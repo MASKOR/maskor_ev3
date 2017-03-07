@@ -79,6 +79,7 @@ void GazeboRosCamera::OnNewFrame(const unsigned char *_image,
     const std::string &_format)
 {
   GazeboRosCameraUtils * test = new GazeboRosCameraUtils();
+
 # if GAZEBO_MAJOR_VERSION >= 7
   common::Time sensor_update_time = this->parentSensor_->LastMeasurementTime();
 # else
@@ -102,12 +103,13 @@ void GazeboRosCamera::OnNewFrame(const unsigned char *_image,
       // Setting the <updateRate> to zero will make this plugin
       // update at the gazebo sensor <update_rate>, update_period_ will be
       // zero and the conditional always will be true.
+      //std::cout << "" << std::endl;
       if (sensor_update_time - this->last_update_time_ >= this->update_period_)
       {
         this->PutCameraData(_image, sensor_update_time);
         //Test();
         //this->PutCameraData(_image,1);
-        test->Test();
+        //test->Test();
         this->PublishCameraInfo(sensor_update_time);
         this->last_update_time_ = sensor_update_time;
 

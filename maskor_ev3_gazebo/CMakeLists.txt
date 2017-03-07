@@ -10,6 +10,7 @@ project(maskor_ev3_gazebo)
 find_package(GAZEBO REQUIRED)
 find_package(SDFormat REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
+find_package( OpenCV REQUIRED )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 
@@ -179,6 +180,7 @@ add_library(maskor_ev3_color_sensor_util
 	src/maskor_ev3_color_sensor_util.cpp include/maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h
 )
 
+
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
@@ -187,7 +189,8 @@ add_library(maskor_ev3_color_sensor_util
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-## add_executable(maskor_ev3_plugin src/maskor_ev3_plugin.cpp)
+ add_executable(color_sensor_node
+	src/color_sensor_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -219,6 +222,11 @@ target_link_libraries(maskor_ev3_color_sensor_util
 	${GAZEBO_LIBRARIES} 
 	CameraPlugin 
 	${catkin_LIBRARIES}
+)
+
+target_link_libraries(color_sensor_node
+	${catkin_LIBRARIES}
+	${OpenCV_LIBS}
 )
 #############
 ## Install ##

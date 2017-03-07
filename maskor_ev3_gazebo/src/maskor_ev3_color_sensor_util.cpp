@@ -55,7 +55,7 @@ GazeboRosCameraUtils::GazeboRosCameraUtils()
   this->skip_ = 0;
   this->format_ = "";
   this->initialized_ = false;
-  std::cout << "hey" << std::endl;
+  //std::cout << "hey" << std::endl;
 }
 
 void GazeboRosCameraUtils::configCallback(
@@ -582,6 +582,7 @@ void GazeboRosCameraUtils::Init()
 void GazeboRosCameraUtils::PutCameraData(const unsigned char *_src,
   common::Time &last_update_time)
 {
+
   this->sensor_update_time_ = last_update_time;
   this->PutCameraData(_src);
 
