@@ -275,3 +275,4 @@ target_link_libraries(color_sensor_node
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+set(DCMAKE_BUILD_TYPE=Debug)

@@ -26,6 +26,7 @@ int LowerV = 0;
 int UpperH = 180;
 int UpperS = 196;
 int UpperV = 170;
+int count = 0;
 
 void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image)
 {
@@ -35,6 +36,7 @@ void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image)
     {
         //Always copy, returning a mutable CvImage
         //OpenCV expects color images to use BGR channel order.
+        //std::cout << "Hey" << std::endl;
         cv_ptr = cv_bridge::toCvCopy(original_image, enc::RGB8);
     }
     catch (cv_bridge::Exception& e)
@@ -57,11 +59,28 @@ void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image)
     * in the constructor in main().
     */
     //Convert the CvImage to a ROS image message and publish it on the "camera/image_processed" topic.
+
+
+    int rgb[3] = {0,0,0};
+
+    for(int a=0; a<(cv_ptr->image.rows * cv_ptr->image.cols *3); a++){
+      //ROS_INFO("Image_Data[%d] %d",a,cv_ptr->image.data[a]);
+      if(count > 2){
+        count = 0;
+      }
+      rgb[count] += cv_ptr->image.data[a];
+      count++;
+    }
+
+    ROS_INFO("rgb[0] %d",rgb[0]/ 1600);
+    ROS_INFO("rgb[1] %d",rgb[1]/ 1600);
+    ROS_INFO("rgb[2] %d",rgb[2]/ 1600);
     pub.publish(cv_ptr->toImageMsg());
 }
 //This function is called everytime a new image is published
 void imageCallback(const sensor_msgs::ImageConstPtr& original_image)
 {
+
     //Convert from the ROS image message to a CvImage suitable for working with OpenCV for processing
     cv_bridge::CvImagePtr cv_ptr;
     try
@@ -77,12 +96,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& original_image)
         return;
     }
 
-    for(int a=0; a<cv_ptr->image.rows; a++){
-      for(int b=0; b<cv_ptr->image.cols; b++){
-        std::cout << cv_ptr->image.data[1] << std::endl;
-        ROS_INFO("ndlaknd %d",cv_ptr->image.data[1]);
-      }
-    }
+
 
     //Invert Image
     //Go through all the rows
@@ -160,7 +174,7 @@ int main(int argc, char **argv)
     * When the Subscriber object is destructed, it will automatically unsubscribe from the "camera/image_raw" base topic.
     */
     //image_transport::Subscriber sub = it.subscribe("camera/image_raw", 1, imageCallback);
-    image_transport::Subscriber sub = it.subscribe("rrbot/camera1/image_raw", 1, colorDetectionCallback);
+    image_transport::Subscriber sub = it.subscribe("/rrbot/camera1/image_raw", 1, colorDetectionCallback);
     //OpenCV HighGUI call to destroy a display window on shut-down.
     cv::destroyWindow(WINDOW);
     /**
