@@ -1,8 +1,0 @@
-prefix=/usr/local
-
-Name: maskor_ev3_gazebo
-Description: Description of maskor_ev3_gazebo
-Version: 0.0.0
-Cflags: -I/usr/local/include -I/usr/include -I/usr/include/gazebo-2.2 -I/usr/include/sdformat-1.4
-Libs: -L/usr/local/lib -lmaskor_ev3_gazebo -lmaskor_ev3_color_sensor_plugin -lmaskor_ev3_color_sensor_util -l:/usr/lib/x86_64-linux-gnu/libgazebo.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_ccd.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_common.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_gimpact.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_gui.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_gui_building.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_gui_viewers.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_math.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_msgs.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_ode.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_opcode.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_opende_ou.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_physics.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_physics_ode.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_rendering.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_selection_buffer.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_sensors.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_skyx.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_transport.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_util.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_player.so -l:/usr/lib/x86_64-linux-gnu/libgazebo_rendering_deferred.so -l:/usr/lib/x86_64-linux-gnu/libprotobuf.so -l-lpthread -l:/usr/lib/x86_64-linux-gnu/libsdformat.so
-Requires: roscpp
