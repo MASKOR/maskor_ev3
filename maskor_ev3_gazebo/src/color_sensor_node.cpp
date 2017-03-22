@@ -28,6 +28,74 @@ int UpperS = 196;
 int UpperV = 170;
 int count = 0;
 
+
+void color_detection(int * rgb, cv::Mat H_histo,cv::Mat S_histo, cv::Mat V_histo, bool * color) {
+
+  int black_or_white = 0;
+  int black_int = 0;
+  int white_int = 0;
+  bool color_b = false;
+
+  for(int i = 250;i < 255;i++){
+    if((S_histo.at<float>(i)) < 50){
+      black_or_white++;
+    }
+  }
+
+  if(black_or_white >=3)
+  {
+    for(int i= 0; i < 6;i++){
+      if(V_histo.at<float>(i) > 15){
+        black_int++;
+      }
+    }
+    if(black_int >= 4)
+    {
+      color[0] = true; //black = true
+    }
+    else{
+      for(int i = 0;i< 3; i++){
+        if(S_histo.at<float>(i) > 15){
+          white_int++;
+        }
+      }
+      if(white_int >=1){
+        color[1] = true; //white = true
+      }
+      else{
+        color_b = true;
+      }
+
+    }
+  }
+  else{
+      color_b = true;
+    }
+
+  if(color_b != false){
+
+    if(rgb[0] >=0 && rgb[0] <= 10 && rgb[1] >=0 && rgb[1] <= 10 && rgb[2] >=250 && rgb[2] <= 255){
+      color[4] = true; // blue = true
+    }
+    else if(rgb[0] >= 0 && rgb[0] <= 10 && rgb[1] >= 250 && rgb[1] <= 255 && rgb[2] >=0 && rgb[2] <= 10){
+      color[3] = true; // green = true
+    }
+    else if(rgb[0] >= 240 && rgb[0] <= 250 && rgb[1] >= 250 && rgb[1] <= 255 && rgb[2] >= 53 && rgb[2] <= 63){
+      color[5] = true; // yellow = true
+    }
+    else if(rgb[0] >= 250 && rgb[0] <= 255 && rgb[1] >= 0 && rgb[1] <= 10 && rgb[2] >= 0 && rgb[2] <= 10){
+      color[2] = true; // red = true
+    }
+    else if(rgb[0] >= 98 && rgb[0] <= 107 && rgb[1] >= 46 && rgb[1] <= 55 && rgb[2] >= 49 && rgb[2] <= 59){
+      color[6] = true; // brown = true
+    }
+    else{
+       color[7] = true; // undifined = true;
+    }
+  }
+
+}
+
 void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image)
 {
     //Convert from the ROS image message to a CvImage suitable for working with OpenCV for processing
@@ -45,8 +113,9 @@ void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image)
         ROS_ERROR("tutorialROSOpenCV::main.cpp::cv_bridge exception: %s", e.what());
         return;
     }
-  cv::Mat img_mask,img_hsv;
+  cv::Mat img_mask,img_hsv, img_hsv_1;
   cv::cvtColor(cv_ptr->image,img_hsv,CV_BGR2HSV);
+  img_hsv_1 = img_hsv;
   cv::inRange(img_hsv,cv::Scalar(LowerH,LowerS,LowerV),cv::Scalar(UpperH,UpperS,UpperV),img_mask);
     //Display the image using OpenCV
     cv::imshow(WINDOW, img_mask);
@@ -60,7 +129,7 @@ void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image)
     */
     //Convert the CvImage to a ROS image message and publish it on the "camera/image_processed" topic.
 
-
+// Farberkennung RGB
     int rgb[3] = {0,0,0};
 
     for(int a=0; a<(cv_ptr->image.rows * cv_ptr->image.cols *3); a++){
@@ -72,9 +141,151 @@ void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image)
       count++;
     }
 
-    ROS_INFO("rgb[0] %d",rgb[0]/ 1600);
-    ROS_INFO("rgb[1] %d",rgb[1]/ 1600);
-    ROS_INFO("rgb[2] %d",rgb[2]/ 1600);
+    for(int i = 0;i<3;i++){
+      rgb[i] = rgb[i] / 1600;
+    }
+
+/*    if(rgb[0] >=0 && rgb[0] <= 10 && rgb[1] >=0 && rgb[1] <= 10 && rgb[2] >=0 && rgb[2] <= 20){
+      ROS_INFO("Schwarz");
+    }
+    else if(rgb[0] >=0 && rgb[0] <= 10 && rgb[1] >=0 && rgb[1] <= 10 && rgb[2] >=250 && rgb[2] <= 255){
+      ROS_INFO("Blau");
+    }
+    else if(rgb[0] >= 0 && rgb[0] <= 10 && rgb[1] >= 250 && rgb[1] <= 255 && rgb[2] >=55 && rgb[2] <= 62){
+      ROS_INFO("Grün");
+    }
+    else if(rgb[0] >= 240 && rgb[0] <= 250 && rgb[1] >= 250 && rgb[1] <= 255 && rgb[2] >= 53 && rgb[2] <= 63){
+      ROS_INFO("Gelb");
+    }
+    else if(rgb[0] >= 250 && rgb[0] <= 255 && rgb[1] >= 0 && rgb[1] <= 10 && rgb[2] >= 0 && rgb[2] <= 10){
+      ROS_INFO("Rot");
+    }
+    else if(rgb[0] >= 245 && rgb[0] <= 255 && rgb[1] >= 245 && rgb[1] <= 255 && rgb[2] >= 245 && rgb[2] <= 255){
+      ROS_INFO("Weiß");
+    }
+    else if(rgb[0] >= 98 && rgb[0] <= 107 && rgb[1] >= 46 && rgb[1] <= 55 && rgb[2] >= 49 && rgb[2] <= 59){
+      ROS_INFO("Braun");
+    }
+    else{
+      ROS_INFO("Unbekannte Farbe oder Farblos");
+    }
+
+//    ROS_INFO("rgb[0] %d",rgb[0]);
+//    ROS_INFO("rgb[1] %d",rgb[1]);
+//    ROS_INFO("rgb[2] %d",rgb[2]); */
+
+//Farberkennung HSV
+
+    //color[0] = black
+    //color[1] = white
+    //color[2] = red
+    //color[3] = green
+    //color[4] = blue
+    //color[5] = yellow
+    //color[6] = brown
+    //color[7] = undifined
+    bool color[8] = {false};
+
+    cv::Mat hsv[3];   //HSV array
+    split(img_hsv_1, hsv);//split source
+
+    int HSV[3] = {0,0,0};
+
+
+    for(int a=0; a<3; a++){
+      for(int c = 0;c< hsv[a].cols;c++){
+        for(int r = 0;r<hsv[a].rows;r++){
+          HSV[a] += (int)hsv[a].at<uchar>(c,r);
+        }
+      }
+    }
+
+    /// Establish the number of bins
+      int histSize = 256;
+
+      /// Set the ranges ( for H,S,V) )
+      float range[] = { 0, 256 } ;
+      const float* histRange = { range };
+
+      bool uniform = true; bool accumulate = false;
+
+      cv::Mat H_hist, S_hist, V_hist;
+
+      /// Compute the histograms:
+      cv::calcHist( &hsv[0], 1, 0, cv::Mat(), H_hist, 1, &histSize, &histRange, uniform, accumulate );
+      cv::calcHist( &hsv[1], 1, 0, cv::Mat(), S_hist, 1, &histSize, &histRange, uniform, accumulate );
+      cv::calcHist( &hsv[2], 1, 0, cv::Mat(), V_hist, 1, &histSize, &histRange, uniform, accumulate );
+
+      //Visualisation
+      int hist_w = 512; int hist_h = 400;
+      int bin_w = cvRound( (double) hist_w/histSize );
+
+      cv::Mat histImage( hist_h, hist_w, CV_8UC3, cv::Scalar( 0,0,0) );
+
+      cv::Mat H_hist1, S_hist1, V_hist1;
+
+      normalize(H_hist, H_hist1, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+      normalize(S_hist, S_hist1, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+      normalize(V_hist, V_hist1, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+
+      /// Draw for each channel
+        for( int i = 1; i < histSize; i++ )
+        {
+            line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(H_hist1.at<float>(i-1)) ) ,
+                             cv::Point( bin_w*(i), hist_h - cvRound(H_hist1.at<float>(i)) ),
+                             cv::Scalar( 255, 0, 0), 2, 8, 0  );
+            line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(S_hist1.at<float>(i-1)) ) ,
+                             cv::Point( bin_w*(i), hist_h - cvRound(S_hist1.at<float>(i)) ),
+                             cv::Scalar( 0, 255, 0), 2, 8, 0  );
+            line( histImage, cv::Point( bin_w*(i-1), hist_h - cvRound(V_hist1.at<float>(i-1)) ) ,
+                             cv::Point( bin_w*(i), hist_h - cvRound(V_hist1.at<float>(i)) ),
+                             cv::Scalar( 0, 0, 255), 2, 8, 0  );
+        }
+
+        /// Display
+        cv::namedWindow("calcHist Demo", CV_WINDOW_AUTOSIZE );
+        imshow("calcHist Demo", histImage );
+
+
+        //Color Detection for black and white
+      color_detection(rgb,H_hist, S_hist, V_hist, color);
+
+     if(color[0] == true){
+        std::cout << "Color: black" << std::endl;
+      }
+      else if(color[1] == true){
+        std::cout << "Color: white" << std::endl;
+      }
+     else if(color[2] ==true){
+       std::cout << "Color: red" << std::endl;
+     }
+     else if(color[3] ==true){
+       std::cout << "Color: green" << std::endl;
+     }
+     else if(color[4] ==true){
+       std::cout << "Color: blue" << std::endl;
+     }
+     else if(color[5] ==true){
+       std::cout << "Color: yellow" << std::endl;
+     }
+     else if(color[6] ==true){
+       std::cout << "Color: brown" << std::endl;
+     }
+     else if(color[7] ==true){
+       std::cout << "Color: undifined" << std::endl;
+     }
+
+
+//      std::cout << "H_hist" << H_hist << std::endl;
+//      std::cout << "S_hist" << S_hist << std::endl;
+//      std::cout << "V_hist" << V_hist << std::endl;
+
+//    std::cout << HSV[0] / 1600 << std::endl;
+//    std::cout << HSV[1] / 1600 << std::endl;
+//    std::cout << HSV[2] / 1600 << std::endl;
+
+
+
     pub.publish(cv_ptr->toImageMsg());
 }
 //This function is called everytime a new image is published

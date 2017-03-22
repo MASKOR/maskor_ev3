@@ -135,7 +135,7 @@ void GazeboRosDiffDrive::Load ( physics::ModelPtr _parent, sdf::ElementPtr _sdf 
 #else
     joints_[LEFT]->SetMaxForce ( 0, wheel_torque );
     joints_[RIGHT]->SetMaxForce ( 0, wheel_torque );
-    joints_[LIFT]->SetMaxForce ( 0, wheel_torque );
+    joints_[LIFT]->SetMaxForce ( 0, wheel_torque *5);
 #endif
 
 
@@ -219,7 +219,7 @@ void GazeboRosDiffDrive::Reset()
 #else
   joints_[LEFT]->SetMaxForce ( 0, wheel_torque );
   joints_[RIGHT]->SetMaxForce ( 0, wheel_torque );
-  joints_[LIFT]->SetMaxForce ( 0, wheel_torque );
+  joints_[LIFT]->SetMaxForce ( 0, wheel_torque *5);
 #endif
 }
 //todo joint erweitern
@@ -277,7 +277,7 @@ void GazeboRosDiffDrive::UpdateChild()
         joints_[i]->SetParam ( "fmax", 0, wheel_torque );
 #else
       if ( fabs(wheel_torque -joints_[i]->GetMaxForce ( 0 )) > 1e-6 ) {
-        joints_[i]->SetMaxForce ( 0, wheel_torque );
+        joints_[i]->SetMaxForce ( 0, wheel_torque *5);
 #endif
       }
     }

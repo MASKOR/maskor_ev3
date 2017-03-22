@@ -1,0 +1,15 @@
+
+0 = Farblos: ? ? ?
+1 = Schwarz: 0, 0, 0
+2 = Blau: 82, 0, 251
+3 = Grün: 0, 255, 58
+4 = Gelb: 245, 255, 58
+5 = Rot: 255, 0, 4
+6 = Weiß: 255, 255, 255
+7 = Braun: 103, 51, 54
+
+
+Kreuzungen: Farbcodiert mit drei Farben in der Mitte Rot (Vertikal sind die Farben gespiegelt)
+K1 = Blau, Grün, Rot
+K2 = Gelb, Blau, Rot
+K3 = Grün, Gelb, Rot
