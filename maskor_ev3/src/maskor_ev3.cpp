@@ -1320,6 +1320,6 @@ bool lego_port::connect(const std::map<std::string, std::set<std::string>> &matc
 
 //-----------------------------------------------------------------------------
 
-} // namespace ev3dev
+} // namespace maskor_ev3
 
 // vim: sw=2

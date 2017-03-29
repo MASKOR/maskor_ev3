@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 2.8.3)
 project(maskor_ev3)
 
 
-set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
-set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
+#set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
+#set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
+
 add_definitions(-D_GLIBCXX_USE_NANOSLEEP)
 add_compile_options(-std=c++11)
 
@@ -125,7 +126,10 @@ include_directories(
 
 ## Declare a C++ library
 add_library(maskor_ev3
-   src/maskor_ev3.cpp include/maskor_ev3/maskor_ev3.h
+   include/maskor_ev3/maskor_ev3.h
+   include/maskor_ev3/common.h
+   include/maskor_ev3/lru_cache.h
+   include/maskor_ev3/device.h src/device.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -134,19 +138,19 @@ add_library(maskor_ev3
 # add_dependencies(maskor_ev3 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(hello_ros_node src/HelloROS.cpp)
+#add_executable(hello_ros_node src/HelloROS.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(maskor_ev3_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-#target_link_libraries(maskor_ev3
-#   ${catkin_LIBRARIES}
-#)
-target_link_libraries(hello_ros_node
-   #${catkin_LIBRARIES}
+target_link_libraries(maskor_ev3
+   ${catkin_LIBRARIES}
 )
+#target_link_libraries(hello_ros_node
+   #${catkin_LIBRARIES}
+#)
 
 #############
 ## Install ##

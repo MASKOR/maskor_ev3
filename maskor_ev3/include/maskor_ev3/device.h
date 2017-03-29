@@ -1,7 +1,6 @@
 #ifndef _DEVICE_H_
 #define _DEVICE_H_
 
-
 // Generic device class.
 // The sensor class provides a uniform interface for using most of the
 // sensors available for the EV3. The various underlying device drivers will
@@ -18,6 +17,9 @@
 // `driver_name`. Then it will not matter which port a sensor is plugged in to
 // your program will still work.
 
+#include <maskor_ev3/common.h>
+
+namespace maskor_ev3 {
 
 class device
 {
@@ -48,5 +50,6 @@ protected:
   mutable int _device_index = -1;
 };
 
+} //namespace maskor_ev3
 
-#endif //DEVICE_H_
+#endif //DEVICE_H

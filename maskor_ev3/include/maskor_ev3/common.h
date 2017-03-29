@@ -1,6 +1,27 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#ifndef FSTREAM_CACHE_SIZE
+#define FSTREAM_CACHE_SIZE 16
+#endif
+
+
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <memory>
+
+#include <maskor_ev3/lru_cache.h>
+
+// A global cache of files.
+lru_cache<std::string, std::ifstream> ifstream_cache(FSTREAM_CACHE_SIZE);
+lru_cache<std::string, std::ofstream> ofstream_cache(FSTREAM_CACHE_SIZE);
+
+namespace maskor_ev3 {
+
 typedef std::string         device_type;
 typedef std::string         mode_type;
 typedef std::set<mode_type> mode_set;
@@ -33,5 +54,7 @@ const address_type OUTPUT_C { "outC" }; //!< Motor port C
 const address_type OUTPUT_D { "outD" }; //!< Motor port D
 #endif
 
+} //namespace maskor_ev3
 
 #endif //COMMON_H
+
