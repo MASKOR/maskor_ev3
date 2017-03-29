@@ -1,6 +1,10 @@
 #ifndef _SOUND_H_
 #define _SOUND_H_
 
+#include<string>
+#include<vector>
+
+namespace maskor_ev3 {
 
 // EV3 Sound
 class sound
@@ -13,5 +17,6 @@ public:
   static void speak(const std::string &text, bool bSynchronous = false);
 };
 
+}//end namespace
 
 #endif //SOUND_H

@@ -1,6 +1,10 @@
 #ifndef _LCD_H_
 #define _LCD_H_
 
+#include <stdint.h>
+
+namespace maskor_ev3 {
+
 // EV3 LCD
 class lcd
 {
@@ -33,6 +37,8 @@ private:
   uint32_t _yres;
   uint32_t _bpp;
 };
+
+}//end namespace
 
 
 #endif //LCD_H

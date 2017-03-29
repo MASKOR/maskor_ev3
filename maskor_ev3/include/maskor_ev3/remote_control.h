@@ -1,6 +1,10 @@
 #ifndef _REMOTE_CONTROL_H_
 #define _REMOTE_CONTROL_H_
 
+#include <maskor_ev3/infrared_sensor.h>
+
+namespace maskor_ev3 {
+
 // EV3 remote control
 class remote_control
 {
@@ -40,5 +44,6 @@ protected:
   int              _state = 0;
 };
 
+}//end namespace
 
 #endif //REMOTE_CONTROL_H_

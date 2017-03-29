@@ -19,6 +19,9 @@
 #include <maskor_ev3/led.h>
 #include <maskor_ev3/power_supply.h>
 #include <maskor_ev3/button.h>
+#include <maskor_ev3/sound.h>
+#include <maskor_ev3/lcd.h>
+#include <maskor_ev3/remote_control.h>
 
 namespace maskor_ev3 {
 

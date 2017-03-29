@@ -129,7 +129,7 @@ add_library(maskor_ev3
   include/maskor_ev3/maskor_ev3.h
   include/maskor_ev3/common.h
   include/maskor_ev3/lru_cache.h
-  include/maskor_ev3/port.h
+  include/maskor_ev3/port.h src/port.cpp
   include/maskor_ev3/device.h src/device.cpp
   include/maskor_ev3/sensor.h src/sensor.cpp
   include/maskor_ev3/i2c_sensor.h src/i2c_sensor.cpp
@@ -148,6 +148,9 @@ add_library(maskor_ev3
   include/maskor_ev3/led.h src/led.cpp
   include/maskor_ev3/power_supply.h src/power_supply.cpp
   include/maskor_ev3/button.h src/button.cpp
+  include/maskor_ev3/sound.h src/sound.cpp
+  include/maskor_ev3/lcd.h src/lcd.cpp
+  include/maskor_ev3/remote_control.h src/remote_control.cpp
   )
 
 ## Add cmake target dependencies of the library
