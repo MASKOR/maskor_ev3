@@ -1,6 +1,9 @@
 #ifndef _TOUCH_SENSOR_H_
 #define _TOUCH_SENSOR_H_
 
+#include <maskor_ev3/sensor.h>
+
+namespace maskor_ev3 {
 
 // Touch Sensor
 class touch_sensor : public sensor
@@ -11,7 +14,6 @@ public:
   // Button state
   static const std::string mode_touch;
 
-
   // A boolean indicating whether the current touch sensor is being
   // pressed.
   bool is_pressed() {
@@ -21,5 +23,6 @@ public:
 
 };
 
+}//end namespace
 
 #endif

@@ -1,6 +1,10 @@
 #ifndef _INFRARED_SENSOR_H_
 #define _INFRARED_SENSOR_H_
 
+#include <maskor_ev3/sensor.h>
+
+namespace maskor_ev3 {
+
 // LEGO EV3 infrared sensor.
 class infrared_sensor : public sensor
 {
@@ -32,5 +36,6 @@ public:
 
 };
 
+}//end namespace
 
 #endif //INFRARED_SENSOR_H

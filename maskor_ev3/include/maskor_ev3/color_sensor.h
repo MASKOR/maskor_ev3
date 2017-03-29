@@ -1,9 +1,13 @@
 #ifndef _COLOR_SENSOR_H_
 #define _COLOR_SENSOR_H_
 
+#include <maskor_ev3/sensor.h>
+
 // LEGO EV3 color sensor.
-class color_sensor : public sensor
-{
+
+namespace maskor_ev3 {
+
+class color_sensor : public sensor {
 public:
   color_sensor(address_type address = INPUT_AUTO);
 
@@ -69,5 +73,6 @@ public:
 
 };
 
+} // end namespace
 
 #endif // COLOR_SENSOR_H

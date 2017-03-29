@@ -1,13 +1,16 @@
 #ifndef _MOTOR_H_
 #define _MOTOR_H_
 
+#include <maskor_ev3/device.h>
+
 // The motor class provides a uniform interface for using motors with
 // positional and directional feedback such as the EV3 and NXT motors.
 // This feedback allows for precise control of the motors. This is the
 // most common type of motor, so we just call it `motor`.
 
-class motor : protected device
-{
+namespace maskor_ev3 {
+
+class motor : protected device {
 public:
   typedef device_type motor_type;
 
@@ -380,3 +383,7 @@ protected:
 
   bool connect(const std::map<std::string, std::set<std::string>>&) noexcept;
 };
+
+} //end namespace
+
+#endif //MOTOR_H

@@ -120,7 +120,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
-  include/ros_lib/
+  include/ros_lib/ #rosserial
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -131,6 +131,13 @@ add_library(maskor_ev3
    include/maskor_ev3/lru_cache.h
    include/maskor_ev3/device.h src/device.cpp
    include/maskor_ev3/sensor.h src/sensor.cpp
+   include/maskor_ev3/i2c_sensor.h src/i2c_sensor.cpp
+   include/maskor_ev3/touch_sensor.h src/touch_sensor.cpp
+   include/maskor_ev3/color_sensor.h src/color_sensor.cpp
+   include/maskor_ev3/infrared_sensor.h src/infrared_sensor.cpp
+   include/maskor_ev3/gyro_sensor.h src/gyro_sensor.cpp
+   include/maskor_ev3/ultrasonic_sensor.h src/ultrasonic_sensor.cpp
+   include/maskor_ev3/motor.h src/motor.cpp
 
 )
 

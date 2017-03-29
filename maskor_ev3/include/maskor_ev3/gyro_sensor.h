@@ -1,6 +1,10 @@
 #ifndef _GYRO_SENSOR_H_
 #define _GYRO_SENSOR_H_
 
+#include <maskor_ev3/sensor.h>
+
+namespace maskor_ev3 {
+
 // LEGO EV3 gyro sensor.
 class gyro_sensor : public sensor
 {
@@ -37,5 +41,7 @@ public:
   }
 
 };
+
+}//end namespace
 
 #endif //GYRO_SENSOR_H

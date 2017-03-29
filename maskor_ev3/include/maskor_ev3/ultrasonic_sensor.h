@@ -1,6 +1,9 @@
 #ifndef _ULTRASONIC_SENSOR_H_
 #define _ULTRASONIC_SENSOR_H_
 
+#include <maskor_ev3/sensor.h>
+
+namespace maskor_ev3 {
 
 // LEGO EV3 ultrasonic sensor.
 class ultrasonic_sensor : public sensor
@@ -47,5 +50,6 @@ public:
 
 };
 
+}//end namespace
 
 #endif //ULTRASONIC_SENSOR_H

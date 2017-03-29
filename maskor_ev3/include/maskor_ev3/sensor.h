@@ -25,6 +25,19 @@ class sensor : protected device {
 public:
   typedef device_type sensor_type;
 
+/* const sensor::sensor_type sensor::ev3_touch       { "lego-ev3-touch" }; */
+/* const sensor::sensor_type sensor::ev3_color       { "lego-ev3-color" }; */
+/* const sensor::sensor_type sensor::ev3_ultrasonic  { "lego-ev3-us" }; */
+/* const sensor::sensor_type sensor::ev3_gyro        { "lego-ev3-gyro" }; */
+/* const sensor::sensor_type sensor::ev3_infrared    { "lego-ev3-ir" }; */
+
+/* const sensor::sensor_type sensor::nxt_touch       { "lego-nxt-touch" }; */
+/* const sensor::sensor_type sensor::nxt_light       { "lego-nxt-light" }; */
+/* const sensor::sensor_type sensor::nxt_sound       { "lego-nxt-sound" }; */
+/* const sensor::sensor_type sensor::nxt_ultrasonic  { "lego-nxt-us" }; */
+/* const sensor::sensor_type sensor::nxt_i2c_sensor  { "nxt-i2c-sensor" }; */
+/* const sensor::sensor_type sensor::nxt_analog      { "nxt-analog" }; */
+
   static const sensor_type ev3_touch;
   static const sensor_type ev3_color;
   static const sensor_type ev3_ultrasonic;
