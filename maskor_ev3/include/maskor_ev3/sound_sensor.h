@@ -1,6 +1,10 @@
 #ifndef _SOUND_SENSOR_H_
 #define _SOUND_SENSOR_H_
 
+#include <maskor_ev3/sensor.h>
+
+namespace maskor_ev3 {
+
 // LEGO NXT Sound Sensor
 class sound_sensor : public sensor
 {
@@ -30,5 +34,6 @@ public:
 
 };
 
+}//end namespace
 
 #endif //SOUNDSENSOR_H

@@ -1,6 +1,10 @@
 #ifndef _LIGHT_SENSOR_H_
 #define _LIGHT_SENSOR_H_
 
+#include <maskor_ev3/sensor.h>
+
+namespace maskor_ev3 {
+
 // LEGO NXT Light Sensor
 class light_sensor : public sensor
 {
@@ -27,5 +31,7 @@ public:
   }
 
 };
+
+}//end namespace
 
 #endif //LIGHT_SENSOR_H

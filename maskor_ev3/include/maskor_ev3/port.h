@@ -1,6 +1,8 @@
 #ifndef _PORT_H_
 #define _PORT_H_
 
+#include <maskor_ev3/device.h>
+
 // The `lego-port` class provides an interface for working with input and
 // output ports that are compatible with LEGO MINDSTORMS RCX/NXT/EV3, LEGO
 // WeDo and LEGO Power Functions sensors and motors. Supported devices include
@@ -26,6 +28,8 @@
 // incremented each time a new port is registered. Note: The number is not
 // related to the actual port at all - use the `address` attribute to find
 // a specific port.
+
+namespace maskor_ev3 {
 
 class lego_port : protected device
 {
@@ -78,13 +82,12 @@ class lego_port : protected device
   // for the full list of possible values.
   std::string status() const { return get_attr_string("status"); }
 
-
-
  protected:
   lego_port() {}
 
   bool connect(const std::map<std::string, std::set<std::string>>&) noexcept;
 };
 
+}//end namespace
 
 #endif //PORT_H

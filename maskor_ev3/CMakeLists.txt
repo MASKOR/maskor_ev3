@@ -14,7 +14,7 @@ add_compile_options(-std=c++11)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-)
+  )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -109,8 +109,8 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES maskor_ev3
   CATKIN_DEPENDS roscpp
-#  DEPENDS system_lib
-)
+  #  DEPENDS system_lib
+  )
 
 ###########
 ## Build ##
@@ -122,24 +122,29 @@ include_directories(
   include
   include/ros_lib/ #rosserial
   ${catkin_INCLUDE_DIRS}
-)
+  )
 
 ## Declare a C++ library
 add_library(maskor_ev3
-   include/maskor_ev3/maskor_ev3.h
-   include/maskor_ev3/common.h
-   include/maskor_ev3/lru_cache.h
-   include/maskor_ev3/device.h src/device.cpp
-   include/maskor_ev3/sensor.h src/sensor.cpp
-   include/maskor_ev3/i2c_sensor.h src/i2c_sensor.cpp
-   include/maskor_ev3/touch_sensor.h src/touch_sensor.cpp
-   include/maskor_ev3/color_sensor.h src/color_sensor.cpp
-   include/maskor_ev3/infrared_sensor.h src/infrared_sensor.cpp
-   include/maskor_ev3/gyro_sensor.h src/gyro_sensor.cpp
-   include/maskor_ev3/ultrasonic_sensor.h src/ultrasonic_sensor.cpp
-   include/maskor_ev3/motor.h src/motor.cpp
+  include/maskor_ev3/maskor_ev3.h
+  include/maskor_ev3/common.h
+  include/maskor_ev3/lru_cache.h
+  include/maskor_ev3/port.h
+  include/maskor_ev3/device.h src/device.cpp
+  include/maskor_ev3/sensor.h src/sensor.cpp
+  include/maskor_ev3/i2c_sensor.h src/i2c_sensor.cpp
+  include/maskor_ev3/touch_sensor.h src/touch_sensor.cpp
+  include/maskor_ev3/color_sensor.h src/color_sensor.cpp
+  include/maskor_ev3/infrared_sensor.h src/infrared_sensor.cpp
+  include/maskor_ev3/gyro_sensor.h src/gyro_sensor.cpp
+  include/maskor_ev3/ultrasonic_sensor.h src/ultrasonic_sensor.cpp
+  include/maskor_ev3/sound_sensor.h src/sound_sensor.cpp
+  include/maskor_ev3/light_sensor.h src/light_sensor.cpp 
+  include/maskor_ev3/motor.h src/motor.cpp
+  include/maskor_ev3/medium_motor.h src/medium_motor.cpp
+  include/maskor_ev3/medium_motor.h src/large_motor.cpp
 
-)
+  )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -155,10 +160,10 @@ add_library(maskor_ev3
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(maskor_ev3
-   #${catkin_LIBRARIES}
-)
+  #${catkin_LIBRARIES}
+  )
 #target_link_libraries(hello_ros_node
-   #${catkin_LIBRARIES}
+#${catkin_LIBRARIES}
 #)
 
 #############
