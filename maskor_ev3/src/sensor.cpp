@@ -1,5 +1,4 @@
 #include <maskor_ev3/sensor.h>
-//#include <maskor_ev3/stream.h>
 
 namespace maskor_ev3 {
 

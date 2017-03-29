@@ -44,7 +44,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
-
 #include <maskor_ev3/lru_cache.h>
 
 static const int bits_per_long = sizeof(long) * 8;
@@ -55,10 +54,6 @@ static std::mutex ifstream_cache_lock;
 // A global cache of files.
 static lru_cache<std::string, std::ifstream> ifstream_cache(FSTREAM_CACHE_SIZE);
 static lru_cache<std::string, std::ofstream> ofstream_cache(FSTREAM_CACHE_SIZE);
-
-//static std::ofstream &ofstream_open(const std::string &path);
-//static std::ifstream &ifstream_open(const std::string &path);
-
 
 inline std::ofstream &ofstream_open(const std::string &path)
 {
