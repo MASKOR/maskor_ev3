@@ -16,7 +16,6 @@
 #define FSTREAM_CACHE_SIZE 16
 #endif
 
-
 #include <set>
 #include <string>
 #include <mutex>

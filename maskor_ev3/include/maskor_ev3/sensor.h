@@ -17,7 +17,6 @@
 // program will still work.
 
 #include <maskor_ev3/device.h>
-#include <maskor_ev3/common.h>
 
 namespace maskor_ev3 {
 
