@@ -130,6 +130,8 @@ add_library(maskor_ev3
    include/maskor_ev3/common.h
    include/maskor_ev3/lru_cache.h
    include/maskor_ev3/device.h src/device.cpp
+   include/maskor_ev3/sensor.h src/sensor.cpp
+
 )
 
 ## Add cmake target dependencies of the library

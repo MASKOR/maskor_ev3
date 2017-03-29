@@ -44,17 +44,59 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <maskor_ev3/lru_cache.h>
 
+#include <maskor_ev3/lru_cache.h>
 
 static const int bits_per_long = sizeof(long) * 8;
 
-std::mutex ofstream_cache_lock;
-std::mutex ifstream_cache_lock;
+static std::mutex ofstream_cache_lock;
+static std::mutex ifstream_cache_lock;
 
 // A global cache of files.
-lru_cache<std::string, std::ifstream> ifstream_cache(FSTREAM_CACHE_SIZE);
-lru_cache<std::string, std::ofstream> ofstream_cache(FSTREAM_CACHE_SIZE);
+static lru_cache<std::string, std::ifstream> ifstream_cache(FSTREAM_CACHE_SIZE);
+static lru_cache<std::string, std::ofstream> ofstream_cache(FSTREAM_CACHE_SIZE);
+
+//static std::ofstream &ofstream_open(const std::string &path);
+//static std::ifstream &ifstream_open(const std::string &path);
+
+
+inline std::ofstream &ofstream_open(const std::string &path)
+{
+  std::lock_guard<std::mutex> lock(ofstream_cache_lock);
+  std::ofstream &file = ofstream_cache[path];
+  if (!file.is_open())
+  {
+    // Don't buffer writes to avoid latency. Also saves a bit of memory.
+    file.rdbuf()->pubsetbuf(NULL, 0);
+    file.open(path);
+  }
+  else
+  {
+    // Clear the error bits in case something happened.
+    file.clear();
+  }
+  return file;
+}
+
+inline std::ifstream &ifstream_open(const std::string &path)
+{
+  std::lock_guard<std::mutex> lock(ifstream_cache_lock);
+  std::ifstream &file = ifstream_cache[path];
+  if (!file.is_open())
+  {
+    file.open(path);
+  }
+  else
+  {
+    // Clear the flags bits in case something happened (like reaching EOF).
+    file.clear();
+    file.seekg(0, std::ios::beg);
+  }
+  return file;
+}
+
+
+
 
 namespace maskor_ev3 {
 

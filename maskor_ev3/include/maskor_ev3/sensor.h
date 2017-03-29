@@ -16,8 +16,12 @@
 // `driver_name`. Then it will not matter which port a sensor is plugged in to - your
 // program will still work.
 
-class sensor : protected device
-{
+#include <maskor_ev3/device.h>
+#include <maskor_ev3/common.h>
+
+namespace maskor_ev3 {
+
+class sensor : protected device {
 public:
   typedef device_type sensor_type;
 
@@ -144,5 +148,6 @@ protected:
   mutable std::vector<char> _bin_data;
 };
 
+} // end namespace
 
 #endif //SENSOR_H

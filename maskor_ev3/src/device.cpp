@@ -1,40 +1,5 @@
 #include <maskor_ev3/device.h>
-
-std::ofstream &ofstream_open(const std::string &path)
-{
-  std::lock_guard<std::mutex> lock(ofstream_cache_lock);
-  std::ofstream &file = ofstream_cache[path];
-  if (!file.is_open())
-  {
-    // Don't buffer writes to avoid latency. Also saves a bit of memory.
-    file.rdbuf()->pubsetbuf(NULL, 0);
-    file.open(path);
-  }
-  else
-  {
-    // Clear the error bits in case something happened.
-    file.clear();
-  }
-  return file;
-}
-
-std::ifstream &ifstream_open(const std::string &path)
-{
-  std::lock_guard<std::mutex> lock(ifstream_cache_lock);
-  std::ifstream &file = ifstream_cache[path];
-  if (!file.is_open())
-  {
-    file.open(path);
-  }
-  else
-  {
-    // Clear the flags bits in case something happened (like reaching EOF).
-    file.clear();
-    file.seekg(0, std::ios::beg);
-  }
-  return file;
-}
-
+//include <maskor_ev3/stream.h>
 
 namespace maskor_ev3 {
 
