@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(maskor_ev3)
 
 
-#set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
-#set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
+set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
+set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
 
 add_definitions(-D_GLIBCXX_USE_NANOSLEEP)
 add_compile_options(-std=c++11)
@@ -146,7 +146,7 @@ add_library(maskor_ev3
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(maskor_ev3
-   ${catkin_LIBRARIES}
+   #${catkin_LIBRARIES}
 )
 #target_link_libraries(hello_ros_node
    #${catkin_LIBRARIES}

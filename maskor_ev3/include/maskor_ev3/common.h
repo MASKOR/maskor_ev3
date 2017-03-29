@@ -1,10 +1,20 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+#ifndef SYS_ROOT
+#define SYS_ROOT "/sys/class"
+#endif
+
+#ifndef NO_LINUX_HEADERS
+#include <linux/fb.h>
+#include <linux/input.h>
+#else
+#define KEY_CNT 8
+#endif
+
 #ifndef FSTREAM_CACHE_SIZE
 #define FSTREAM_CACHE_SIZE 16
 #endif
-
 
 #include <map>
 #include <set>
@@ -13,8 +23,34 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
-
+#include <ctime>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <list>
+#include <map>
+#include <array>
+#include <algorithm>
+#include <system_error>
+#include <mutex>
+#include <chrono>
+#include <thread>
+#include <stdexcept>
+#include <string.h>
+#include <math.h>
+#include <dirent.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
 #include <maskor_ev3/lru_cache.h>
+
+
+static const int bits_per_long = sizeof(long) * 8;
+
+std::mutex ofstream_cache_lock;
+std::mutex ifstream_cache_lock;
 
 // A global cache of files.
 lru_cache<std::string, std::ifstream> ifstream_cache(FSTREAM_CACHE_SIZE);

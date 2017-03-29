@@ -1,45 +1,5 @@
 #include <maskor_ev3/device.h>
 
-#include <ctime>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <list>
-#include <map>
-#include <array>
-#include <algorithm>
-#include <system_error>
-#include <mutex>
-#include <chrono>
-#include <thread>
-#include <stdexcept>
-#include <string.h>
-#include <math.h>
-
-#include <dirent.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-
-#ifndef SYS_ROOT
-#define SYS_ROOT "/sys/class"
-#endif
-
-#ifndef NO_LINUX_HEADERS
-#include <linux/fb.h>
-#include <linux/input.h>
-#else
-#define KEY_CNT 8
-#endif
-static const int bits_per_long = sizeof(long) * 8;
-
-std::mutex ofstream_cache_lock;
-std::mutex ifstream_cache_lock;
-
-
-
 std::ofstream &ofstream_open(const std::string &path)
 {
   std::lock_guard<std::mutex> lock(ofstream_cache_lock);
@@ -74,9 +34,6 @@ std::ifstream &ifstream_open(const std::string &path)
   }
   return file;
 }
-
-
-
 
 
 namespace maskor_ev3 {
