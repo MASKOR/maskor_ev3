@@ -16,34 +16,11 @@
 #define FSTREAM_CACHE_SIZE 16
 #endif
 
-#include <map>
+
 #include <set>
 #include <string>
-#include <vector>
-#include <algorithm>
-#include <functional>
-#include <memory>
-#include <ctime>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <list>
-#include <map>
-#include <array>
-#include <algorithm>
-#include <system_error>
 #include <mutex>
-#include <chrono>
-#include <thread>
-#include <stdexcept>
-#include <string.h>
-#include <math.h>
-#include <dirent.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
+#include <fstream>
 #include <maskor_ev3/lru_cache.h>
 
 static const int bits_per_long = sizeof(long) * 8;

@@ -2,6 +2,7 @@
 #define _LRU_CACHE_H_
 
 #include <list>
+#include <algorithm>
 
 // This class implements a small LRU cache. It assumes the number of elements
 // is small, and so uses a simple linear search.

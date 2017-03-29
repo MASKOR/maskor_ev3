@@ -2,6 +2,7 @@
 #define _LED_H_
 
 #include <maskor_ev3/device.h>
+#include <thread>
 
 // Any device controlled by the generic LED driver.
 // See https://www.kernel.org/doc/Documentation/leds/leds-class.txt

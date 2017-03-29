@@ -2,6 +2,9 @@
 #define _BUTTON_H_
 
 #include <maskor_ev3/common.h>
+#include <thread>
+#include <fcntl.h>
+#include <unistd.h>
 
 namespace maskor_ev3 {
 

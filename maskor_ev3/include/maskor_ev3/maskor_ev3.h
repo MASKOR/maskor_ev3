@@ -45,11 +45,25 @@ const power_supply power_supply::battery { "" };
 
 // STRINGS
 
+const std::string touch_sensor::mode_touch{ "TOUCH" };
+
 const std::string infrared_sensor::mode_ir_prox{ "IR-PROX" };
 const std::string infrared_sensor::mode_ir_seek{ "IR-SEEK" };
 const std::string infrared_sensor::mode_ir_remote{ "IR-REMOTE" };
 const std::string infrared_sensor::mode_ir_rem_a{ "IR-REM-A" };
 const std::string infrared_sensor::mode_ir_cal{ "IR-CAL" };
+
+const std::string color_sensor::mode_col_reflect{ "COL-REFLECT" };
+const std::string color_sensor::mode_col_ambient{ "COL-AMBIENT" };
+const std::string color_sensor::mode_col_color{ "COL-COLOR" };
+const std::string color_sensor::mode_ref_raw{ "REF-RAW" };
+const std::string color_sensor::mode_rgb_raw{ "RGB-RAW" };
+
+const std::string ultrasonic_sensor::mode_us_dist_cm{ "US-DIST-CM" };
+const std::string ultrasonic_sensor::mode_us_dist_in{ "US-DIST-IN" };
+const std::string ultrasonic_sensor::mode_us_listen{ "US-LISTEN" };
+const std::string ultrasonic_sensor::mode_us_si_cm{ "US-SI-CM" };
+const std::string ultrasonic_sensor::mode_us_si_in{ "US-SI-IN" };
 
 const std::string gyro_sensor::mode_gyro_ang{ "GYRO-ANG" };
 const std::string gyro_sensor::mode_gyro_rate{ "GYRO-RATE" };
@@ -57,11 +71,11 @@ const std::string gyro_sensor::mode_gyro_fas{ "GYRO-FAS" };
 const std::string gyro_sensor::mode_gyro_g_a{ "GYRO-G&A" };
 const std::string gyro_sensor::mode_gyro_cal{ "GYRO-CAL" };
 
-const std::string ultrasonic_sensor::mode_us_dist_cm{ "US-DIST-CM" };
-const std::string ultrasonic_sensor::mode_us_dist_in{ "US-DIST-IN" };
-const std::string ultrasonic_sensor::mode_us_listen{ "US-LISTEN" };
-const std::string ultrasonic_sensor::mode_us_si_cm{ "US-SI-CM" };
-const std::string ultrasonic_sensor::mode_us_si_in{ "US-SI-IN" };
+const std::string infrared_sensor::mode_ir_prox{ "IR-PROX" };
+const std::string infrared_sensor::mode_ir_seek{ "IR-SEEK" };
+const std::string infrared_sensor::mode_ir_remote{ "IR-REMOTE" };
+const std::string infrared_sensor::mode_ir_rem_a{ "IR-REM-A" };
+const std::string infrared_sensor::mode_ir_cal{ "IR-CAL" };
 
 const std::string motor::command_run_forever{ "run-forever" };
 const std::string motor::command_run_to_abs_pos{ "run-to-abs-pos" };
