@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(maskor_ev3)
 
 
-set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
-set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
+#set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
+#set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
 
 add_definitions(-D_GLIBCXX_USE_NANOSLEEP)
 add_compile_options(-std=c++11)
@@ -159,7 +159,7 @@ add_library(maskor_ev3
 # add_dependencies(maskor_ev3 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-#add_executable(hello_ros_node src/HelloROS.cpp)
+add_executable(rosserial_tcp_testnode src/rosserial_tcp_testnode.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
