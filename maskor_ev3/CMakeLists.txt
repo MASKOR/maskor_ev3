@@ -141,11 +141,11 @@ add_executable(hello_ros_node src/HelloROS.cpp)
 # add_dependencies(maskor_ev3_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(maskor_ev3
-   ${catkin_LIBRARIES}
-)
+#target_link_libraries(maskor_ev3
+#   ${catkin_LIBRARIES}
+#)
 target_link_libraries(hello_ros_node
-   ${catkin_LIBRARIES}
+   #${catkin_LIBRARIES}
 )
 
 #############
