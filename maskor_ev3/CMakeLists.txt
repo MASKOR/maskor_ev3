@@ -6,6 +6,7 @@ project(maskor_ev3)
 #set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
 
 add_definitions(-D_GLIBCXX_USE_NANOSLEEP)
+add_definitions(-DEV3DEV_PLATFORM_BRICKPI)
 add_compile_options(-std=c++11)
 
 
@@ -15,7 +16,6 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   )
-
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

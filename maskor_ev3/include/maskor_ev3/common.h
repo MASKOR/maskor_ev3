@@ -70,7 +70,6 @@ inline std::ifstream &ifstream_open(const std::string &path)
 
 
 namespace maskor_ev3 {
-
 typedef std::string         device_type;
 typedef std::string         mode_type;
 typedef std::set<mode_type> mode_set;
@@ -102,6 +101,7 @@ const address_type OUTPUT_B { "outB" }; //!< Motor port B
 const address_type OUTPUT_C { "outC" }; //!< Motor port C
 const address_type OUTPUT_D { "outD" }; //!< Motor port D
 #endif
+
 
 } //namespace maskor_ev3
 
