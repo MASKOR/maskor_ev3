@@ -22,14 +22,15 @@
    Date: 24 Sept 2008
 */
 
-#include "/home/dennis/catkin_ws/src/maskor_allegro/maskor_ev3_gazebo/include/maskor_ev3_gazebo/maskor_ev3_color_sensor_plugin.h"
-
 #include <string>
 #include <iostream>
 
 #include <gazebo/sensors/Sensor.hh>
 #include <gazebo/sensors/CameraSensor.hh>
 #include <gazebo/sensors/SensorTypes.hh>
+
+#include <maskor_ev3_gazebo/maskor_ev3_color_sensor_plugin.h>
+
 
 namespace gazebo
 {

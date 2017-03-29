@@ -156,8 +156,8 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS} 
-	${GAZEBO_INCLUDE_DIRS}
-	include
+  ${GAZEBO_INCLUDE_DIRS}
+  include
 
 )
 message(STATUS,${catkin_INCLUDE_DIRS})

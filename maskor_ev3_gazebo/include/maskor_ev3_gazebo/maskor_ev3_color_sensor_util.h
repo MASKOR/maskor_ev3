@@ -49,7 +49,7 @@
 #include <gazebo/sensors/SensorTypes.hh>
 #include <gazebo/plugins/CameraPlugin.hh>
 #include <gazebo_plugins/gazebo_ros_utils.h>
-#include "/home/dennis/catkin_ws/src/maskor_allegro/maskor_ev3_gazebo/include/maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h"
+
 
 namespace gazebo
 {

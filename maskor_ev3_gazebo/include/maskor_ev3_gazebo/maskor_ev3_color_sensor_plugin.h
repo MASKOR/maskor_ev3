@@ -24,13 +24,10 @@
 
 #include <string>
 
-
 // library for processing camera data for gazebo / ros conversions
 #include <gazebo/plugins/CameraPlugin.hh>
+#include <maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h>
 
-//#include <gazebo_plugins/gazebo_ros_camera_utils.h>
-#include "/home/dennis/catkin_ws/src/maskor_allegro/maskor_ev3_gazebo/include/maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h"
-//#include<maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h>
 namespace gazebo
 {
   class GazeboRosCamera : public CameraPlugin, GazeboRosCameraUtils
