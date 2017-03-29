@@ -142,8 +142,12 @@ add_library(maskor_ev3
   include/maskor_ev3/light_sensor.h src/light_sensor.cpp 
   include/maskor_ev3/motor.h src/motor.cpp
   include/maskor_ev3/medium_motor.h src/medium_motor.cpp
-  include/maskor_ev3/medium_motor.h src/large_motor.cpp
-
+  include/maskor_ev3/large_motor.h src/large_motor.cpp
+  include/maskor_ev3/dc_motor.h src/dc_motor.cpp
+  include/maskor_ev3/servo_motor.h src/servo_motor.cpp
+  include/maskor_ev3/led.h src/led.cpp
+  include/maskor_ev3/power_supply.h src/power_supply.cpp
+  include/maskor_ev3/button.h src/button.cpp
   )
 
 ## Add cmake target dependencies of the library

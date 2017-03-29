@@ -1,9 +1,13 @@
 #ifndef _DC_MOTOR_H_
 #define _DC_MOTOR_H_
 
+#include <maskor_ev3/device.h>
+
 // The DC motor class provides a uniform interface for using regular DC motors
 // with no fancy controls or feedback. This includes LEGO MINDSTORMS RCX motors
 // and LEGO Power Functions motors.
+
+namespace maskor_ev3 {
 
 class dc_motor : protected device
 {
@@ -160,5 +164,6 @@ class dc_motor : protected device
   std::string _port_name;
 };
 
+}//end namespace
 
 #endif //DC_MOTOR_H

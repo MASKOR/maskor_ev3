@@ -1,6 +1,9 @@
 #ifndef _BUTTON_H_
 #define _BUTTON_H_
 
+#include <maskor_ev3/common.h>
+
+namespace maskor_ev3 {
 
 // EV3 buttons
 class button
@@ -47,5 +50,6 @@ private:
   std::shared_ptr<file_descriptor> _fd;
 };
 
+}//end namespace
 
 #endif //BUTTON_H

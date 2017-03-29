@@ -15,6 +15,10 @@
 #include <maskor_ev3/motor.h>
 #include <maskor_ev3/medium_motor.h>
 #include <maskor_ev3/large_motor.h>
+#include <maskor_ev3/dc_motor.h>
+#include <maskor_ev3/led.h>
+#include <maskor_ev3/power_supply.h>
+#include <maskor_ev3/button.h>
 
 namespace maskor_ev3 {
 
@@ -33,6 +37,10 @@ const sensor::sensor_type sensor::nxt_sound       { "lego-nxt-sound" };
 const sensor::sensor_type sensor::nxt_ultrasonic  { "lego-nxt-us" };
 const sensor::sensor_type sensor::nxt_i2c_sensor  { "nxt-i2c-sensor" };
 const sensor::sensor_type sensor::nxt_analog      { "nxt-analog" };
+
+const power_supply power_supply::battery { "" };
+
+// STRINGS
 
 const std::string infrared_sensor::mode_ir_prox{ "IR-PROX" };
 const std::string infrared_sensor::mode_ir_seek{ "IR-SEEK" };
@@ -74,6 +82,20 @@ const std::string sound_sensor::mode_dba{ "DBA" };
 
 const std::string light_sensor::mode_reflect{ "REFLECT" };
 const std::string light_sensor::mode_ambient{ "AMBIENT" };
+
+const std::string dc_motor::command_run_forever{ "run-forever" };
+const std::string dc_motor::command_run_timed{ "run-timed" };
+const std::string dc_motor::command_run_direct{ "run-direct" };
+const std::string dc_motor::command_stop{ "stop" };
+const std::string dc_motor::polarity_normal{ "normal" };
+const std::string dc_motor::polarity_inversed{ "inversed" };
+const std::string dc_motor::stop_command_coast{ "coast" };
+const std::string dc_motor::stop_command_brake{ "brake" };
+
+const std::string servo_motor::command_run{ "run" };
+const std::string servo_motor::command_float{ "float" };
+const std::string servo_motor::polarity_normal{ "normal" };
+const std::string servo_motor::polarity_inversed{ "inversed" };
 
 } //end namespace
 

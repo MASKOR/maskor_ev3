@@ -1,9 +1,13 @@
 #ifndef _LED_H_
 #define _LED_H_
 
+#include <maskor_ev3/device.h>
+
 // Any device controlled by the generic LED driver.
 // See https://www.kernel.org/doc/Documentation/leds/leds-class.txt
 // for more details.
+
+namespace maskor_ev3 {
 
 class led : protected device
 {
@@ -123,5 +127,7 @@ class led : protected device
  protected:
   int _max_brightness = 0;
 };
+
+}//end namespace
 
 #endif //LED_H

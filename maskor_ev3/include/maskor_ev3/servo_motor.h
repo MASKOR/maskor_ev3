@@ -1,8 +1,12 @@
 #ifndef _SERVO_MOTOR_H_
 #define _SERVO_MOTOR_H
 
+#include <maskor_ev3/device.h>
+
 // The servo motor class provides a uniform interface for using hobby type
 // servo motors.
+
+namespace maskor_ev3 {
 
 class servo_motor : protected device
 {
@@ -127,5 +131,6 @@ class servo_motor : protected device
   void float_() { set_command("float"); }
 };
 
+}//end namespace
 
 #endif //SERVO_MOTOR_H

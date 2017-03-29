@@ -1,6 +1,10 @@
 #ifndef _POWER_SUPPLY_H_
 #define _POWER_SUPPLY_H_
 
+#include <maskor_ev3/device.h>
+
+namespace maskor_ev3 {
+
 class power_supply : protected device
 {
 public:
@@ -38,5 +42,7 @@ public:
 
   static power_supply battery;
 };
+
+}//end namespace
 
 #endif //POWER_SUPPLY_H
