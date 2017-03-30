@@ -1,24 +1,29 @@
 /*
  * MASKOR EV3 BOBB3E NODE
  *
- * Copyright (c) 2017 - Marcel Stüttgen 
- * mail:stuettgen@fh-aachen.de
-*/
+ * Copyright (c) 2017 
+ * Marcel Stüttgen 
+ * stuettgen@fh-aachen.de
+ *
+ * Patrick Hannak 
+ * patrick.hannak@alumni.fh-aachen.de
+ */
+
+#include <stdio.h>
+#include <maskor_ev3/maskor_ev3.h>
+#include <maskor_ev3/motor.h>
 
 #include <ros.h>
 #include <std_msgs/String.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
-#include <stdio.h>
 #include <ros/time.h>
 #include <tf/transform_broadcaster.h>
-#include <maskor_ev3/maskor_ev3.h>
-//#include <maskor_ev3/motor.h>
 
 // EV3 STUFF
-//maskor_ev3::motor left_motor = maskor_ev3::OUTPUT_B;
-//maskor_ev3::motor right_motor = maskor_ev3::OUTPUT_C;//randomly initialised 
-
+maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_C);
+maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);//randomly initialised 
+maskor_ev3::infrared_sensor ir_sensor(maskor_ev3::INPUT_1);
 
 // ROS STUFF
 ros::NodeHandle  nh;
@@ -37,8 +42,8 @@ void cmd_velCb(const geometry_msgs::Twist& twist_msg) {
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
 ros::Publisher odom_pub("odom", &odom_msg);
 
-void publish_odom(){
-    odom_pub.publish(&odom_msg);
+void publish_odom() {
+  odom_pub.publish(&odom_msg);
 }
 
 
@@ -55,7 +60,7 @@ void publish_tf() {
 }
 
 
-int main()
+int main(int argc, char* argv[])
 {
   nh.initNode(rosSrvrIp);
   nh.subscribe(cmd_vel_sub);
@@ -68,4 +73,6 @@ int main()
     publish_tf();
     nh.spinOnce();
   }
+
+  return 0;
 }

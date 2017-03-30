@@ -117,17 +117,6 @@ class led : protected device
   static std::vector<float> orange;
   static std::vector<float> yellow;
 
-  //int max_brightness() const {return get_attr_int("max_brightness"); }
-  //int brightness() const { return get_attr_int("brightness"); }
-
-  /*auto set_brightness(int v) -> decltype(*this)
-  {
-    set_attr_int("brightness", v);
-    return *this;    
-  }
-  */
-  //void on() { set_brightness(max_brightness()); }
-  //void off() {set_brightness(0); }
 #endif
 
   // Assigns to each led in `group` corresponding brightness percentage from `color`.

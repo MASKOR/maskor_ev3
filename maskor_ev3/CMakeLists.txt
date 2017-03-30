@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(maskor_ev3)
 
 #comment this in to cross compile for ARM
-set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
-set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
+#set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
+#set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
 
 add_definitions(-D_GLIBCXX_USE_NANOSLEEP)
 add_compile_options(-std=c++11)
@@ -170,10 +170,12 @@ add_executable(maskor_ev3_bobb3e_node src/maskor_ev3_bobb3e_node.cpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(maskor_ev3
   #${catkin_LIBRARIES}
-  )
-#target_link_libraries(hello_ros_node
-#${catkin_LIBRARIES}
-#)
+)
+
+target_link_libraries(maskor_ev3_bobb3e_node
+  #${catkin_LIBRARIES}
+  maskor_ev3
+)
 
 #############
 ## Install ##
@@ -188,6 +190,11 @@ target_link_libraries(maskor_ev3
 #   scripts/my_python_script
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
+
+## automatic deployment of the nodes and libs to the EV3
+set(NFS_MOUNT /home/mstuettgen/test)
+set(CATKIN_PACKAGE_BIN_DESTINATION ${NFS_MOUNT})
+set(CATKIN_PACKAGE_LIB_DESTINATION ${NFS_MOUNT})
 
 ## Mark executables and/or libraries for installation
 install(TARGETS maskor_ev3 maskor_ev3_bobb3e_node
