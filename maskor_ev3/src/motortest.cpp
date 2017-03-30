@@ -99,9 +99,9 @@ int main(int argc, char* argv[])
       //print values
       // printf("sensor value: %d\n", s.value());
       printf("left_motor_position: %d\n", left_motor.position());
-      printf("left_motor_speed: %f\n", left_motor_speed);
+      printf("left_motor_speed: %d\n", left_motor_speed);
       printf("right_motor_position: %d\n", right_motor.position());
-      printf("right_motor_speed: %f\n", right_motor_speed);
+      printf("right_motor_speed: %d\n", right_motor_speed);
       printf("\n\n\n");
 
       //set speed
