@@ -31,9 +31,8 @@
 //~autogen
 //-----------------------------------------------------------------------------
 
-#include <maskor_ev3/maskor_ev3.h>
+#include "ev3dev.h"
 
-#include <ctime>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -1320,6 +1319,6 @@ bool lego_port::connect(const std::map<std::string, std::set<std::string>> &matc
 
 //-----------------------------------------------------------------------------
 
-} // namespace maskor_ev3
+} // namespace ev3dev
 
 // vim: sw=2

@@ -1,0 +1,7 @@
+<launch>
+
+<node name="serial_node" type="serial_node.py" pkg="rosserial_python" output="screen" args="tcp" />
+
+<!--<node name="rosserial_tcp_testnode" type="rosserial_tcp_testnode" pkg="maskor_ev3" output="screen" />-->
+
+</launch>
