@@ -26,6 +26,7 @@ char rosSrvrIp[] = "10.42.0.1";//IP address of the master
 
 double left_motor_speed=0.0;
 double right_motor_speed=0.0;
+double lift_motor_speed=0.0;
 
 //motor left_motor("outB");
 //motor left_motor;
@@ -37,7 +38,7 @@ void cmd_vel_cb(const geometry_msgs::Twist& cmd) {
 
   //set value to left motor speed
   if (cmd.linear.x != 0) {
-    left_motor_speed = cmd.linear.x;
+    left_motor_speed = -cmd.linear.x;
   }
   else {
     left_motor_speed = 0.0;
@@ -45,12 +46,36 @@ void cmd_vel_cb(const geometry_msgs::Twist& cmd) {
 
   //set value to right motor speed
   if (cmd.linear.x != 0) {
-    right_motor_speed = cmd.linear.x;
+    right_motor_speed = -cmd.linear.x;
   }
   else {
     right_motor_speed = 0.0;
   }
+
+  //set value to lift
+  int rot_limit = 0;
+  printf("Rot_limit: %d", rot_limit);
   
+  if (rot_limit == 0 || rot_limit < 10)
+    {
+      if (cmd.linear.z !=0){
+	lift_motor_speed = cmd.linear.z;
+      }
+      else{
+	lift_motor_speed = 0.0;
+      }
+      rot_limit++;
+    }
+  else if (rot_limit >= 10)
+    {
+      if (cmd.linear.z !=0){
+	lift_motor_speed = -cmd.linear.z;
+      }
+      else{
+	lift_motor_speed = 0.0;
+      }
+      rot_limit--;
+    }
   //left_motor.set_speed_sp(1.0);//setting up speed for the left motor 
   //left_motor.set_command("run-forever");
 }
@@ -82,8 +107,8 @@ int main(int argc, char* argv[])
  
   //init forklift
   //string fork_motor_port ="outA";
-  motor lift("outA");
-  lift.set_position(0);
+  motor lift_motor("outA");
+  lift_motor.set_position(0);
   
   //init a sensor
   string sensor_port = "in4";
@@ -99,17 +124,26 @@ int main(int argc, char* argv[])
       //print values
       // printf("sensor value: %d\n", s.value());
       printf("left_motor_position: %d\n", left_motor.position());
-      printf("left_motor_speed: %d\n", left_motor_speed);
+      printf("left_motor_speed: %d\n", -left_motor.speed_sp());
       printf("right_motor_position: %d\n", right_motor.position());
-      printf("right_motor_speed: %d\n", right_motor_speed);
+      printf("right_motor_speed: %d\n", -right_motor.speed_sp());
+
+      printf("fork_motor_position: %d\n", lift_motor.position());
+      printf("fork_motor_speed: %d\n", lift_motor.speed_sp());      
       printf("\n\n\n");
 
       //set speed
+      
       left_motor.set_speed_sp(left_motor_speed);
       left_motor.set_command("run-forever");
       right_motor.set_speed_sp(right_motor_speed);
       right_motor.set_command("run-forever");
 
+      //move lift
+
+      lift_motor.set_speed_sp(lift_motor_speed);
+      lift_motor.set_command("run-forever");
+     
       //ros stuff
       usleep(10000); //microseconds
       nh.spinOnce(); // check for incoming messages
