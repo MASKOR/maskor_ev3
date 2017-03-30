@@ -25,6 +25,7 @@ ros::NodeHandle  nh;
 char rosSrvrIp[] = "10.42.0.1";//IP address of the master
 
 double left_motor_speed=0.0;
+double right_motor_speed=0.0;
 
 //motor left_motor("outB");
 //motor left_motor;
@@ -33,13 +34,23 @@ double left_motor_speed=0.0;
 
 void cmd_vel_cb(const geometry_msgs::Twist& cmd) {
   printf("received cmd_vel_msg\n");
-  
+
+  //set value to left motor speed
   if (cmd.linear.x != 0) {
     left_motor_speed = cmd.linear.x;
   }
   else {
     left_motor_speed = 0.0;
   }
+
+  //set value to right motor speed
+  if (cmd.linear.x != 0) {
+    right_motor_speed = cmd.linear.x;
+  }
+  else {
+    right_motor_speed = 0.0;
+  }
+  
   //left_motor.set_speed_sp(1.0);//setting up speed for the left motor 
   //left_motor.set_command("run-forever");
 }
@@ -60,10 +71,20 @@ int main(int argc, char* argv[])
   left_motor.set_speed_regulation_enabled("on");
   */
 
-  //init a motor
-  string motor_port ="outB";
+  //init left and right motor
+  //string left_motor_port ="outB";
   motor left_motor("outB");
+  left_motor.set_position(0);
 
+  //string right_motor_port ="outC";
+  motor right_motor("outC");
+  right_motor.set_position(0);
+ 
+  //init forklift
+  //string fork_motor_port ="outA";
+  motor lift("outA");
+  lift.set_position(0);
+  
   //init a sensor
   string sensor_port = "in4";
   sensor s = sensor(sensor_port);
@@ -75,11 +96,21 @@ int main(int argc, char* argv[])
   
   while(1)
     {
-      printf("sensor value: %d\n", s.value());
+      //print values
+      // printf("sensor value: %d\n", s.value());
       printf("left_motor_position: %d\n", left_motor.position());
       printf("left_motor_speed: %f\n", left_motor_speed);
+      printf("right_motor_position: %d\n", right_motor.position());
+      printf("right_motor_speed: %f\n", right_motor_speed);
+      printf("\n\n\n");
+
+      //set speed
       left_motor.set_speed_sp(left_motor_speed);
       left_motor.set_command("run-forever");
+      right_motor.set_speed_sp(right_motor_speed);
+      right_motor.set_command("run-forever");
+
+      //ros stuff
       usleep(10000); //microseconds
       nh.spinOnce(); // check for incoming messages
     }
