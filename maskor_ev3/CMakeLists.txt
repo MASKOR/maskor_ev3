@@ -1,13 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(maskor_ev3)
 
-
-#set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
-#set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
+#comment this in to cross compile for ARM
+set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
+set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
 
 add_definitions(-D_GLIBCXX_USE_NANOSLEEP)
-add_definitions(-DEV3DEV_PLATFORM_BRICKPI)
 add_compile_options(-std=c++11)
+
+#comment this in if using raspberry pi
+#add_definitions(-DEV3DEV_PLATFORM_BRICKPI)
 
 
 ## Find catkin macros and libraries
@@ -159,7 +161,7 @@ add_library(maskor_ev3
 # add_dependencies(maskor_ev3 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(rosserial_tcp_testnode src/rosserial_tcp_testnode.cpp)
+add_executable(maskor_ev3_bobb3e_node src/maskor_ev3_bobb3e_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -188,11 +190,11 @@ target_link_libraries(maskor_ev3
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS maskor_ev3 maskor_ev3_node
+install(TARGETS maskor_ev3 maskor_ev3_bobb3e_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
