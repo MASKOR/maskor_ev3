@@ -28,7 +28,7 @@ nav_msgs::Odometry odom_msg;
 
 char base_link[] = "/base_link";
 char odom[] = "/odom";
-char rosSrvrIp[] = "127.0.0.1";
+char rosSrvrIp[] = "10.42.0.1";
 
 void cmd_velCb(const geometry_msgs::Twist& twist_msg) {
   printf("Received cmd_vel message\n");
