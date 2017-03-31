@@ -6,8 +6,9 @@
  * Copyright (c) 2017 
  * Marcel Stüttgen 
  * stuettgen@fh-aachen.de
+ * https://www.maskor.fh-aachen.de
  *
- * based on and refactored from "ev3-dev" 
+ * based on and refactored from "ev3-dev" package, the
  * C++ API to the sensors, motors, buttons, LEDs and battery of the ev3dev
  * Linux kernel for the LEGO Mindstorms EV3 hardware
  * Copyright (c) 2014 - Franz Detro
