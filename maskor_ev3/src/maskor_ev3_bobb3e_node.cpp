@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 #include <maskor_ev3/maskor_ev3.h>
+#include <maskor_ev3_msgs/ColorSensor.h>
 
 #include <ros.h>
 #include <ros/time.h>
@@ -21,6 +22,7 @@
 #include <std_msgs/String.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
+
 
 // FUNCTION DECLARATIONS
 void cmd_velCb(const geometry_msgs::Twist& cmd);
@@ -40,7 +42,9 @@ tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
 ros::Publisher odom_pub("odom", &odom_msg);
+maskor_ev3_msgs::ColorSensor color_sensor_msg;
 
+color.sensor_msg.color = 1;
 
 //global variables
 const float deg2rad = M_PI/180.0;
