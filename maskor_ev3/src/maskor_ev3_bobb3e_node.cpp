@@ -27,9 +27,11 @@ void cmd_velCb(const geometry_msgs::Twist& cmd);
 void calc_odometry();
 
 // EV3 STUFF
+/*
 maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_C);
 maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);//randomly initialised 
 maskor_ev3::infrared_sensor ir_sensor(maskor_ev3::INPUT_1);
+*/
 
 // ROS STUFF
 ros::NodeHandle nh;
@@ -66,6 +68,12 @@ float vl = 0.0;
 float vr = 0.0; 
 float wheelbase = 0.12;
 float wheelradius = 0.03;
+
+//Init motors
+maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
+maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_B);
+maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
+
 
 
 /*vx=velocity of centroid, wt=angular velocity of cenintroid, 
@@ -197,14 +205,12 @@ int main(int argc, char* argv[])
     
   printf("Init Motors...\n");
 
-  //init motors
-  maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
-  maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_B);
-  maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
+  //init motor position
   left_motor.set_position(0);
   right_motor.set_position(0);
   lift_motor.set_position(0);
 
+  
   /*
   //configuring the motors
   left_motor.reset();
