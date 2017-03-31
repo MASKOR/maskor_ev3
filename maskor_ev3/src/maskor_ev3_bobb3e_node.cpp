@@ -14,6 +14,7 @@
 
 #include <ros.h>
 #include <ros/time.h>
+#include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <std_msgs/String.h>
 #include <geometry_msgs/Twist.h>
@@ -30,7 +31,7 @@ maskor_ev3::infrared_sensor ir_sensor(maskor_ev3::INPUT_1);
 
 // ROS STUFF
 ros::NodeHandle nh;
-geometry_msgs::TransformStamped t;
+geometry_msgs::TransformStamped odom_tf;
 tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
@@ -136,31 +137,25 @@ void calc_odometry() {
   //motor.speed() returns speed in rad/s
   vl = left_motor.speed();
   vr = right_motor.speed();
-        
+
+  //TODO: what is happening here??      
   //remmapping linear and angular velocity of centroid from vl, vr
-  vx = (vl+vr)/2*speed;
-  wt = (vl-vr)/L*speed;
+  vx = (vl+vr) / 2*(wheelradius * deg2rad);
+  wt = (vl-vr) / wheelbase * (wheelradius * deg2rad);
 
+  //since all odometry is 6DOF we'll need a quaternion created from yaw
+  geometry_msgs::Quaternion odom_quat = tf::createQuaternionFromYaw(theta);
+
+  //first, we'll publish the transform over tf
+  odom_tf.header.stamp = nh.now();;
+  odom_tf.header.frame_id = odom;
+  odom_tf.child_frame_id = base_link;
+  odom_tf.transform.translation.x = trans_x;
+  odom_tf.transform.translation.y = trans_y;
+  odom_tf.transform.translation.z = 0.0;
+  odom_tf.transform.rotation = odom_quat;
+  broadcaster.sendTransform(odom_tf);
 } 
-
-
-
-void publish_odom() {
-  odom_pub.publish(&odom_msg);
-}
-
-
-void publish_tf() {
-  t.header.frame_id = odom;
-  t.child_frame_id = base_link;
-  t.transform.translation.x = 1.0; 
-  t.transform.rotation.x = 0.0;
-  t.transform.rotation.y = 0.0; 
-  t.transform.rotation.z = 0.0; 
-  t.transform.rotation.w = 1.0;  
-  t.header.stamp = nh.now();
-  broadcaster.sendTransform(t);
-}
 
 
 int main(int argc, char* argv[])
@@ -219,6 +214,7 @@ int main(int argc, char* argv[])
       lift_motor.set_command("run-forever");
      
       //ros stuff
+      calc_odometry();
       usleep(10000); //microseconds
       nh.spinOnce(); // check for incoming messages
     }
