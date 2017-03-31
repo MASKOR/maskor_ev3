@@ -1,5 +1,31 @@
 #ifndef _MASKOR_EV3_H_
 #define _MASKOR_EV3_H_
+/*
+ * MASKOR LEGO EV3 library
+ *
+ * Copyright (c) 2017 
+ * Marcel Stüttgen 
+ * stuettgen@fh-aachen.de
+ *
+ * based on and refactored from "ev3-dev" 
+ * C++ API to the sensors, motors, buttons, LEDs and battery of the ev3dev
+ * Linux kernel for the LEGO Mindstorms EV3 hardware
+ * Copyright (c) 2014 - Franz Detro
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
 
 #include <maskor_ev3/common.h>
 #include <maskor_ev3/device.h>
