@@ -126,9 +126,8 @@ void calc_odometry() {
   dr = wheel_encoder_current_pos[1] - wheel_encoder_prev_pos[1];
 
   //calc how far the robot has travelled
-  float speed = wheelradius * deg2rad;
-  trans_x += cos(theta)*speed*(dl+dr)/2.0;
-  trans_y += sin(theta)*speed*(dl+dr)/2.0;
+  trans_x += cos(theta) * (wheelradius * deg2rad) * (dl+dr)/2.0;
+  trans_y += sin(theta) * (wheelradius * deg2rad) * (dl+dr)/2.0;
 
   //save current values for next iteration
   wheel_encoder_prev_pos[0] = wheel_encoder_current_pos[0];
