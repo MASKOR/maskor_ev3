@@ -24,6 +24,8 @@ int k = 0, q = 0;
 ros::NodeHandle  nh;
 char rosSrvrIp[] = "10.42.0.1";//IP address of the master
 
+bool lift_rot_flag = true;
+int lift_rot_limit = 0;
 double left_motor_speed=0.0;
 double right_motor_speed=0.0;
 double lift_motor_speed=0.0;
@@ -35,6 +37,11 @@ double lift_motor_speed=0.0;
 
 void cmd_vel_cb(const geometry_msgs::Twist& cmd) {
   printf("received cmd_vel_msg\n");
+
+  if (lift_rot_flag == true)
+    printf("lift flag = true\n");
+  else
+    printf("lift flag = false\n");
 
   //set value to left motor speed
   if (cmd.linear.x != 0) {
@@ -53,29 +60,34 @@ void cmd_vel_cb(const geometry_msgs::Twist& cmd) {
   }
 
   //set value to lift
-  int rot_limit = 0;
-  printf("Rot_limit: %d", rot_limit);
+  printf("Rot_limit: %d\n", lift_rot_limit);
+  //lift_rot_limit++;
+
+  if (lift_rot_limit == 0 && lift_rot_limit < 15 )
+    lift_rot_flag = true;
+  else if ( lift_rot_limit >= 15 )
+    lift_rot_flag = false;
   
-  if (rot_limit == 0 || rot_limit < 10)
+  if (lift_rot_flag == true)
     {
-      if (cmd.linear.z !=0){
+      if (cmd.linear.z !=0) {
 	lift_motor_speed = cmd.linear.z;
+	lift_rot_limit++;
       }
       else{
 	lift_motor_speed = 0.0;
       }
-      rot_limit++;
     }
-  else if (rot_limit >= 10)
+  else if (lift_rot_flag == false)
     {
       if (cmd.linear.z !=0){
 	lift_motor_speed = -cmd.linear.z;
+	lift_rot_limit--;
       }
       else{
 	lift_motor_speed = 0.0;
       }
-      rot_limit--;
-    }
+   }
   //left_motor.set_speed_sp(1.0);//setting up speed for the left motor 
   //left_motor.set_command("run-forever");
 }
@@ -145,7 +157,7 @@ int main(int argc, char* argv[])
       lift_motor.set_command("run-forever");
      
       //ros stuff
-      usleep(10000); //microseconds
+      usleep(100000); //microseconds
       nh.spinOnce(); // check for incoming messages
     }
  

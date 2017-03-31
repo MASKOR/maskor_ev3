@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(maskor_ev3)
 
 #comment this in to cross compile for ARM
-#set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
-#set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
+set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
+set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
 
 add_definitions(-D_GLIBCXX_USE_NANOSLEEP)
 add_compile_options(-std=c++11)
@@ -192,7 +192,7 @@ target_link_libraries(maskor_ev3_bobb3e_node
 # )
 
 ## automatic deployment of the nodes and libs to the EV3
-set(NFS_MOUNT /home/mstuettgen/test)
+set(NFS_MOUNT /home/flokaefer/nfs/ev3dev)
 set(CATKIN_PACKAGE_BIN_DESTINATION ${NFS_MOUNT})
 set(CATKIN_PACKAGE_LIB_DESTINATION ${NFS_MOUNT})
 

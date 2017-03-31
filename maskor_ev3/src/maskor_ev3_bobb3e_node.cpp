@@ -48,6 +48,9 @@ double left_motor_speed=0.0;
 double right_motor_speed=0.0;
 double lift_motor_speed=0.0;
 
+bool lift_rot_flag = true;
+
+int lift_rot_limit = 0;
 int wheel_encoder_current_pos[2] = {0,0};
 int wheel_encoder_prev_pos[2] = {0,0};
 int dl = 0;
@@ -86,34 +89,38 @@ void cmd_velCb(const geometry_msgs::Twist& cmd) {
     right_motor_speed = 0.0;
   }
 
-  //set value to lift
-  int rot_limit = 0;
-  printf("Rot_limit: %d", rot_limit);
+ //set value to lift
+  printf("Rot_limit: %d\n", lift_rot_limit);
+  //lift_rot_limit++;
+
+  if (lift_rot_limit == 0 && lift_rot_limit < 15 )
+    lift_rot_flag = true;
+  else if ( lift_rot_limit >= 15 )
+    lift_rot_flag = false;
   
-  if (rot_limit == 0 || rot_limit < 10)
+  if (lift_rot_flag == true)
     {
-      if (cmd.linear.z !=0){
+      if (cmd.linear.z !=0) {
 	lift_motor_speed = cmd.linear.z;
+	lift_rot_limit++;
       }
       else{
 	lift_motor_speed = 0.0;
       }
-      rot_limit++;
     }
-  else if (rot_limit >= 10)
+  else if (lift_rot_flag == false)
     {
       if (cmd.linear.z !=0){
 	lift_motor_speed = -cmd.linear.z;
+	lift_rot_limit--;
       }
       else{
 	lift_motor_speed = 0.0;
       }
-      rot_limit--;
-    }
+   }
   //left_motor.set_speed_sp(1.0);//setting up speed for the left motor 
   //left_motor.set_command("run-forever");
 }
-
 
 //function to calculate the odometry 
 void calc_odometry() {
@@ -215,7 +222,7 @@ int main(int argc, char* argv[])
      
       //ros stuff
       calc_odometry();
-      usleep(10000); //microseconds
+      usleep(100000); //microseconds
       nh.spinOnce(); // check for incoming messages
     }
  
