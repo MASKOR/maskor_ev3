@@ -14,7 +14,6 @@ class led : protected device
 {
  public:
   led(std::string name);
-
   using device::connected;
 
   // Max Brightness: read-only
