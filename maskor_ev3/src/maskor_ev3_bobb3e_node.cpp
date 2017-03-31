@@ -132,6 +132,15 @@ void calc_odometry() {
   //save current values for next iteration
   wheel_encoder_prev_pos[0] = wheel_encoder_current_pos[0];
   wheel_encoder_prev_pos[1] = wheel_encoder_current_pos[1];
+
+  //motor.speed() returns speed in rad/s
+  vl = left_motor.speed();
+  vr = right_motor.speed();
+        
+  //remmapping linear and angular velocity of centroid from vl, vr
+  vx = (vl+vr)/2*speed;
+  wt = (vl-vr)/L*speed;
+
 } 
 
 
