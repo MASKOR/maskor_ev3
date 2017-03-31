@@ -1,0 +1,410 @@
+<?xml version="1.0"?>
+<robot name="mindstorm" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="länge" value="1" />
+  <xacro:property name="höhe" value="0.5" />
+  <xacro:property name="tiefe" value="0.5"/>
+  <xacro:property name="reifenradius" value="0.2" />
+  <xacro:property name="reifenlaenge" value="0.2" />
+  <xacro:property name="pi" value="3.1415" />
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+
+  <xacro:macro name="einfaches_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia ixx="0.5" ixy="0.0" ixz="0.0" iyy="0.5" iyz="0.0" izz="0.5"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- Unterbau -->
+
+  <link name="base_link">
+      <visual>
+        <geometry>
+          <box size="1 0.6 0.2"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <material name="white"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="1 0.6 0.2"/>
+        </geometry>
+      </collision>
+      <xacro:einfaches_inertial mass="10"/>
+   </link>
+
+  <joint name="gegengewicht_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="gegengewicht"/>
+   <origin xyz="-0.3 0 0"/>
+  </joint>
+
+  <link name="gegengewicht">
+      <visual>
+        <geometry>
+          <box size="0.05 0.05 0.05"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <material name="white"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="0.05 0.05 0.05"/>
+        </geometry>
+      </collision>
+      <xacro:einfaches_inertial mass="1.5"/>
+   </link>
+
+  <!-- Reifen macro -->
+
+    <xacro:macro name="wheel" params="prefix reflect">
+      <link name="${prefix}_wheel">
+        <visual>
+          <geometry>
+            <cylinder length="${reifenlaenge}" radius="${reifenradius}"/>
+          </geometry>
+          <origin rpy="1.55 -1.57 0" xyz="0 0 0"/>
+          <material name="black"/>
+        </visual>
+        <collision>
+          <geometry>
+            <cylinder length="${reifenlaenge}" radius="${reifenradius}"/>
+          </geometry>
+          <origin rpy="1.55 -1.57 0" xyz="0 0 0"/>
+        </collision>
+       <xacro:einfaches_inertial mass="1"/>
+      </link>
+
+      <joint name="${prefix}_wheel_joint" type="continuous">
+        <joint_properties damping="0.0" friction="40.0" />
+         <axis rpy="0 0 0" xyz="0 1 0"/>
+         <parent link="base_link"/>
+         <child link="${prefix}_wheel"/>
+         <origin xyz="0.1 ${reflect*0.4} 0"/>
+       </joint>
+  </xacro:macro>
+
+  <xacro:wheel prefix="rechts" reflect="-1"/>
+  <xacro:wheel prefix="links" reflect="1"/>
+
+  <!--  caster Wheel-->
+
+  <joint name="caster_wheel_joint" type="continuous">
+    <joint_properties damping="0.0" friction="0.0" />
+    <axis rpy="0 0 0" xyz="0 1 0"/>
+    <origin xyz="-0.3 0 -0.155"/>
+    <parent link="base_link"/>
+    <child link="caster_wheel"/>
+  </joint>
+  <gazebo reference="caster_wheel">
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+  <link name="caster_wheel">
+    <visual>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+        <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <xacro:einfaches_inertial mass="0.1"/>
+  </link>
+
+<!-- Gabel mit lifter -->
+
+  <joint name="lift_joint_left" type="fixed">
+    <parent link="base_link"/>
+    <child link="lift_left"/>
+   <origin xyz="0.55 0 0.35"/>
+  </joint>
+
+  <link name="lift_left">
+    <visual name="lift_left">
+      <geometry>
+       <box size="0.1 0.05 1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.05 1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+    </collision>
+    <xacro:einfaches_inertial mass="0.1"/>
+  </link>
+
+  <joint name="lift_joint_right" type="fixed">
+    <parent link="base_link"/>
+    <child link="lift_right"/>
+   <origin xyz="0.55 0 0.35"/>
+  </joint>
+
+  <link name="lift_right">
+    <visual name="lift_right">
+      <geometry>
+       <box size="0.1 0.05 1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0.2 0"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.05 1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0.2 0"/>
+    </collision>
+    <xacro:einfaches_inertial mass="0.1"/>
+  </link>
+
+  <joint name="lift_joint_top" type="fixed">
+    <parent link="base_link"/>
+    <child link="lift_top"/>
+   <origin xyz="0.55 0 0.35"/>
+  </joint>
+
+  <link name="lift_top">
+    <visual name="lift_top">
+      <geometry>
+       <box size="0.1 0.45 0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.5"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.45 0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.5"/>
+    </collision>
+    <xacro:einfaches_inertial mass="0.1"/>
+  </link>
+
+
+  <joint name="slider_joint" type="prismatic">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="0.0" upper="0.8" velocity="0.5"/>
+    <parent link="lift_left"/>
+    <child link="slider"/>
+   <origin xyz="0.05 0 -0.5"/>
+  </joint>
+
+  <link name="slider">
+    <visual>
+      <geometry>
+       <box size="0.05 0.5 0.045"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.5 0.045"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <xacro:einfaches_inertial mass="0.1"/>
+  </link>
+
+
+  <joint name="fork_left_joint" type="fixed">
+    <parent link="slider"/>
+    <child link="left_fork"/>
+   <origin xyz="0 0 0"/>
+  </joint>
+
+  <link name="left_fork">
+    <visual name="left_fork">
+      <geometry>
+       <box size="0.5 0.05 0.02"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.25 -0.15 0"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.5 0.05 0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.25 -0.15 0"/>
+    </collision>
+    <xacro:einfaches_inertial mass="0.1"/>
+  </link>
+
+  <joint name="fork_right_joint" type="fixed">
+    <parent link="slider"/>
+    <child link="right_fork"/>
+   <origin xyz="0 0 0"/>
+  </joint>
+
+  <link name="right_fork">
+    <visual name="right_fork">
+      <geometry>
+       <box size="0.5 0.05 0.02"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.25 0.15 0"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.5 0.05 0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.25 0.15 0"/>
+    </collision>
+    <xacro:einfaches_inertial mass="0.1"/>
+  </link>
+
+<!-- Sensoren -->
+
+<!-- IR Sensor (hier Laser) -->
+  <joint name="ir_sensor_box_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="ir_sensor_box"/>
+   <origin xyz="0.5 0 0.05"/>
+  </joint>
+
+  <link name="ir_sensor_box">
+    <visual>
+      <geometry>
+        <box size="0.05 0.2 0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.2 0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <xacro:einfaches_inertial mass="0.1"/>
+  </link>
+
+  <gazebo reference="ir_sensor_box">
+    <sensor type="ray" name="hokuyo">
+      <visualize>true</visualize>
+      <update_rate>40</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>10</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.1</min_angle>
+            <max_angle>0.1</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.03</min>
+          <max>2.5</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+      <plugin name="laser" filename="libgazebo_ros_laser.so">
+        <topicName>/scan</topicName>
+        <frameName>ir_sensor_box</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+<!-- Farb Sensor (hier camera) -->
+
+  <joint name="color_sensor_box_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="color_sensor_box"/>
+   <origin xyz="0.5 0 -0.1" rpy="0 1.5708 0"/>
+  </joint>
+
+  <link name="color_sensor_box">
+    <visual>
+      <geometry>
+        <box size="0.15 0.05 0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.15 0.05 0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
+    <xacro:einfaches_inertial mass="0.1"/>
+  </link>
+
+  <gazebo reference="color_sensor_box">
+    <sensor type="camera" name="camera1">
+      <update_rate>1000.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>40</width>
+          <height>40</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+      <plugin name="camera_controller" filename="libmaskor_ev3_color_sensor_plugin.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>rrbot/camera1</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>color_sensor_box</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libmaskor_ev3_plugin.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100</updateRate>
+      <leftJoint>links_wheel_joint</leftJoint>
+      <rightJoint>rechts_wheel_joint</rightJoint>
+      <sliderJoint>slider_joint</sliderJoint>
+      <wheelSeparation>0.6</wheelSeparation>
+      <wheelDiameter>0.2</wheelDiameter>
+      <torque>50</torque>
+      <!-- interface:position name="position_iface_0"/ -->
+      <commandTopic>cmd_vel</commandTopic>
+      <robotBaseFrame>base_link</robotBaseFrame>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <publishWheelJointState>true</publishWheelJointState>
+			<legacyMode>true </legacyMode>
+    </plugin>
+  </gazebo>
+
+</robot>
+
