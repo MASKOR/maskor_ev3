@@ -9,6 +9,8 @@
  * patrick.hannak@alumni.fh-aachen.de
  */
 
+#define _DEBUG
+
 #include <stdio.h>
 #include <maskor_ev3/maskor_ev3.h>
 
@@ -71,7 +73,10 @@ float wheelradius = 0.03;
 
 
 void cmd_velCb(const geometry_msgs::Twist& cmd) {
-  printf("received cmd_vel_msg\n");
+
+#ifdef _DEBUG
+  printf("cmd_velCb(const geometry_msgs::Twist& cmd)\n");
+#endif
 
   //set value to left motor speed
   if (cmd.linear.x != 0) {
@@ -125,6 +130,9 @@ void cmd_velCb(const geometry_msgs::Twist& cmd) {
 //function to calculate the odometry 
 void calc_odometry() {
 
+#ifdef _DEBUG
+  printf("calc_odometry()\n");
+#endif
   //get current wheel positions  
   wheel_encoder_current_pos[0] = left_motor.position(); 
   wheel_encoder_current_pos[1] = right_motor.position();
@@ -154,7 +162,7 @@ void calc_odometry() {
   geometry_msgs::Quaternion odom_quat = tf::createQuaternionFromYaw(theta);
 
   //first, we'll publish the transform over tf
-  odom_tf.header.stamp = nh.now();;
+  odom_tf.header.stamp = nh.now();
   odom_tf.header.frame_id = odom;
   odom_tf.child_frame_id = base_link;
   odom_tf.transform.translation.x = trans_x;
@@ -162,6 +170,19 @@ void calc_odometry() {
   odom_tf.transform.translation.z = 0.0;
   odom_tf.transform.rotation = odom_quat;
   broadcaster.sendTransform(odom_tf);
+
+  //publish corresponding odom msg
+  odom_msg.header.stamp = nh.now();
+  odom_msg.header.frame_id = odom;
+  odom_msg.child_frame_id = base_link;
+  odom_msg.pose.pose.position.x = trans_x; 
+  odom_msg.pose.pose.position.y = trans_y;
+  odom_msg.pose.pose.position.z = 0.0;
+  odom_msg.pose.pose.orientation = odom_quat;
+  odom_msg.twist.twist.linear.x = vx;
+  odom_msg.twist.twist.linear.y = 0;
+  odom_msg.twist.twist.angular.z = wt;
+  odom_pub.publish(&odom_msg);
 } 
 
 
