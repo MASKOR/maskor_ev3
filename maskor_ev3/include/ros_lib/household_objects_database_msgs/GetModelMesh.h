@@ -15,8 +15,7 @@ static const char GETMODELMESH[] = "household_objects_database_msgs/GetModelMesh
   class GetModelMeshRequest : public ros::Msg
   {
     public:
-      typedef int32_t _model_id_type;
-      _model_id_type model_id;
+      int32_t model_id;
 
     GetModelMeshRequest():
       model_id(0)
@@ -64,10 +63,8 @@ static const char GETMODELMESH[] = "household_objects_database_msgs/GetModelMesh
   class GetModelMeshResponse : public ros::Msg
   {
     public:
-      typedef household_objects_database_msgs::DatabaseReturnCode _return_code_type;
-      _return_code_type return_code;
-      typedef shape_msgs::Mesh _mesh_type;
-      _mesh_type mesh;
+      household_objects_database_msgs::DatabaseReturnCode return_code;
+      shape_msgs::Mesh mesh;
 
     GetModelMeshResponse():
       return_code(),

@@ -13,12 +13,9 @@ static const char RENAMEROBOTSTATEINWAREHOUSE[] = "moveit_msgs/RenameRobotStateI
   class RenameRobotStateInWarehouseRequest : public ros::Msg
   {
     public:
-      typedef const char* _old_name_type;
-      _old_name_type old_name;
-      typedef const char* _new_name_type;
-      _new_name_type new_name;
-      typedef const char* _robot_type;
-      _robot_type robot;
+      const char* old_name;
+      const char* new_name;
+      const char* robot;
 
     RenameRobotStateInWarehouseRequest():
       old_name(""),
@@ -31,17 +28,17 @@ static const char RENAMEROBOTSTATEINWAREHOUSE[] = "moveit_msgs/RenameRobotStateI
     {
       int offset = 0;
       uint32_t length_old_name = strlen(this->old_name);
-      varToArr(outbuffer + offset, length_old_name);
+      memcpy(outbuffer + offset, &length_old_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->old_name, length_old_name);
       offset += length_old_name;
       uint32_t length_new_name = strlen(this->new_name);
-      varToArr(outbuffer + offset, length_new_name);
+      memcpy(outbuffer + offset, &length_new_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->new_name, length_new_name);
       offset += length_new_name;
       uint32_t length_robot = strlen(this->robot);
-      varToArr(outbuffer + offset, length_robot);
+      memcpy(outbuffer + offset, &length_robot, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->robot, length_robot);
       offset += length_robot;
@@ -52,7 +49,7 @@ static const char RENAMEROBOTSTATEINWAREHOUSE[] = "moveit_msgs/RenameRobotStateI
     {
       int offset = 0;
       uint32_t length_old_name;
-      arrToVar(length_old_name, (inbuffer + offset));
+      memcpy(&length_old_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_old_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -61,7 +58,7 @@ static const char RENAMEROBOTSTATEINWAREHOUSE[] = "moveit_msgs/RenameRobotStateI
       this->old_name = (char *)(inbuffer + offset-1);
       offset += length_old_name;
       uint32_t length_new_name;
-      arrToVar(length_new_name, (inbuffer + offset));
+      memcpy(&length_new_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_new_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -70,7 +67,7 @@ static const char RENAMEROBOTSTATEINWAREHOUSE[] = "moveit_msgs/RenameRobotStateI
       this->new_name = (char *)(inbuffer + offset-1);
       offset += length_new_name;
       uint32_t length_robot;
-      arrToVar(length_robot, (inbuffer + offset));
+      memcpy(&length_robot, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_robot; ++k){
           inbuffer[k-1]=inbuffer[k];

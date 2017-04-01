@@ -13,8 +13,7 @@ static const char TRANSLATERECOGNITIONID[] = "household_objects_database_msgs/Tr
   class TranslateRecognitionIdRequest : public ros::Msg
   {
     public:
-      typedef const char* _recognition_id_type;
-      _recognition_id_type recognition_id;
+      const char* recognition_id;
 
     TranslateRecognitionIdRequest():
       recognition_id("")
@@ -25,7 +24,7 @@ static const char TRANSLATERECOGNITIONID[] = "household_objects_database_msgs/Tr
     {
       int offset = 0;
       uint32_t length_recognition_id = strlen(this->recognition_id);
-      varToArr(outbuffer + offset, length_recognition_id);
+      memcpy(outbuffer + offset, &length_recognition_id, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->recognition_id, length_recognition_id);
       offset += length_recognition_id;
@@ -36,7 +35,7 @@ static const char TRANSLATERECOGNITIONID[] = "household_objects_database_msgs/Tr
     {
       int offset = 0;
       uint32_t length_recognition_id;
-      arrToVar(length_recognition_id, (inbuffer + offset));
+      memcpy(&length_recognition_id, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_recognition_id; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -55,16 +54,11 @@ static const char TRANSLATERECOGNITIONID[] = "household_objects_database_msgs/Tr
   class TranslateRecognitionIdResponse : public ros::Msg
   {
     public:
-      typedef int32_t _household_objects_id_type;
-      _household_objects_id_type household_objects_id;
-      typedef int32_t _ID_NOT_FOUND_type;
-      _ID_NOT_FOUND_type ID_NOT_FOUND;
-      typedef int32_t _DATABASE_ERROR_type;
-      _DATABASE_ERROR_type DATABASE_ERROR;
-      typedef int32_t _OTHER_ERROR_type;
-      _OTHER_ERROR_type OTHER_ERROR;
-      typedef int32_t _result_type;
-      _result_type result;
+      int32_t household_objects_id;
+      int32_t ID_NOT_FOUND;
+      int32_t DATABASE_ERROR;
+      int32_t OTHER_ERROR;
+      int32_t result;
       enum { SUCCESS = 0 };
 
     TranslateRecognitionIdResponse():

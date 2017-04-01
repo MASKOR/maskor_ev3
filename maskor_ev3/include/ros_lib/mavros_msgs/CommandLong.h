@@ -13,26 +13,16 @@ static const char COMMANDLONG[] = "mavros_msgs/CommandLong";
   class CommandLongRequest : public ros::Msg
   {
     public:
-      typedef bool _broadcast_type;
-      _broadcast_type broadcast;
-      typedef uint16_t _command_type;
-      _command_type command;
-      typedef uint8_t _confirmation_type;
-      _confirmation_type confirmation;
-      typedef float _param1_type;
-      _param1_type param1;
-      typedef float _param2_type;
-      _param2_type param2;
-      typedef float _param3_type;
-      _param3_type param3;
-      typedef float _param4_type;
-      _param4_type param4;
-      typedef float _param5_type;
-      _param5_type param5;
-      typedef float _param6_type;
-      _param6_type param6;
-      typedef float _param7_type;
-      _param7_type param7;
+      bool broadcast;
+      uint16_t command;
+      uint8_t confirmation;
+      float param1;
+      float param2;
+      float param3;
+      float param4;
+      float param5;
+      float param6;
+      float param7;
 
     CommandLongRequest():
       broadcast(0),
@@ -240,10 +230,8 @@ static const char COMMANDLONG[] = "mavros_msgs/CommandLong";
   class CommandLongResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef uint8_t _result_type;
-      _result_type result;
+      bool success;
+      uint8_t result;
 
     CommandLongResponse():
       success(0),

@@ -13,16 +13,13 @@ namespace manipulation_msgs
   class CartesianGains : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      uint32_t gains_length;
-      typedef double _gains_type;
-      _gains_type st_gains;
-      _gains_type * gains;
-      uint32_t fixed_frame_length;
-      typedef double _fixed_frame_type;
-      _fixed_frame_type st_fixed_frame;
-      _fixed_frame_type * fixed_frame;
+      std_msgs::Header header;
+      uint8_t gains_length;
+      double st_gains;
+      double * gains;
+      uint8_t fixed_frame_length;
+      double st_fixed_frame;
+      double * fixed_frame;
 
     CartesianGains():
       header(),
@@ -35,12 +32,11 @@ namespace manipulation_msgs
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->gains_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->gains_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->gains_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->gains_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->gains_length);
-      for( uint32_t i = 0; i < gains_length; i++){
+      *(outbuffer + offset++) = gains_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < gains_length; i++){
       union {
         double real;
         uint64_t base;
@@ -56,12 +52,11 @@ namespace manipulation_msgs
       *(outbuffer + offset + 7) = (u_gainsi.base >> (8 * 7)) & 0xFF;
       offset += sizeof(this->gains[i]);
       }
-      *(outbuffer + offset + 0) = (this->fixed_frame_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->fixed_frame_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->fixed_frame_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->fixed_frame_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->fixed_frame_length);
-      for( uint32_t i = 0; i < fixed_frame_length; i++){
+      *(outbuffer + offset++) = fixed_frame_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < fixed_frame_length; i++){
       union {
         double real;
         uint64_t base;
@@ -84,15 +79,12 @@ namespace manipulation_msgs
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint32_t gains_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      gains_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      gains_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      gains_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->gains_length);
+      uint8_t gains_lengthT = *(inbuffer + offset++);
       if(gains_lengthT > gains_length)
         this->gains = (double*)realloc(this->gains, gains_lengthT * sizeof(double));
+      offset += 3;
       gains_length = gains_lengthT;
-      for( uint32_t i = 0; i < gains_length; i++){
+      for( uint8_t i = 0; i < gains_length; i++){
       union {
         double real;
         uint64_t base;
@@ -110,15 +102,12 @@ namespace manipulation_msgs
       offset += sizeof(this->st_gains);
         memcpy( &(this->gains[i]), &(this->st_gains), sizeof(double));
       }
-      uint32_t fixed_frame_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      fixed_frame_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      fixed_frame_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      fixed_frame_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->fixed_frame_length);
+      uint8_t fixed_frame_lengthT = *(inbuffer + offset++);
       if(fixed_frame_lengthT > fixed_frame_length)
         this->fixed_frame = (double*)realloc(this->fixed_frame, fixed_frame_lengthT * sizeof(double));
+      offset += 3;
       fixed_frame_length = fixed_frame_lengthT;
-      for( uint32_t i = 0; i < fixed_frame_length; i++){
+      for( uint8_t i = 0; i < fixed_frame_length; i++){
       union {
         double real;
         uint64_t base;

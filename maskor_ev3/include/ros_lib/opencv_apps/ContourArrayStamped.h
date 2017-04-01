@@ -14,12 +14,10 @@ namespace opencv_apps
   class ContourArrayStamped : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      uint32_t contours_length;
-      typedef opencv_apps::Contour _contours_type;
-      _contours_type st_contours;
-      _contours_type * contours;
+      std_msgs::Header header;
+      uint8_t contours_length;
+      opencv_apps::Contour st_contours;
+      opencv_apps::Contour * contours;
 
     ContourArrayStamped():
       header(),
@@ -31,12 +29,11 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->contours_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->contours_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->contours_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->contours_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->contours_length);
-      for( uint32_t i = 0; i < contours_length; i++){
+      *(outbuffer + offset++) = contours_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < contours_length; i++){
       offset += this->contours[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -46,15 +43,12 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint32_t contours_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      contours_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      contours_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      contours_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->contours_length);
+      uint8_t contours_lengthT = *(inbuffer + offset++);
       if(contours_lengthT > contours_length)
         this->contours = (opencv_apps::Contour*)realloc(this->contours, contours_lengthT * sizeof(opencv_apps::Contour));
+      offset += 3;
       contours_length = contours_lengthT;
-      for( uint32_t i = 0; i < contours_length; i++){
+      for( uint8_t i = 0; i < contours_length; i++){
       offset += this->st_contours.deserialize(inbuffer + offset);
         memcpy( &(this->contours[i]), &(this->st_contours), sizeof(opencv_apps::Contour));
       }

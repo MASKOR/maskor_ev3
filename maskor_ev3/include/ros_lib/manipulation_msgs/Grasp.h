@@ -15,26 +15,17 @@ namespace manipulation_msgs
   class Grasp : public ros::Msg
   {
     public:
-      typedef const char* _id_type;
-      _id_type id;
-      typedef sensor_msgs::JointState _pre_grasp_posture_type;
-      _pre_grasp_posture_type pre_grasp_posture;
-      typedef sensor_msgs::JointState _grasp_posture_type;
-      _grasp_posture_type grasp_posture;
-      typedef geometry_msgs::PoseStamped _grasp_pose_type;
-      _grasp_pose_type grasp_pose;
-      typedef double _grasp_quality_type;
-      _grasp_quality_type grasp_quality;
-      typedef manipulation_msgs::GripperTranslation _approach_type;
-      _approach_type approach;
-      typedef manipulation_msgs::GripperTranslation _retreat_type;
-      _retreat_type retreat;
-      typedef float _max_contact_force_type;
-      _max_contact_force_type max_contact_force;
-      uint32_t allowed_touch_objects_length;
-      typedef char* _allowed_touch_objects_type;
-      _allowed_touch_objects_type st_allowed_touch_objects;
-      _allowed_touch_objects_type * allowed_touch_objects;
+      const char* id;
+      sensor_msgs::JointState pre_grasp_posture;
+      sensor_msgs::JointState grasp_posture;
+      geometry_msgs::PoseStamped grasp_pose;
+      double grasp_quality;
+      manipulation_msgs::GripperTranslation approach;
+      manipulation_msgs::GripperTranslation retreat;
+      float max_contact_force;
+      uint8_t allowed_touch_objects_length;
+      char* st_allowed_touch_objects;
+      char* * allowed_touch_objects;
 
     Grasp():
       id(""),
@@ -53,7 +44,7 @@ namespace manipulation_msgs
     {
       int offset = 0;
       uint32_t length_id = strlen(this->id);
-      varToArr(outbuffer + offset, length_id);
+      memcpy(outbuffer + offset, &length_id, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->id, length_id);
       offset += length_id;
@@ -86,14 +77,13 @@ namespace manipulation_msgs
       *(outbuffer + offset + 2) = (u_max_contact_force.base >> (8 * 2)) & 0xFF;
       *(outbuffer + offset + 3) = (u_max_contact_force.base >> (8 * 3)) & 0xFF;
       offset += sizeof(this->max_contact_force);
-      *(outbuffer + offset + 0) = (this->allowed_touch_objects_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->allowed_touch_objects_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->allowed_touch_objects_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->allowed_touch_objects_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->allowed_touch_objects_length);
-      for( uint32_t i = 0; i < allowed_touch_objects_length; i++){
+      *(outbuffer + offset++) = allowed_touch_objects_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < allowed_touch_objects_length; i++){
       uint32_t length_allowed_touch_objectsi = strlen(this->allowed_touch_objects[i]);
-      varToArr(outbuffer + offset, length_allowed_touch_objectsi);
+      memcpy(outbuffer + offset, &length_allowed_touch_objectsi, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->allowed_touch_objects[i], length_allowed_touch_objectsi);
       offset += length_allowed_touch_objectsi;
@@ -105,7 +95,7 @@ namespace manipulation_msgs
     {
       int offset = 0;
       uint32_t length_id;
-      arrToVar(length_id, (inbuffer + offset));
+      memcpy(&length_id, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_id; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -144,17 +134,14 @@ namespace manipulation_msgs
       u_max_contact_force.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       this->max_contact_force = u_max_contact_force.real;
       offset += sizeof(this->max_contact_force);
-      uint32_t allowed_touch_objects_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      allowed_touch_objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      allowed_touch_objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      allowed_touch_objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->allowed_touch_objects_length);
+      uint8_t allowed_touch_objects_lengthT = *(inbuffer + offset++);
       if(allowed_touch_objects_lengthT > allowed_touch_objects_length)
         this->allowed_touch_objects = (char**)realloc(this->allowed_touch_objects, allowed_touch_objects_lengthT * sizeof(char*));
+      offset += 3;
       allowed_touch_objects_length = allowed_touch_objects_lengthT;
-      for( uint32_t i = 0; i < allowed_touch_objects_length; i++){
+      for( uint8_t i = 0; i < allowed_touch_objects_length; i++){
       uint32_t length_st_allowed_touch_objects;
-      arrToVar(length_st_allowed_touch_objects, (inbuffer + offset));
+      memcpy(&length_st_allowed_touch_objects, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_allowed_touch_objects; ++k){
           inbuffer[k-1]=inbuffer[k];

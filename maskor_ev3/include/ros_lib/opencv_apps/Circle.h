@@ -13,10 +13,8 @@ namespace opencv_apps
   class Circle : public ros::Msg
   {
     public:
-      typedef opencv_apps::Point2D _center_type;
-      _center_type center;
-      typedef double _radius_type;
-      _radius_type radius;
+      opencv_apps::Point2D center;
+      double radius;
 
     Circle():
       center(),

@@ -15,12 +15,9 @@ namespace moveit_msgs
   class ExecuteTrajectoryAction : public ros::Msg
   {
     public:
-      typedef moveit_msgs::ExecuteTrajectoryActionGoal _action_goal_type;
-      _action_goal_type action_goal;
-      typedef moveit_msgs::ExecuteTrajectoryActionResult _action_result_type;
-      _action_result_type action_result;
-      typedef moveit_msgs::ExecuteTrajectoryActionFeedback _action_feedback_type;
-      _action_feedback_type action_feedback;
+      moveit_msgs::ExecuteTrajectoryActionGoal action_goal;
+      moveit_msgs::ExecuteTrajectoryActionResult action_result;
+      moveit_msgs::ExecuteTrajectoryActionFeedback action_feedback;
 
     ExecuteTrajectoryAction():
       action_goal(),

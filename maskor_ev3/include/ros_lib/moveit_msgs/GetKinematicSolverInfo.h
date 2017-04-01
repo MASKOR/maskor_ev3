@@ -39,8 +39,7 @@ static const char GETKINEMATICSOLVERINFO[] = "moveit_msgs/GetKinematicSolverInfo
   class GetKinematicSolverInfoResponse : public ros::Msg
   {
     public:
-      typedef moveit_msgs::KinematicSolverInfo _kinematic_solver_info_type;
-      _kinematic_solver_info_type kinematic_solver_info;
+      moveit_msgs::KinematicSolverInfo kinematic_solver_info;
 
     GetKinematicSolverInfoResponse():
       kinematic_solver_info()

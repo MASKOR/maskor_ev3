@@ -36,15 +36,15 @@ maskor_ev3::infrared_sensor ir_sensor(maskor_ev3::INPUT_1);
 */
 
 // ROS STUFF
-ros::NodeHandle nh;
 geometry_msgs::TransformStamped odom_tf;
 tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
-ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
-ros::Publisher odom_pub("odom", &odom_msg);
 maskor_ev3_msgs::ColorSensor color_sensor_msg;
 
-color.sensor_msg.color = 1;
+ros::NodeHandle nh;
+ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
+ros::Publisher odom_pub("/bobb3e/odom", &odom_msg);
+ros::Publisher color_sensor_pub("/bobb3e/color_sensor", &color_sensor_msg);
 
 //global variables
 const float deg2rad = M_PI/180.0;

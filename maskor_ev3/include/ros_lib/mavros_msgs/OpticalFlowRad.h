@@ -13,28 +13,17 @@ namespace mavros_msgs
   class OpticalFlowRad : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef uint32_t _integration_time_us_type;
-      _integration_time_us_type integration_time_us;
-      typedef float _integrated_x_type;
-      _integrated_x_type integrated_x;
-      typedef float _integrated_y_type;
-      _integrated_y_type integrated_y;
-      typedef float _integrated_xgyro_type;
-      _integrated_xgyro_type integrated_xgyro;
-      typedef float _integrated_ygyro_type;
-      _integrated_ygyro_type integrated_ygyro;
-      typedef float _integrated_zgyro_type;
-      _integrated_zgyro_type integrated_zgyro;
-      typedef int16_t _temperature_type;
-      _temperature_type temperature;
-      typedef uint8_t _quality_type;
-      _quality_type quality;
-      typedef uint32_t _time_delta_distance_us_type;
-      _time_delta_distance_us_type time_delta_distance_us;
-      typedef float _distance_type;
-      _distance_type distance;
+      std_msgs::Header header;
+      uint32_t integration_time_us;
+      float integrated_x;
+      float integrated_y;
+      float integrated_xgyro;
+      float integrated_ygyro;
+      float integrated_zgyro;
+      int16_t temperature;
+      uint8_t quality;
+      uint32_t time_delta_distance_us;
+      float distance;
 
     OpticalFlowRad():
       header(),

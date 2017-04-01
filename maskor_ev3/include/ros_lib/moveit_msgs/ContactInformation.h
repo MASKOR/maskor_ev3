@@ -15,22 +15,14 @@ namespace moveit_msgs
   class ContactInformation : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef geometry_msgs::Point _position_type;
-      _position_type position;
-      typedef geometry_msgs::Vector3 _normal_type;
-      _normal_type normal;
-      typedef double _depth_type;
-      _depth_type depth;
-      typedef const char* _contact_body_1_type;
-      _contact_body_1_type contact_body_1;
-      typedef uint32_t _body_type_1_type;
-      _body_type_1_type body_type_1;
-      typedef const char* _contact_body_2_type;
-      _contact_body_2_type contact_body_2;
-      typedef uint32_t _body_type_2_type;
-      _body_type_2_type body_type_2;
+      std_msgs::Header header;
+      geometry_msgs::Point position;
+      geometry_msgs::Vector3 normal;
+      double depth;
+      const char* contact_body_1;
+      uint32_t body_type_1;
+      const char* contact_body_2;
+      uint32_t body_type_2;
       enum { ROBOT_LINK = 0 };
       enum { WORLD_OBJECT = 1 };
       enum { ROBOT_ATTACHED = 2 };
@@ -68,7 +60,7 @@ namespace moveit_msgs
       *(outbuffer + offset + 7) = (u_depth.base >> (8 * 7)) & 0xFF;
       offset += sizeof(this->depth);
       uint32_t length_contact_body_1 = strlen(this->contact_body_1);
-      varToArr(outbuffer + offset, length_contact_body_1);
+      memcpy(outbuffer + offset, &length_contact_body_1, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->contact_body_1, length_contact_body_1);
       offset += length_contact_body_1;
@@ -78,7 +70,7 @@ namespace moveit_msgs
       *(outbuffer + offset + 3) = (this->body_type_1 >> (8 * 3)) & 0xFF;
       offset += sizeof(this->body_type_1);
       uint32_t length_contact_body_2 = strlen(this->contact_body_2);
-      varToArr(outbuffer + offset, length_contact_body_2);
+      memcpy(outbuffer + offset, &length_contact_body_2, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->contact_body_2, length_contact_body_2);
       offset += length_contact_body_2;
@@ -112,7 +104,7 @@ namespace moveit_msgs
       this->depth = u_depth.real;
       offset += sizeof(this->depth);
       uint32_t length_contact_body_1;
-      arrToVar(length_contact_body_1, (inbuffer + offset));
+      memcpy(&length_contact_body_1, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_contact_body_1; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -126,7 +118,7 @@ namespace moveit_msgs
       this->body_type_1 |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       offset += sizeof(this->body_type_1);
       uint32_t length_contact_body_2;
-      arrToVar(length_contact_body_2, (inbuffer + offset));
+      memcpy(&length_contact_body_2, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_contact_body_2; ++k){
           inbuffer[k-1]=inbuffer[k];

@@ -38,8 +38,7 @@ static const char WAYPOINTCLEAR[] = "mavros_msgs/WaypointClear";
   class WaypointClearResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
+      bool success;
 
     WaypointClearResponse():
       success(0)

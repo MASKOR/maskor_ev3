@@ -15,16 +15,11 @@ namespace moveit_msgs
   class MoveGroupResult : public ros::Msg
   {
     public:
-      typedef moveit_msgs::MoveItErrorCodes _error_code_type;
-      _error_code_type error_code;
-      typedef moveit_msgs::RobotState _trajectory_start_type;
-      _trajectory_start_type trajectory_start;
-      typedef moveit_msgs::RobotTrajectory _planned_trajectory_type;
-      _planned_trajectory_type planned_trajectory;
-      typedef moveit_msgs::RobotTrajectory _executed_trajectory_type;
-      _executed_trajectory_type executed_trajectory;
-      typedef double _planning_time_type;
-      _planning_time_type planning_time;
+      moveit_msgs::MoveItErrorCodes error_code;
+      moveit_msgs::RobotState trajectory_start;
+      moveit_msgs::RobotTrajectory planned_trajectory;
+      moveit_msgs::RobotTrajectory executed_trajectory;
+      double planning_time;
 
     MoveGroupResult():
       error_code(),

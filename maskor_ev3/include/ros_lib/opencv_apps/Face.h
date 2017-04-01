@@ -13,12 +13,10 @@ namespace opencv_apps
   class Face : public ros::Msg
   {
     public:
-      typedef opencv_apps::Rect _face_type;
-      _face_type face;
-      uint32_t eyes_length;
-      typedef opencv_apps::Rect _eyes_type;
-      _eyes_type st_eyes;
-      _eyes_type * eyes;
+      opencv_apps::Rect face;
+      uint8_t eyes_length;
+      opencv_apps::Rect st_eyes;
+      opencv_apps::Rect * eyes;
 
     Face():
       face(),
@@ -30,12 +28,11 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->face.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->eyes_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->eyes_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->eyes_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->eyes_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->eyes_length);
-      for( uint32_t i = 0; i < eyes_length; i++){
+      *(outbuffer + offset++) = eyes_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < eyes_length; i++){
       offset += this->eyes[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -45,15 +42,12 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->face.deserialize(inbuffer + offset);
-      uint32_t eyes_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      eyes_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      eyes_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      eyes_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->eyes_length);
+      uint8_t eyes_lengthT = *(inbuffer + offset++);
       if(eyes_lengthT > eyes_length)
         this->eyes = (opencv_apps::Rect*)realloc(this->eyes, eyes_lengthT * sizeof(opencv_apps::Rect));
+      offset += 3;
       eyes_length = eyes_lengthT;
-      for( uint32_t i = 0; i < eyes_length; i++){
+      for( uint8_t i = 0; i < eyes_length; i++){
       offset += this->st_eyes.deserialize(inbuffer + offset);
         memcpy( &(this->eyes[i]), &(this->st_eyes), sizeof(opencv_apps::Rect));
       }

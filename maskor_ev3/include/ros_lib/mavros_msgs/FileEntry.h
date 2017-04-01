@@ -12,12 +12,9 @@ namespace mavros_msgs
   class FileEntry : public ros::Msg
   {
     public:
-      typedef const char* _name_type;
-      _name_type name;
-      typedef uint8_t _type_type;
-      _type_type type;
-      typedef uint64_t _size_type;
-      _size_type size;
+      const char* name;
+      uint8_t type;
+      uint64_t size;
       enum { TYPE_FILE =  0 };
       enum { TYPE_DIRECTORY =  1 };
 
@@ -32,21 +29,20 @@ namespace mavros_msgs
     {
       int offset = 0;
       uint32_t length_name = strlen(this->name);
-      varToArr(outbuffer + offset, length_name);
+      memcpy(outbuffer + offset, &length_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->name, length_name);
       offset += length_name;
       *(outbuffer + offset + 0) = (this->type >> (8 * 0)) & 0xFF;
       offset += sizeof(this->type);
-      union {
-        uint64_t real;
-        uint32_t base;
-      } u_size;
-      u_size.real = this->size;
-      *(outbuffer + offset + 0) = (u_size.base >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (u_size.base >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (u_size.base >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (u_size.base >> (8 * 3)) & 0xFF;
+      *(outbuffer + offset + 0) = (this->size >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->size >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->size >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->size >> (8 * 3)) & 0xFF;
+      *(outbuffer + offset + 4) = (this->size >> (8 * 4)) & 0xFF;
+      *(outbuffer + offset + 5) = (this->size >> (8 * 5)) & 0xFF;
+      *(outbuffer + offset + 6) = (this->size >> (8 * 6)) & 0xFF;
+      *(outbuffer + offset + 7) = (this->size >> (8 * 7)) & 0xFF;
       offset += sizeof(this->size);
       return offset;
     }
@@ -55,7 +51,7 @@ namespace mavros_msgs
     {
       int offset = 0;
       uint32_t length_name;
-      arrToVar(length_name, (inbuffer + offset));
+      memcpy(&length_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -65,16 +61,14 @@ namespace mavros_msgs
       offset += length_name;
       this->type =  ((uint8_t) (*(inbuffer + offset)));
       offset += sizeof(this->type);
-      union {
-        uint64_t real;
-        uint32_t base;
-      } u_size;
-      u_size.base = 0;
-      u_size.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
-      u_size.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
-      u_size.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
-      u_size.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
-      this->size = u_size.real;
+      this->size =  ((uint64_t) (*(inbuffer + offset)));
+      this->size |= ((uint64_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 4))) << (8 * 4);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 5))) << (8 * 5);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 6))) << (8 * 6);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 7))) << (8 * 7);
       offset += sizeof(this->size);
      return offset;
     }

@@ -15,10 +15,8 @@ static const char EXECUTEKNOWNTRAJECTORY[] = "moveit_msgs/ExecuteKnownTrajectory
   class ExecuteKnownTrajectoryRequest : public ros::Msg
   {
     public:
-      typedef moveit_msgs::RobotTrajectory _trajectory_type;
-      _trajectory_type trajectory;
-      typedef bool _wait_for_execution_type;
-      _wait_for_execution_type wait_for_execution;
+      moveit_msgs::RobotTrajectory trajectory;
+      bool wait_for_execution;
 
     ExecuteKnownTrajectoryRequest():
       trajectory(),
@@ -63,8 +61,7 @@ static const char EXECUTEKNOWNTRAJECTORY[] = "moveit_msgs/ExecuteKnownTrajectory
   class ExecuteKnownTrajectoryResponse : public ros::Msg
   {
     public:
-      typedef moveit_msgs::MoveItErrorCodes _error_code_type;
-      _error_code_type error_code;
+      moveit_msgs::MoveItErrorCodes error_code;
 
     ExecuteKnownTrajectoryResponse():
       error_code()

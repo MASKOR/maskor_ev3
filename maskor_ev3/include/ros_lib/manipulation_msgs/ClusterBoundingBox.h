@@ -14,10 +14,8 @@ namespace manipulation_msgs
   class ClusterBoundingBox : public ros::Msg
   {
     public:
-      typedef geometry_msgs::PoseStamped _pose_stamped_type;
-      _pose_stamped_type pose_stamped;
-      typedef geometry_msgs::Vector3 _dimensions_type;
-      _dimensions_type dimensions;
+      geometry_msgs::PoseStamped pose_stamped;
+      geometry_msgs::Vector3 dimensions;
 
     ClusterBoundingBox():
       pose_stamped(),

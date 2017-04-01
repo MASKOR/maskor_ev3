@@ -13,10 +13,8 @@ namespace opencv_apps
   class Flow : public ros::Msg
   {
     public:
-      typedef opencv_apps::Point2D _point_type;
-      _point_type point;
-      typedef opencv_apps::Point2D _velocity_type;
-      _velocity_type velocity;
+      opencv_apps::Point2D point;
+      opencv_apps::Point2D velocity;
 
     Flow():
       point(),

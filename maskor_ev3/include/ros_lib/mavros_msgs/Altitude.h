@@ -13,20 +13,13 @@ namespace mavros_msgs
   class Altitude : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef float _monotonic_type;
-      _monotonic_type monotonic;
-      typedef float _amsl_type;
-      _amsl_type amsl;
-      typedef float _local_type;
-      _local_type local;
-      typedef float _relative_type;
-      _relative_type relative;
-      typedef float _terrain_type;
-      _terrain_type terrain;
-      typedef float _bottom_clearance_type;
-      _bottom_clearance_type bottom_clearance;
+      std_msgs::Header header;
+      float monotonic;
+      float amsl;
+      float local;
+      float relative;
+      float terrain;
+      float bottom_clearance;
 
     Altitude():
       header(),

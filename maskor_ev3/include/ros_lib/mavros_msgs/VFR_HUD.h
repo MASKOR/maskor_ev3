@@ -13,20 +13,13 @@ namespace mavros_msgs
   class VFR_HUD : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef float _airspeed_type;
-      _airspeed_type airspeed;
-      typedef float _groundspeed_type;
-      _groundspeed_type groundspeed;
-      typedef int16_t _heading_type;
-      _heading_type heading;
-      typedef float _throttle_type;
-      _throttle_type throttle;
-      typedef float _altitude_type;
-      _altitude_type altitude;
-      typedef float _climb_type;
-      _climb_type climb;
+      std_msgs::Header header;
+      float airspeed;
+      float groundspeed;
+      int16_t heading;
+      float throttle;
+      float altitude;
+      float climb;
 
     VFR_HUD():
       header(),

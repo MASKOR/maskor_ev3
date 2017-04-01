@@ -12,10 +12,8 @@ namespace mavros_msgs
   class ParamValue : public ros::Msg
   {
     public:
-      typedef int64_t _integer_type;
-      _integer_type integer;
-      typedef double _real_type;
-      _real_type real;
+      int64_t integer;
+      double real;
 
     ParamValue():
       integer(0),

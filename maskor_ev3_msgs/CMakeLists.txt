@@ -6,8 +6,9 @@ project(maskor_ev3_msgs)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   message_generation
-  message_runtime
-  roscpp
+  std_msgs
+#  message_runtime
+#  roscpp
 )
 
 ## System dependencies are found with CMake's conventions
@@ -101,7 +102,7 @@ generate_messages(
 catkin_package(
    INCLUDE_DIRS include
 #  LIBRARIES maskor_ev3_msgs
-   CATKIN_DEPENDS message_generation message_runtime roscpp
+   CATKIN_DEPENDS message_runtime
 #  DEPENDS system_lib
 )
 

@@ -15,16 +15,11 @@ namespace moveit_msgs
   class MotionPlanResponse : public ros::Msg
   {
     public:
-      typedef moveit_msgs::RobotState _trajectory_start_type;
-      _trajectory_start_type trajectory_start;
-      typedef const char* _group_name_type;
-      _group_name_type group_name;
-      typedef moveit_msgs::RobotTrajectory _trajectory_type;
-      _trajectory_type trajectory;
-      typedef double _planning_time_type;
-      _planning_time_type planning_time;
-      typedef moveit_msgs::MoveItErrorCodes _error_code_type;
-      _error_code_type error_code;
+      moveit_msgs::RobotState trajectory_start;
+      const char* group_name;
+      moveit_msgs::RobotTrajectory trajectory;
+      double planning_time;
+      moveit_msgs::MoveItErrorCodes error_code;
 
     MotionPlanResponse():
       trajectory_start(),
@@ -40,7 +35,7 @@ namespace moveit_msgs
       int offset = 0;
       offset += this->trajectory_start.serialize(outbuffer + offset);
       uint32_t length_group_name = strlen(this->group_name);
-      varToArr(outbuffer + offset, length_group_name);
+      memcpy(outbuffer + offset, &length_group_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->group_name, length_group_name);
       offset += length_group_name;
@@ -68,7 +63,7 @@ namespace moveit_msgs
       int offset = 0;
       offset += this->trajectory_start.deserialize(inbuffer + offset);
       uint32_t length_group_name;
-      arrToVar(length_group_name, (inbuffer + offset));
+      memcpy(&length_group_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_group_name; ++k){
           inbuffer[k-1]=inbuffer[k];

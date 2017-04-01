@@ -17,10 +17,8 @@ static const char GETCONSTRAINTAWAREPOSITIONIK[] = "moveit_msgs/GetConstraintAwa
   class GetConstraintAwarePositionIKRequest : public ros::Msg
   {
     public:
-      typedef moveit_msgs::PositionIKRequest _ik_request_type;
-      _ik_request_type ik_request;
-      typedef moveit_msgs::Constraints _constraints_type;
-      _constraints_type constraints;
+      moveit_msgs::PositionIKRequest ik_request;
+      moveit_msgs::Constraints constraints;
 
     GetConstraintAwarePositionIKRequest():
       ik_request(),
@@ -52,10 +50,8 @@ static const char GETCONSTRAINTAWAREPOSITIONIK[] = "moveit_msgs/GetConstraintAwa
   class GetConstraintAwarePositionIKResponse : public ros::Msg
   {
     public:
-      typedef moveit_msgs::RobotState _solution_type;
-      _solution_type solution;
-      typedef moveit_msgs::MoveItErrorCodes _error_code_type;
-      _error_code_type error_code;
+      moveit_msgs::RobotState solution;
+      moveit_msgs::MoveItErrorCodes error_code;
 
     GetConstraintAwarePositionIKResponse():
       solution(),

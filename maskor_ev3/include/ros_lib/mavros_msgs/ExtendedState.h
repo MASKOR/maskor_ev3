@@ -13,12 +13,9 @@ namespace mavros_msgs
   class ExtendedState : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef uint8_t _vtol_state_type;
-      _vtol_state_type vtol_state;
-      typedef uint8_t _landed_state_type;
-      _landed_state_type landed_state;
+      std_msgs::Header header;
+      uint8_t vtol_state;
+      uint8_t landed_state;
       enum { VTOL_STATE_UNDEFINED =  0 };
       enum { VTOL_STATE_TRANSITION_TO_FW =  1 };
       enum { VTOL_STATE_TRANSITION_TO_MC =  2 };

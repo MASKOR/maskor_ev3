@@ -24,7 +24,7 @@ namespace mavros_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      for( uint32_t i = 0; i < 8; i++){
+      for( uint8_t i = 0; i < 8; i++){
       *(outbuffer + offset + 0) = (this->channels[i] >> (8 * 0)) & 0xFF;
       *(outbuffer + offset + 1) = (this->channels[i] >> (8 * 1)) & 0xFF;
       offset += sizeof(this->channels[i]);
@@ -35,7 +35,7 @@ namespace mavros_msgs
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      for( uint32_t i = 0; i < 8; i++){
+      for( uint8_t i = 0; i < 8; i++){
       this->channels[i] =  ((uint16_t) (*(inbuffer + offset)));
       this->channels[i] |= ((uint16_t) (*(inbuffer + offset + 1))) << (8 * 1);
       offset += sizeof(this->channels[i]);

@@ -13,16 +13,11 @@ namespace mavros_msgs
   class State : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef bool _connected_type;
-      _connected_type connected;
-      typedef bool _armed_type;
-      _armed_type armed;
-      typedef bool _guided_type;
-      _guided_type guided;
-      typedef const char* _mode_type;
-      _mode_type mode;
+      std_msgs::Header header;
+      bool connected;
+      bool armed;
+      bool guided;
+      const char* mode;
 
     State():
       header(),
@@ -59,7 +54,7 @@ namespace mavros_msgs
       *(outbuffer + offset + 0) = (u_guided.base >> (8 * 0)) & 0xFF;
       offset += sizeof(this->guided);
       uint32_t length_mode = strlen(this->mode);
-      varToArr(outbuffer + offset, length_mode);
+      memcpy(outbuffer + offset, &length_mode, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->mode, length_mode);
       offset += length_mode;
@@ -95,7 +90,7 @@ namespace mavros_msgs
       this->guided = u_guided.real;
       offset += sizeof(this->guided);
       uint32_t length_mode;
-      arrToVar(length_mode, (inbuffer + offset));
+      memcpy(&length_mode, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_mode; ++k){
           inbuffer[k-1]=inbuffer[k];

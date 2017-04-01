@@ -13,28 +13,17 @@ namespace mavros_msgs
   class HilControls : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef float _roll_ailerons_type;
-      _roll_ailerons_type roll_ailerons;
-      typedef float _pitch_elevator_type;
-      _pitch_elevator_type pitch_elevator;
-      typedef float _yaw_rudder_type;
-      _yaw_rudder_type yaw_rudder;
-      typedef float _throttle_type;
-      _throttle_type throttle;
-      typedef float _aux1_type;
-      _aux1_type aux1;
-      typedef float _aux2_type;
-      _aux2_type aux2;
-      typedef float _aux3_type;
-      _aux3_type aux3;
-      typedef float _aux4_type;
-      _aux4_type aux4;
-      typedef uint8_t _mode_type;
-      _mode_type mode;
-      typedef uint8_t _nav_mode_type;
-      _nav_mode_type nav_mode;
+      std_msgs::Header header;
+      float roll_ailerons;
+      float pitch_elevator;
+      float yaw_rudder;
+      float throttle;
+      float aux1;
+      float aux2;
+      float aux3;
+      float aux4;
+      uint8_t mode;
+      uint8_t nav_mode;
 
     HilControls():
       header(),

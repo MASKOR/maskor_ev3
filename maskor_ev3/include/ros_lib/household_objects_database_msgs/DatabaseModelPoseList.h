@@ -13,10 +13,9 @@ namespace household_objects_database_msgs
   class DatabaseModelPoseList : public ros::Msg
   {
     public:
-      uint32_t model_list_length;
-      typedef household_objects_database_msgs::DatabaseModelPose _model_list_type;
-      _model_list_type st_model_list;
-      _model_list_type * model_list;
+      uint8_t model_list_length;
+      household_objects_database_msgs::DatabaseModelPose st_model_list;
+      household_objects_database_msgs::DatabaseModelPose * model_list;
 
     DatabaseModelPoseList():
       model_list_length(0), model_list(NULL)
@@ -26,12 +25,11 @@ namespace household_objects_database_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset + 0) = (this->model_list_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->model_list_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->model_list_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->model_list_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->model_list_length);
-      for( uint32_t i = 0; i < model_list_length; i++){
+      *(outbuffer + offset++) = model_list_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < model_list_length; i++){
       offset += this->model_list[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -40,15 +38,12 @@ namespace household_objects_database_msgs
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t model_list_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      model_list_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      model_list_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      model_list_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->model_list_length);
+      uint8_t model_list_lengthT = *(inbuffer + offset++);
       if(model_list_lengthT > model_list_length)
         this->model_list = (household_objects_database_msgs::DatabaseModelPose*)realloc(this->model_list, model_list_lengthT * sizeof(household_objects_database_msgs::DatabaseModelPose));
+      offset += 3;
       model_list_length = model_list_lengthT;
-      for( uint32_t i = 0; i < model_list_length; i++){
+      for( uint8_t i = 0; i < model_list_length; i++){
       offset += this->st_model_list.deserialize(inbuffer + offset);
         memcpy( &(this->model_list[i]), &(this->st_model_list), sizeof(household_objects_database_msgs::DatabaseModelPose));
       }

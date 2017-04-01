@@ -15,8 +15,7 @@ static const char GETOBJECTINFORMATION[] = "object_recognition_msgs/GetObjectInf
   class GetObjectInformationRequest : public ros::Msg
   {
     public:
-      typedef object_recognition_msgs::ObjectType _type_type;
-      _type_type type;
+      object_recognition_msgs::ObjectType type;
 
     GetObjectInformationRequest():
       type()
@@ -45,8 +44,7 @@ static const char GETOBJECTINFORMATION[] = "object_recognition_msgs/GetObjectInf
   class GetObjectInformationResponse : public ros::Msg
   {
     public:
-      typedef object_recognition_msgs::ObjectInformation _information_type;
-      _information_type information;
+      object_recognition_msgs::ObjectInformation information;
 
     GetObjectInformationResponse():
       information()

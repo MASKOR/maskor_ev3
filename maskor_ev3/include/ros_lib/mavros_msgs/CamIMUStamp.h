@@ -13,10 +13,8 @@ namespace mavros_msgs
   class CamIMUStamp : public ros::Msg
   {
     public:
-      typedef ros::Time _frame_stamp_type;
-      _frame_stamp_type frame_stamp;
-      typedef int32_t _frame_seq_id_type;
-      _frame_seq_id_type frame_seq_id;
+      ros::Time frame_stamp;
+      int32_t frame_seq_id;
 
     CamIMUStamp():
       frame_stamp(),

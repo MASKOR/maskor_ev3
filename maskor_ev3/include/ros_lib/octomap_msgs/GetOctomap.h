@@ -39,8 +39,7 @@ static const char GETOCTOMAP[] = "octomap_msgs/GetOctomap";
   class GetOctomapResponse : public ros::Msg
   {
     public:
-      typedef octomap_msgs::Octomap _map_type;
-      _map_type map;
+      octomap_msgs::Octomap map;
 
     GetOctomapResponse():
       map()

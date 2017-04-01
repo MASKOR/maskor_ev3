@@ -12,10 +12,8 @@ namespace object_recognition_msgs
   class ObjectType : public ros::Msg
   {
     public:
-      typedef const char* _key_type;
-      _key_type key;
-      typedef const char* _db_type;
-      _db_type db;
+      const char* key;
+      const char* db;
 
     ObjectType():
       key(""),
@@ -27,12 +25,12 @@ namespace object_recognition_msgs
     {
       int offset = 0;
       uint32_t length_key = strlen(this->key);
-      varToArr(outbuffer + offset, length_key);
+      memcpy(outbuffer + offset, &length_key, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->key, length_key);
       offset += length_key;
       uint32_t length_db = strlen(this->db);
-      varToArr(outbuffer + offset, length_db);
+      memcpy(outbuffer + offset, &length_db, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->db, length_db);
       offset += length_db;
@@ -43,7 +41,7 @@ namespace object_recognition_msgs
     {
       int offset = 0;
       uint32_t length_key;
-      arrToVar(length_key, (inbuffer + offset));
+      memcpy(&length_key, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_key; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -52,7 +50,7 @@ namespace object_recognition_msgs
       this->key = (char *)(inbuffer + offset-1);
       offset += length_key;
       uint32_t length_db;
-      arrToVar(length_db, (inbuffer + offset));
+      memcpy(&length_db, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_db; ++k){
           inbuffer[k-1]=inbuffer[k];

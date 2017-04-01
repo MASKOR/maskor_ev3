@@ -13,10 +13,8 @@ namespace moveit_msgs
   class ObjectColor : public ros::Msg
   {
     public:
-      typedef const char* _id_type;
-      _id_type id;
-      typedef std_msgs::ColorRGBA _color_type;
-      _color_type color;
+      const char* id;
+      std_msgs::ColorRGBA color;
 
     ObjectColor():
       id(""),
@@ -28,7 +26,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_id = strlen(this->id);
-      varToArr(outbuffer + offset, length_id);
+      memcpy(outbuffer + offset, &length_id, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->id, length_id);
       offset += length_id;
@@ -40,7 +38,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_id;
-      arrToVar(length_id, (inbuffer + offset));
+      memcpy(&length_id, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_id; ++k){
           inbuffer[k-1]=inbuffer[k];

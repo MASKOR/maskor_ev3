@@ -14,8 +14,7 @@ static const char SETBIAS[] = "hector_gazebo_plugins/SetBias";
   class SetBiasRequest : public ros::Msg
   {
     public:
-      typedef geometry_msgs::Vector3 _bias_type;
-      _bias_type bias;
+      geometry_msgs::Vector3 bias;
 
     SetBiasRequest():
       bias()

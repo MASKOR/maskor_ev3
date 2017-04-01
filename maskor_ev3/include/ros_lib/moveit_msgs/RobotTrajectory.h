@@ -14,10 +14,8 @@ namespace moveit_msgs
   class RobotTrajectory : public ros::Msg
   {
     public:
-      typedef trajectory_msgs::JointTrajectory _joint_trajectory_type;
-      _joint_trajectory_type joint_trajectory;
-      typedef trajectory_msgs::MultiDOFJointTrajectory _multi_dof_joint_trajectory_type;
-      _multi_dof_joint_trajectory_type multi_dof_joint_trajectory;
+      trajectory_msgs::JointTrajectory joint_trajectory;
+      trajectory_msgs::MultiDOFJointTrajectory multi_dof_joint_trajectory;
 
     RobotTrajectory():
       joint_trajectory(),

@@ -13,8 +13,7 @@ static const char FILECLOSE[] = "mavros_msgs/FileClose";
   class FileCloseRequest : public ros::Msg
   {
     public:
-      typedef const char* _file_path_type;
-      _file_path_type file_path;
+      const char* file_path;
 
     FileCloseRequest():
       file_path("")
@@ -25,7 +24,7 @@ static const char FILECLOSE[] = "mavros_msgs/FileClose";
     {
       int offset = 0;
       uint32_t length_file_path = strlen(this->file_path);
-      varToArr(outbuffer + offset, length_file_path);
+      memcpy(outbuffer + offset, &length_file_path, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->file_path, length_file_path);
       offset += length_file_path;
@@ -36,7 +35,7 @@ static const char FILECLOSE[] = "mavros_msgs/FileClose";
     {
       int offset = 0;
       uint32_t length_file_path;
-      arrToVar(length_file_path, (inbuffer + offset));
+      memcpy(&length_file_path, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_file_path; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -55,10 +54,8 @@ static const char FILECLOSE[] = "mavros_msgs/FileClose";
   class FileCloseResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef int32_t _r_errno_type;
-      _r_errno_type r_errno;
+      bool success;
+      int32_t r_errno;
 
     FileCloseResponse():
       success(0),

@@ -14,12 +14,10 @@ namespace opencv_apps
   class FlowArrayStamped : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      uint32_t flow_length;
-      typedef opencv_apps::Flow _flow_type;
-      _flow_type st_flow;
-      _flow_type * flow;
+      std_msgs::Header header;
+      uint8_t flow_length;
+      opencv_apps::Flow st_flow;
+      opencv_apps::Flow * flow;
 
     FlowArrayStamped():
       header(),
@@ -31,12 +29,11 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->flow_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->flow_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->flow_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->flow_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->flow_length);
-      for( uint32_t i = 0; i < flow_length; i++){
+      *(outbuffer + offset++) = flow_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < flow_length; i++){
       offset += this->flow[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -46,15 +43,12 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint32_t flow_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      flow_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      flow_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      flow_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->flow_length);
+      uint8_t flow_lengthT = *(inbuffer + offset++);
       if(flow_lengthT > flow_length)
         this->flow = (opencv_apps::Flow*)realloc(this->flow, flow_lengthT * sizeof(opencv_apps::Flow));
+      offset += 3;
       flow_length = flow_lengthT;
-      for( uint32_t i = 0; i < flow_length; i++){
+      for( uint8_t i = 0; i < flow_length; i++){
       offset += this->st_flow.deserialize(inbuffer + offset);
         memcpy( &(this->flow[i]), &(this->st_flow), sizeof(opencv_apps::Flow));
       }

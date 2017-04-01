@@ -15,22 +15,14 @@ namespace mavros_msgs
   class PositionTarget : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef uint8_t _coordinate_frame_type;
-      _coordinate_frame_type coordinate_frame;
-      typedef uint16_t _type_mask_type;
-      _type_mask_type type_mask;
-      typedef geometry_msgs::Point _position_type;
-      _position_type position;
-      typedef geometry_msgs::Vector3 _velocity_type;
-      _velocity_type velocity;
-      typedef geometry_msgs::Vector3 _acceleration_or_force_type;
-      _acceleration_or_force_type acceleration_or_force;
-      typedef float _yaw_type;
-      _yaw_type yaw;
-      typedef float _yaw_rate_type;
-      _yaw_rate_type yaw_rate;
+      std_msgs::Header header;
+      uint8_t coordinate_frame;
+      uint16_t type_mask;
+      geometry_msgs::Point position;
+      geometry_msgs::Vector3 velocity;
+      geometry_msgs::Vector3 acceleration_or_force;
+      float yaw;
+      float yaw_rate;
       enum { FRAME_LOCAL_NED =  1 };
       enum { FRAME_LOCAL_OFFSET_NED =  7 };
       enum { FRAME_BODY_NED =  8 };

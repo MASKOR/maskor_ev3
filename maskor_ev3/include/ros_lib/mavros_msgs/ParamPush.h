@@ -38,10 +38,8 @@ static const char PARAMPUSH[] = "mavros_msgs/ParamPush";
   class ParamPushResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef uint32_t _param_transfered_type;
-      _param_transfered_type param_transfered;
+      bool success;
+      uint32_t param_transfered;
 
     ParamPushResponse():
       success(0),

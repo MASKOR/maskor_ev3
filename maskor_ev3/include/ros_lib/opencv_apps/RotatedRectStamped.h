@@ -14,10 +14,8 @@ namespace opencv_apps
   class RotatedRectStamped : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef opencv_apps::RotatedRect _rect_type;
-      _rect_type rect;
+      std_msgs::Header header;
+      opencv_apps::RotatedRect rect;
 
     RotatedRectStamped():
       header(),

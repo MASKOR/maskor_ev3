@@ -19,26 +19,17 @@ static const char GETCARTESIANPATH[] = "moveit_msgs/GetCartesianPath";
   class GetCartesianPathRequest : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef moveit_msgs::RobotState _start_state_type;
-      _start_state_type start_state;
-      typedef const char* _group_name_type;
-      _group_name_type group_name;
-      typedef const char* _link_name_type;
-      _link_name_type link_name;
-      uint32_t waypoints_length;
-      typedef geometry_msgs::Pose _waypoints_type;
-      _waypoints_type st_waypoints;
-      _waypoints_type * waypoints;
-      typedef double _max_step_type;
-      _max_step_type max_step;
-      typedef double _jump_threshold_type;
-      _jump_threshold_type jump_threshold;
-      typedef bool _avoid_collisions_type;
-      _avoid_collisions_type avoid_collisions;
-      typedef moveit_msgs::Constraints _path_constraints_type;
-      _path_constraints_type path_constraints;
+      std_msgs::Header header;
+      moveit_msgs::RobotState start_state;
+      const char* group_name;
+      const char* link_name;
+      uint8_t waypoints_length;
+      geometry_msgs::Pose st_waypoints;
+      geometry_msgs::Pose * waypoints;
+      double max_step;
+      double jump_threshold;
+      bool avoid_collisions;
+      moveit_msgs::Constraints path_constraints;
 
     GetCartesianPathRequest():
       header(),
@@ -59,21 +50,20 @@ static const char GETCARTESIANPATH[] = "moveit_msgs/GetCartesianPath";
       offset += this->header.serialize(outbuffer + offset);
       offset += this->start_state.serialize(outbuffer + offset);
       uint32_t length_group_name = strlen(this->group_name);
-      varToArr(outbuffer + offset, length_group_name);
+      memcpy(outbuffer + offset, &length_group_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->group_name, length_group_name);
       offset += length_group_name;
       uint32_t length_link_name = strlen(this->link_name);
-      varToArr(outbuffer + offset, length_link_name);
+      memcpy(outbuffer + offset, &length_link_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->link_name, length_link_name);
       offset += length_link_name;
-      *(outbuffer + offset + 0) = (this->waypoints_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->waypoints_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->waypoints_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->waypoints_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->waypoints_length);
-      for( uint32_t i = 0; i < waypoints_length; i++){
+      *(outbuffer + offset++) = waypoints_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < waypoints_length; i++){
       offset += this->waypoints[i].serialize(outbuffer + offset);
       }
       union {
@@ -121,7 +111,7 @@ static const char GETCARTESIANPATH[] = "moveit_msgs/GetCartesianPath";
       offset += this->header.deserialize(inbuffer + offset);
       offset += this->start_state.deserialize(inbuffer + offset);
       uint32_t length_group_name;
-      arrToVar(length_group_name, (inbuffer + offset));
+      memcpy(&length_group_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_group_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -130,7 +120,7 @@ static const char GETCARTESIANPATH[] = "moveit_msgs/GetCartesianPath";
       this->group_name = (char *)(inbuffer + offset-1);
       offset += length_group_name;
       uint32_t length_link_name;
-      arrToVar(length_link_name, (inbuffer + offset));
+      memcpy(&length_link_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_link_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -138,15 +128,12 @@ static const char GETCARTESIANPATH[] = "moveit_msgs/GetCartesianPath";
       inbuffer[offset+length_link_name-1]=0;
       this->link_name = (char *)(inbuffer + offset-1);
       offset += length_link_name;
-      uint32_t waypoints_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      waypoints_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      waypoints_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      waypoints_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->waypoints_length);
+      uint8_t waypoints_lengthT = *(inbuffer + offset++);
       if(waypoints_lengthT > waypoints_length)
         this->waypoints = (geometry_msgs::Pose*)realloc(this->waypoints, waypoints_lengthT * sizeof(geometry_msgs::Pose));
+      offset += 3;
       waypoints_length = waypoints_lengthT;
-      for( uint32_t i = 0; i < waypoints_length; i++){
+      for( uint8_t i = 0; i < waypoints_length; i++){
       offset += this->st_waypoints.deserialize(inbuffer + offset);
         memcpy( &(this->waypoints[i]), &(this->st_waypoints), sizeof(geometry_msgs::Pose));
       }
@@ -200,14 +187,10 @@ static const char GETCARTESIANPATH[] = "moveit_msgs/GetCartesianPath";
   class GetCartesianPathResponse : public ros::Msg
   {
     public:
-      typedef moveit_msgs::RobotState _start_state_type;
-      _start_state_type start_state;
-      typedef moveit_msgs::RobotTrajectory _solution_type;
-      _solution_type solution;
-      typedef double _fraction_type;
-      _fraction_type fraction;
-      typedef moveit_msgs::MoveItErrorCodes _error_code_type;
-      _error_code_type error_code;
+      moveit_msgs::RobotState start_state;
+      moveit_msgs::RobotTrajectory solution;
+      double fraction;
+      moveit_msgs::MoveItErrorCodes error_code;
 
     GetCartesianPathResponse():
       start_state(),

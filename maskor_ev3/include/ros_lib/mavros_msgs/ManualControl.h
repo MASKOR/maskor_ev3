@@ -13,18 +13,12 @@ namespace mavros_msgs
   class ManualControl : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef float _x_type;
-      _x_type x;
-      typedef float _y_type;
-      _y_type y;
-      typedef float _z_type;
-      _z_type z;
-      typedef float _r_type;
-      _r_type r;
-      typedef uint16_t _buttons_type;
-      _buttons_type buttons;
+      std_msgs::Header header;
+      float x;
+      float y;
+      float z;
+      float r;
+      uint16_t buttons;
 
     ManualControl():
       header(),

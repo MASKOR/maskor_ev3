@@ -12,10 +12,8 @@ namespace driver_base
   class ConfigValue : public ros::Msg
   {
     public:
-      typedef const char* _name_type;
-      _name_type name;
-      typedef double _value_type;
-      _value_type value;
+      const char* name;
+      double value;
 
     ConfigValue():
       name(""),
@@ -27,7 +25,7 @@ namespace driver_base
     {
       int offset = 0;
       uint32_t length_name = strlen(this->name);
-      varToArr(outbuffer + offset, length_name);
+      memcpy(outbuffer + offset, &length_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->name, length_name);
       offset += length_name;
@@ -52,7 +50,7 @@ namespace driver_base
     {
       int offset = 0;
       uint32_t length_name;
-      arrToVar(length_name, (inbuffer + offset));
+      memcpy(&length_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_name; ++k){
           inbuffer[k-1]=inbuffer[k];

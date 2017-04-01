@@ -13,30 +13,18 @@ static const char COMMANDINT[] = "mavros_msgs/CommandInt";
   class CommandIntRequest : public ros::Msg
   {
     public:
-      typedef bool _broadcast_type;
-      _broadcast_type broadcast;
-      typedef uint8_t _frame_type;
-      _frame_type frame;
-      typedef uint16_t _command_type;
-      _command_type command;
-      typedef uint8_t _current_type;
-      _current_type current;
-      typedef uint8_t _autocontinue_type;
-      _autocontinue_type autocontinue;
-      typedef float _param1_type;
-      _param1_type param1;
-      typedef float _param2_type;
-      _param2_type param2;
-      typedef float _param3_type;
-      _param3_type param3;
-      typedef float _param4_type;
-      _param4_type param4;
-      typedef int32_t _x_type;
-      _x_type x;
-      typedef int32_t _y_type;
-      _y_type y;
-      typedef float _z_type;
-      _z_type z;
+      bool broadcast;
+      uint8_t frame;
+      uint16_t command;
+      uint8_t current;
+      uint8_t autocontinue;
+      float param1;
+      float param2;
+      float param3;
+      float param4;
+      int32_t x;
+      int32_t y;
+      float z;
 
     CommandIntRequest():
       broadcast(0),
@@ -254,8 +242,7 @@ static const char COMMANDINT[] = "mavros_msgs/CommandInt";
   class CommandIntResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
+      bool success;
 
     CommandIntResponse():
       success(0)

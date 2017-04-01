@@ -14,10 +14,8 @@ static const char PARAMSET[] = "mavros_msgs/ParamSet";
   class ParamSetRequest : public ros::Msg
   {
     public:
-      typedef const char* _param_id_type;
-      _param_id_type param_id;
-      typedef mavros_msgs::ParamValue _value_type;
-      _value_type value;
+      const char* param_id;
+      mavros_msgs::ParamValue value;
 
     ParamSetRequest():
       param_id(""),
@@ -29,7 +27,7 @@ static const char PARAMSET[] = "mavros_msgs/ParamSet";
     {
       int offset = 0;
       uint32_t length_param_id = strlen(this->param_id);
-      varToArr(outbuffer + offset, length_param_id);
+      memcpy(outbuffer + offset, &length_param_id, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->param_id, length_param_id);
       offset += length_param_id;
@@ -41,7 +39,7 @@ static const char PARAMSET[] = "mavros_msgs/ParamSet";
     {
       int offset = 0;
       uint32_t length_param_id;
-      arrToVar(length_param_id, (inbuffer + offset));
+      memcpy(&length_param_id, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_param_id; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -61,10 +59,8 @@ static const char PARAMSET[] = "mavros_msgs/ParamSet";
   class ParamSetResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef mavros_msgs::ParamValue _value_type;
-      _value_type value;
+      bool success;
+      mavros_msgs::ParamValue value;
 
     ParamSetResponse():
       success(0),

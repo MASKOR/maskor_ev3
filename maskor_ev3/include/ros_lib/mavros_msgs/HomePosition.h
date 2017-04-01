@@ -15,20 +15,13 @@ namespace mavros_msgs
   class HomePosition : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef double _latitude_type;
-      _latitude_type latitude;
-      typedef double _longitude_type;
-      _longitude_type longitude;
-      typedef float _altitude_type;
-      _altitude_type altitude;
-      typedef geometry_msgs::Vector3 _position_type;
-      _position_type position;
-      typedef geometry_msgs::Quaternion _orientation_type;
-      _orientation_type orientation;
-      typedef geometry_msgs::Vector3 _approach_type;
-      _approach_type approach;
+      std_msgs::Header header;
+      double latitude;
+      double longitude;
+      float altitude;
+      geometry_msgs::Vector3 position;
+      geometry_msgs::Quaternion orientation;
+      geometry_msgs::Vector3 approach;
 
     HomePosition():
       header(),

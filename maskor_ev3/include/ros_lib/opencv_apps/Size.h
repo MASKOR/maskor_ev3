@@ -12,10 +12,8 @@ namespace opencv_apps
   class Size : public ros::Msg
   {
     public:
-      typedef double _width_type;
-      _width_type width;
-      typedef double _height_type;
-      _height_type height;
+      double width;
+      double height;
 
     Size():
       width(0),

@@ -13,14 +13,10 @@ namespace mavros_msgs
   class BatteryStatus : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef float _voltage_type;
-      _voltage_type voltage;
-      typedef float _current_type;
-      _current_type current;
-      typedef float _remaining_type;
-      _remaining_type remaining;
+      std_msgs::Header header;
+      float voltage;
+      float current;
+      float remaining;
 
     BatteryStatus():
       header(),

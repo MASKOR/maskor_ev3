@@ -13,12 +13,9 @@ static const char STREAMRATE[] = "mavros_msgs/StreamRate";
   class StreamRateRequest : public ros::Msg
   {
     public:
-      typedef uint8_t _stream_id_type;
-      _stream_id_type stream_id;
-      typedef uint16_t _message_rate_type;
-      _message_rate_type message_rate;
-      typedef bool _on_off_type;
-      _on_off_type on_off;
+      uint8_t stream_id;
+      uint16_t message_rate;
+      bool on_off;
       enum { STREAM_ALL =  0 };
       enum { STREAM_RAW_SENSORS =  1 };
       enum { STREAM_EXTENDED_STATUS =  2 };

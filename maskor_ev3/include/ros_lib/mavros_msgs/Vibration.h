@@ -14,10 +14,8 @@ namespace mavros_msgs
   class Vibration : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef geometry_msgs::Vector3 _vibration_type;
-      _vibration_type vibration;
+      std_msgs::Header header;
+      geometry_msgs::Vector3 vibration;
       float clipping[3];
 
     Vibration():
@@ -32,7 +30,7 @@ namespace mavros_msgs
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
       offset += this->vibration.serialize(outbuffer + offset);
-      for( uint32_t i = 0; i < 3; i++){
+      for( uint8_t i = 0; i < 3; i++){
       union {
         float real;
         uint32_t base;
@@ -52,7 +50,7 @@ namespace mavros_msgs
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
       offset += this->vibration.deserialize(inbuffer + offset);
-      for( uint32_t i = 0; i < 3; i++){
+      for( uint8_t i = 0; i < 3; i++){
       union {
         float real;
         uint32_t base;

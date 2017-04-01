@@ -13,16 +13,11 @@ static const char COMMANDTOL[] = "mavros_msgs/CommandTOL";
   class CommandTOLRequest : public ros::Msg
   {
     public:
-      typedef float _min_pitch_type;
-      _min_pitch_type min_pitch;
-      typedef float _yaw_type;
-      _yaw_type yaw;
-      typedef float _latitude_type;
-      _latitude_type latitude;
-      typedef float _longitude_type;
-      _longitude_type longitude;
-      typedef float _altitude_type;
-      _altitude_type altitude;
+      float min_pitch;
+      float yaw;
+      float latitude;
+      float longitude;
+      float altitude;
 
     CommandTOLRequest():
       min_pitch(0),
@@ -158,10 +153,8 @@ static const char COMMANDTOL[] = "mavros_msgs/CommandTOL";
   class CommandTOLResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef uint8_t _result_type;
-      _result_type result;
+      bool success;
+      uint8_t result;
 
     CommandTOLResponse():
       success(0),

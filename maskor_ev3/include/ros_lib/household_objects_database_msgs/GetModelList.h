@@ -14,8 +14,7 @@ static const char GETMODELLIST[] = "household_objects_database_msgs/GetModelList
   class GetModelListRequest : public ros::Msg
   {
     public:
-      typedef const char* _model_set_type;
-      _model_set_type model_set;
+      const char* model_set;
 
     GetModelListRequest():
       model_set("")
@@ -26,7 +25,7 @@ static const char GETMODELLIST[] = "household_objects_database_msgs/GetModelList
     {
       int offset = 0;
       uint32_t length_model_set = strlen(this->model_set);
-      varToArr(outbuffer + offset, length_model_set);
+      memcpy(outbuffer + offset, &length_model_set, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->model_set, length_model_set);
       offset += length_model_set;
@@ -37,7 +36,7 @@ static const char GETMODELLIST[] = "household_objects_database_msgs/GetModelList
     {
       int offset = 0;
       uint32_t length_model_set;
-      arrToVar(length_model_set, (inbuffer + offset));
+      memcpy(&length_model_set, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_model_set; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -56,12 +55,10 @@ static const char GETMODELLIST[] = "household_objects_database_msgs/GetModelList
   class GetModelListResponse : public ros::Msg
   {
     public:
-      typedef household_objects_database_msgs::DatabaseReturnCode _return_code_type;
-      _return_code_type return_code;
-      uint32_t model_ids_length;
-      typedef int32_t _model_ids_type;
-      _model_ids_type st_model_ids;
-      _model_ids_type * model_ids;
+      household_objects_database_msgs::DatabaseReturnCode return_code;
+      uint8_t model_ids_length;
+      int32_t st_model_ids;
+      int32_t * model_ids;
 
     GetModelListResponse():
       return_code(),
@@ -73,12 +70,11 @@ static const char GETMODELLIST[] = "household_objects_database_msgs/GetModelList
     {
       int offset = 0;
       offset += this->return_code.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->model_ids_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->model_ids_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->model_ids_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->model_ids_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->model_ids_length);
-      for( uint32_t i = 0; i < model_ids_length; i++){
+      *(outbuffer + offset++) = model_ids_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < model_ids_length; i++){
       union {
         int32_t real;
         uint32_t base;
@@ -97,15 +93,12 @@ static const char GETMODELLIST[] = "household_objects_database_msgs/GetModelList
     {
       int offset = 0;
       offset += this->return_code.deserialize(inbuffer + offset);
-      uint32_t model_ids_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      model_ids_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      model_ids_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      model_ids_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->model_ids_length);
+      uint8_t model_ids_lengthT = *(inbuffer + offset++);
       if(model_ids_lengthT > model_ids_length)
         this->model_ids = (int32_t*)realloc(this->model_ids, model_ids_lengthT * sizeof(int32_t));
+      offset += 3;
       model_ids_length = model_ids_lengthT;
-      for( uint32_t i = 0; i < model_ids_length; i++){
+      for( uint8_t i = 0; i < model_ids_length; i++){
       union {
         int32_t real;
         uint32_t base;

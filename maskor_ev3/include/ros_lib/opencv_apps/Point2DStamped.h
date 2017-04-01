@@ -14,10 +14,8 @@ namespace opencv_apps
   class Point2DStamped : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef opencv_apps::Point2D _point_type;
-      _point_type point;
+      std_msgs::Header header;
+      opencv_apps::Point2D point;
 
     Point2DStamped():
       header(),

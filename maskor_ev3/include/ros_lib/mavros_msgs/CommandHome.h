@@ -13,14 +13,10 @@ static const char COMMANDHOME[] = "mavros_msgs/CommandHome";
   class CommandHomeRequest : public ros::Msg
   {
     public:
-      typedef bool _current_gps_type;
-      _current_gps_type current_gps;
-      typedef float _latitude_type;
-      _latitude_type latitude;
-      typedef float _longitude_type;
-      _longitude_type longitude;
-      typedef float _altitude_type;
-      _altitude_type altitude;
+      bool current_gps;
+      float latitude;
+      float longitude;
+      float altitude;
 
     CommandHomeRequest():
       current_gps(0),
@@ -128,10 +124,8 @@ static const char COMMANDHOME[] = "mavros_msgs/CommandHome";
   class CommandHomeResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef uint8_t _result_type;
-      _result_type result;
+      bool success;
+      uint8_t result;
 
     CommandHomeResponse():
       success(0),

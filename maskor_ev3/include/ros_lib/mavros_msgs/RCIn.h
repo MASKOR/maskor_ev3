@@ -13,14 +13,11 @@ namespace mavros_msgs
   class RCIn : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef uint8_t _rssi_type;
-      _rssi_type rssi;
-      uint32_t channels_length;
-      typedef uint16_t _channels_type;
-      _channels_type st_channels;
-      _channels_type * channels;
+      std_msgs::Header header;
+      uint8_t rssi;
+      uint8_t channels_length;
+      uint16_t st_channels;
+      uint16_t * channels;
 
     RCIn():
       header(),
@@ -35,12 +32,11 @@ namespace mavros_msgs
       offset += this->header.serialize(outbuffer + offset);
       *(outbuffer + offset + 0) = (this->rssi >> (8 * 0)) & 0xFF;
       offset += sizeof(this->rssi);
-      *(outbuffer + offset + 0) = (this->channels_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->channels_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->channels_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->channels_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->channels_length);
-      for( uint32_t i = 0; i < channels_length; i++){
+      *(outbuffer + offset++) = channels_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < channels_length; i++){
       *(outbuffer + offset + 0) = (this->channels[i] >> (8 * 0)) & 0xFF;
       *(outbuffer + offset + 1) = (this->channels[i] >> (8 * 1)) & 0xFF;
       offset += sizeof(this->channels[i]);
@@ -54,15 +50,12 @@ namespace mavros_msgs
       offset += this->header.deserialize(inbuffer + offset);
       this->rssi =  ((uint8_t) (*(inbuffer + offset)));
       offset += sizeof(this->rssi);
-      uint32_t channels_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      channels_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      channels_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      channels_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->channels_length);
+      uint8_t channels_lengthT = *(inbuffer + offset++);
       if(channels_lengthT > channels_length)
         this->channels = (uint16_t*)realloc(this->channels, channels_lengthT * sizeof(uint16_t));
+      offset += 3;
       channels_length = channels_lengthT;
-      for( uint32_t i = 0; i < channels_length; i++){
+      for( uint8_t i = 0; i < channels_length; i++){
       this->st_channels =  ((uint16_t) (*(inbuffer + offset)));
       this->st_channels |= ((uint16_t) (*(inbuffer + offset + 1))) << (8 * 1);
       offset += sizeof(this->st_channels);
