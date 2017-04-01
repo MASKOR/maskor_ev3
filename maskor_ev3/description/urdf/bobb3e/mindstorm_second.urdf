@@ -25,18 +25,26 @@
 
   <!-- Unterbau -->
 
+  <!--
+  "package://maskor_ev3/description/meshes/bobb3e_baseLink.dae"
+           -->
+
   <link name="base_link">
       <visual>
         <geometry>
           <box size="1 0.6 0.2"/>
+<!--          <mesh>
+            <uri>model://maskor_ev3/description/meshes/bobb3e_baseLink.dae</uri>
+          </mesh> -->
         </geometry>
         <origin rpy="0 0 0" xyz="0 0 0"/>
-        <material name="white"/>
+        <!--<material name="white"/>-->
       </visual>
       <collision>
         <geometry>
           <box size="1 0.6 0.2"/>
         </geometry>
+<!--        <mesh filename="package:///home/dennis/catkin_ws/src/maskor_allegro/verschiedenes/bobb3e_baseLink.dae"/> -->
       </collision>
       <xacro:einfaches_inertial mass="10"/>
    </link>
@@ -407,4 +415,3 @@
   </gazebo>
 
 </robot>
-
