@@ -11,14 +11,14 @@ add_compile_options(-std=c++11)
 #comment this in if using raspberry pi
 #add_definitions(-DEV3DEV_PLATFORM_BRICKPI)
 
-
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  #maskor_ev3_msgs
-  )
+  rosserial_client
+)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -76,6 +76,11 @@ find_package(catkin REQUIRED COMPONENTS
 # generate_messages(
 #   DEPENDENCIES
 #   std_msgs  # Or other packages containing msgs
+# )
+
+# rosserial_generate_ros_lib(
+#   PACKAGE rosserial_client
+#   SCRIPT make_libraries.py
 # )
 
 ################################################
