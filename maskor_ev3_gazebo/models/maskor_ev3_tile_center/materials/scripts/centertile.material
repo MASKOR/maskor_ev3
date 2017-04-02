@@ -1,0 +1,17 @@
+material center
+{
+  receive_shadows off
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture centertile.png
+        filtering anistropic
+        max_anisotropy 16
+      }
+
+    }
+  }
+}
