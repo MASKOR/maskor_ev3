@@ -1,5 +1,4 @@
 <launch>
-  <env name="GAZEBO_MODEL_PATH" value="$(find maskor_ev3)"/>
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
@@ -8,11 +7,9 @@
   <arg name="debug" default="false"/>
   <arg name="model" default="$(find maskor_ev3)/description/urdf/bobb3e/mindstorm_second.urdf"/>
 
-
-
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-		<arg name="world_name" value="$(find maskor_ev3)/world/box.world"/>
+<!--<arg name="world_name" value="$(find urdf_tutorial)/world/box.world"/>-->
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)"/>
@@ -20,7 +17,7 @@
     <arg name="headless" value="$(arg headless)"/>
   </include>
 
-  <param name="robot_description" textfile="$(find maskor_ev3)/description/urdf/bobb3e/mindstorm_second.urdf" />
+  <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
@@ -35,9 +32,19 @@
   </node>
 
 <!-- Turtle-joy-->
-  <include file="$(find maskor_ev3)/launch/joy.launch" />
+<!-- joy node -->
+  <node respawn="true" pkg="joy"
+        type="joy_node" name="turtle_joy" >
+    <param name="dev" type="string" value="/dev/input/js1" />
+    <param name="deadzone" value="0.12" />
+  </node>
 
-<!-- Color Sensor-Node -->
-
+ <!-- Axes -->
+  <param name="axis_linear" value="1" type="int"/><!-- 1 -->
+	<param name="axis_horizontal" value="4" type="int"/>
+  <param name="axis_angular" value="0" type="int"/><!-- 0 -->
+  <param name="scale_linear" value="2" type="double"/>
+  <param name="scale_angular" value="2" type="double"/>
+  <node pkg="learning_joy" type="turtle_teleop_joy" name="teleop"/>
 
 </launch>

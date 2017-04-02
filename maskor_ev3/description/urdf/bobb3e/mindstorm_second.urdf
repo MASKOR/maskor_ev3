@@ -4,7 +4,7 @@
   <xacro:property name="länge" value="1" />
   <xacro:property name="höhe" value="0.5" />
   <xacro:property name="tiefe" value="0.5"/>
-  <xacro:property name="reifenradius" value="0.2" />
+  <xacro:property name="reifenradius" value="0.13" />
   <xacro:property name="reifenlaenge" value="0.2" />
   <xacro:property name="pi" value="3.1415" />
 
@@ -25,23 +25,19 @@
 
   <!-- Unterbau -->
 
-  <!--
-  "package://maskor_ev3/description/meshes/bobb3e_baseLink.dae"
-           -->
-
   <link name="base_link">
       <visual>
         <geometry>
-          <mesh filename="package://maskor_ev3/description/meshes/bobb3e_baseLink.dae" scale="1 1 1"/>
+ <!--         <box size="1 0.6 0.2"/> -->
+					<mesh filename="package://maskor_ev3/description/meshes/bobb3e_baseLink.dae" scale="1 1 1"/>
         </geometry>
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <!--<material name="white"/>-->
+        <origin rpy="0 0 0" xyz="0 0 -0.2"/>
+        <material name="white"/>
       </visual>
       <collision>
         <geometry>
           <box size="1 0.6 0.2"/>
         </geometry>
-<!--        <mesh filename="package:///home/dennis/catkin_ws/src/maskor_allegro/verschiedenes/bobb3e_baseLink.dae"/> -->
       </collision>
       <xacro:einfaches_inertial mass="10"/>
    </link>
@@ -74,7 +70,7 @@
       <link name="${prefix}_wheel">
         <visual>
           <geometry>
-            <cylinder length="${reifenlaenge}" radius="${reifenradius}"/>
+            <mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
           </geometry>
           <origin rpy="1.55 -1.57 0" xyz="0 0 0"/>
           <material name="black"/>
@@ -90,10 +86,10 @@
 
       <joint name="${prefix}_wheel_joint" type="continuous">
         <joint_properties damping="0.0" friction="40.0" />
-         <axis rpy="0 0 0" xyz="0 1 0"/>
+         <axis rpy="0 0 0" xyz="1 0 0"/>
          <parent link="base_link"/>
          <child link="${prefix}_wheel"/>
-         <origin xyz="0.1 ${reflect*0.4} 0"/>
+         <origin rpy="0 0 ${reflect*1.5708}" xyz="0.63 ${reflect*0.65} -0.054"/>
        </joint>
   </xacro:macro>
 
@@ -141,7 +137,7 @@
   <link name="lift_left">
     <visual name="lift_left">
       <geometry>
-       <box size="0.1 0.05 1"/>
+       <!--<box size="0.1 0.05 1"/>-->
       </geometry>
       <origin rpy="0 0 0" xyz="0 -0.2 0"/>
       <material name="black"/>
@@ -164,7 +160,7 @@
   <link name="lift_right">
     <visual name="lift_right">
       <geometry>
-       <box size="0.1 0.05 1"/>
+       <!--<box size="0.1 0.05 1"/>-->
       </geometry>
       <origin rpy="0 0 0" xyz="0 0.2 0"/>
       <material name="black"/>
@@ -187,7 +183,7 @@
   <link name="lift_top">
     <visual name="lift_top">
       <geometry>
-       <box size="0.1 0.45 0.05"/>
+       <!--<box size="0.1 0.45 0.05"/>-->
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0.5"/>
       <material name="black"/>
@@ -213,7 +209,7 @@
   <link name="slider">
     <visual>
       <geometry>
-       <box size="0.05 0.5 0.045"/>
+       <!--<box size="0.05 0.5 0.045"/>-->
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="black"/>
@@ -237,7 +233,7 @@
   <link name="left_fork">
     <visual name="left_fork">
       <geometry>
-       <box size="0.5 0.05 0.02"/>
+      <!-- <box size="0.5 0.05 0.02"/>-->
       </geometry>
       <origin rpy="0 0 0" xyz="0.25 -0.15 0"/>
       <material name="black"/>
@@ -260,7 +256,7 @@
   <link name="right_fork">
     <visual name="right_fork">
       <geometry>
-       <box size="0.5 0.05 0.02"/>
+       <!--<box size="0.5 0.05 0.02"/>-->
       </geometry>
       <origin rpy="0 0 0" xyz="0.25 0.15 0"/>
       <material name="black"/>
@@ -286,7 +282,7 @@
   <link name="ir_sensor_box">
     <visual>
       <geometry>
-        <box size="0.05 0.2 0.05"/>
+        <!--<box size="0.05 0.2 0.05"/>-->
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="black"/>
@@ -337,7 +333,7 @@
   <link name="color_sensor_box">
     <visual>
       <geometry>
-        <box size="0.15 0.05 0.05"/>
+        <!--<box size="0.15 0.05 0.05"/>-->
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="black"/>
