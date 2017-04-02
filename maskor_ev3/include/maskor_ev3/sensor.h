@@ -147,6 +147,7 @@ protected:
   mutable std::vector<char> _bin_data;
 };
 
+
 } // end namespace
 
 #endif //SENSOR_H

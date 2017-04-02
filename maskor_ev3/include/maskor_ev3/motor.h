@@ -384,6 +384,7 @@ protected:
   bool connect(const std::map<std::string, std::set<std::string>>&) noexcept;
 };
 
+
 } //end namespace
 
 #endif //MOTOR_H
