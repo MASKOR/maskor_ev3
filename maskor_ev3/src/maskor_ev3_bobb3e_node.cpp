@@ -35,12 +35,12 @@ void cmd_velCb(const geometry_msgs::Twist& cmd);
 void calc_odometry();
 void publish_test_messages();
 
-// EV3 STUFF
-/*
-maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_C);
-maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);//randomly initialised 
-maskor_ev3::infrared_sensor ir_sensor(maskor_ev3::INPUT_1);
-*/
+#ifndef _OFFLINETEST
+void init_motors();
+void init_sensors();
+void motortest();
+#endif
+
 
 // ROS STUFF
 geometry_msgs::TransformStamped odom_tf;
@@ -254,45 +254,31 @@ void publish_test_messages() {
 
 }
 
-int main(int argc, char* argv[])
-{
-  printf("Init Node...\n");
-
-  nh.initNode(rosSrvrIp);
-  nh.subscribe(cmd_vel_sub);
-  nh.advertise(odom_pub);
-  nh.advertise(color_sensor_pub); 
-  nh.advertise(gyro_sensor_pub); 
-  nh.advertise(touch_sensor_pub); 
-  nh.advertise(infrared_sensor_pub);
-  nh.advertise(ultrasonic_sensor_pub); 
- 
- broadcaster.init(nh);
-    
+#ifndef _OFFLINETEST
+void init_motors() {
   printf("Init Motors...\n");
 
-#ifndef _OFFLINETEST
   //init motor position
   left_motor.set_position(0);
   right_motor.set_position(0);
   lift_motor.set_position(0);
- /*
+
+  /*
   //configuring the motors
   left_motor.reset();
   left_motor.set_position(0);
   left_motor.set_speed_regulation_enabled("on");
   */
+}
 
+void init_sensors() {
   printf("Init Sensors...\n");
-  
-  //init sensors
-  maskor_ev3::sensor s(maskor_ev3::INPUT_4);
-#endif
-  
-  
-  while(1)
-    {
-#ifndef _OFFLINETEST
+
+ //init sensors
+  maskor_ev3::sensor s(maskor_ev3::INPUT_4); 
+}
+
+void motor_test() {
       //print values
       // printf("sensor value: %d\n", s.value());
       printf("left_motor_position: %d\n", left_motor.position());
@@ -313,8 +299,35 @@ int main(int argc, char* argv[])
       //move lift
       lift_motor.set_speed_sp(lift_motor_speed);
       lift_motor.set_command("run-forever");
-#endif     
+} 
 
+#endif
+
+void init_node() {
+  printf("Init Node...\n");
+
+  nh.initNode(rosSrvrIp);
+  nh.subscribe(cmd_vel_sub);
+  nh.advertise(odom_pub);
+  nh.advertise(color_sensor_pub); 
+  nh.advertise(gyro_sensor_pub); 
+  nh.advertise(touch_sensor_pub); 
+  nh.advertise(infrared_sensor_pub);
+  nh.advertise(ultrasonic_sensor_pub); 
+ 
+  broadcaster.init(nh);
+}
+
+int main(int argc, char* argv[])
+{
+  init_node();
+#ifndef _OFFLINETEST
+  init_motors();
+  init_sensors();
+#endif
+
+  while(1)
+    {
       //ros stuff
       calc_odometry();
       publish_test_messages();

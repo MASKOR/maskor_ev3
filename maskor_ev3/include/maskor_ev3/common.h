@@ -1,6 +1,13 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
+/*
+ * C++ API to the sensors, motors, buttons, LEDs and battery of the ev3dev
+ * Linux kernel for the LEGO Mindstorms EV3 hardware
+ * Copyright (c) 2014 - Franz Detro
+ */
+
+
 #ifndef SYS_ROOT
 #define SYS_ROOT "/sys/class"
 #endif

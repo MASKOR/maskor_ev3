@@ -1,10 +1,16 @@
 #ifndef _SERVO_MOTOR_H_
 #define _SERVO_MOTOR_H
 
-#include <maskor_ev3/device.h>
+/*
+ * C++ API to the sensors, motors, buttons, LEDs and battery of the ev3dev
+ * Linux kernel for the LEGO Mindstorms EV3 hardware
+ * Copyright (c) 2014 - Franz Detro
+*/
 
 // The servo motor class provides a uniform interface for using hobby type
 // servo motors.
+
+#include <maskor_ev3/device.h>
 
 namespace maskor_ev3 {
 
