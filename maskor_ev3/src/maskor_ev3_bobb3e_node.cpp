@@ -22,6 +22,7 @@
 #include <std_msgs/String.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
+#include <sensor_msgs/JointState.h>
 #include <maskor_ev3_msgs/ColorSensor.h>
 #include <maskor_ev3_msgs/GyroSensor.h>
 #include <maskor_ev3_msgs/InfraredSensor.h>
@@ -34,6 +35,7 @@
 void cmd_velCb(const geometry_msgs::Twist& cmd);
 void calc_odometry();
 void publish_test_messages();
+void publish_joint_states();
 
 #ifndef _OFFLINETEST
 void init_motors();
@@ -46,6 +48,7 @@ void motortest();
 geometry_msgs::TransformStamped odom_tf;
 tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
+sensor_msgs::JointState joint_state_msg;
 maskor_ev3_msgs::ColorSensor color_sensor_msg;
 maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
 maskor_ev3_msgs::TouchSensor touch_sensor_msg;
@@ -61,7 +64,7 @@ ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
 ros::Publisher touch_sensor_pub("/bobb3e/touch_sensor", &touch_sensor_msg);
 ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
 ros::Publisher ultrasonic_sensor_pub("/bobb3e/ultrasonic_sensor", &ultrasonic_sensor_msg);
-
+ros::Publisher joint_state_pub("/bobb3e/joint_states", &joint_state_msg);
 
 
 //global variables
@@ -91,6 +94,20 @@ float vl = 0.0;
 float vr = 0.0; 
 float wheelbase = 0.12;
 float wheelradius = 0.03;
+
+enum {
+    LEFT_WHEEL,
+    RIGHT_WHEEL,
+    FORK_LIFT,
+    NUM_JOINTS
+};
+char *joint_names[] = {"left_wheel_link", 
+		       "right_wheel_link", 
+		       "fork_lift_link"};
+double joint_positions[NUM_JOINTS];
+double joint_velocities[NUM_JOINTS];
+double joint_efforts[NUM_JOINTS];
+
 
 #ifndef _OFFLINETEST
 //Init motors
@@ -254,6 +271,36 @@ void publish_test_messages() {
 
 }
 
+void publish_joint_states() {
+  printf("publish_joint_states()");
+
+  joint_state_msg.header.stamp = nh.now();
+  joint_state_msg.header.frame_id = "/bobb3e";
+  joint_state_msg.name_length = NUM_JOINTS;
+  joint_state_msg.velocity_length = NUM_JOINTS;
+  joint_state_msg.position_length = NUM_JOINTS; 
+  joint_state_msg.effort_length = NUM_JOINTS;
+  
+  //TODO: read joint states from motors
+  joint_positions[LEFT_WHEEL] = 0;
+  joint_positions[RIGHT_WHEEL] = 0; 
+  joint_positions[FORK_LIFT] = 0;
+  joint_velocities[LEFT_WHEEL] = 0;
+  joint_velocities[RIGHT_WHEEL] = 0; 
+  joint_velocities[FORK_LIFT] = 0;
+  joint_efforts[LEFT_WHEEL] = 0;
+  joint_efforts[RIGHT_WHEEL] = 0; 
+  joint_efforts[FORK_LIFT] = 0;
+
+  joint_state_msg.name = joint_names;
+  joint_state_msg.position = joint_positions;
+  joint_state_msg.velocity = joint_velocities;
+  joint_state_msg.effort = joint_efforts;
+
+  joint_state_pub.publish(&joint_state_msg);
+}
+
+
 #ifndef _OFFLINETEST
 void init_motors() {
   printf("Init Motors...\n");
@@ -314,6 +361,7 @@ void init_node() {
   nh.advertise(touch_sensor_pub); 
   nh.advertise(infrared_sensor_pub);
   nh.advertise(ultrasonic_sensor_pub); 
+  nh.advertise(joint_state_pub); 
  
   broadcaster.init(nh);
 }
@@ -331,6 +379,7 @@ int main(int argc, char* argv[])
       //ros stuff
       calc_odometry();
       publish_test_messages();
+      publish_joint_states();
       usleep(100000); //microseconds
       nh.spinOnce(); // check for incoming messages
     }
