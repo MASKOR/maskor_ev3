@@ -5542,9 +5542,18 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <state world_name='maskor_ev3_challenge'>
-      <sim_time>13 803000000</sim_time>
-      <real_time>13 983964009</real_time>
-      <wall_time>1491154719 795491664</wall_time>
+      <sim_time>79 725000000</sim_time>
+      <real_time>117 360675365</real_time>
+      <wall_time>1491168535 294589638</wall_time>
+      <model name='ground_plane'>
+        <pose>1.50968 -3 0 0 -0 0</pose>
+        <link name='link'>
+          <pose>1.50968 -3 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
       <model name='tileAC10'>
         <pose>0 0.7 0.001 0 -0 0</pose>
         <link name='link'>
@@ -7258,9 +7267,58 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>6.31447 -3.16947 3.29015 0 0.275643 2.35619</pose>
+        <pose>6.8518 -4.04078 3.07458 0 0.275643 2.35619</pose>
         <view_controller>orbit</view_controller>
       </camera>
     </gui>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+            <bounce/>
+            <contact>
+              <ode/>
+            </contact>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <velocity_decay>
+          <linear>0</linear>
+          <angular>0</angular>
+        </velocity_decay>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose>1.50968 -3 0 0 -0 0</pose>
+    </model>
   </world>
 </sdf>

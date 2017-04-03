@@ -9,7 +9,7 @@
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-<!--<arg name="world_name" value="$(find urdf_tutorial)/world/box.world"/>-->
+    <arg name="world_name" value="$(find maskor_ev3)/world/ev3_challenge.world"/>
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)"/>
@@ -19,9 +19,19 @@
 
   <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
 
+  <!-- Vehicle pose -->
+   <arg name="x" default="0.0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="0.2"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="0"/>
+
+
   <!-- push robot_description to factory and spawn robot in gazebo -->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-        args="-z 1.0 -unpause -urdf -model robot -param robot_description" respawn="false" output="screen" />
+        args="-z 1.0 -unpause -urdf -model ev3_bobb3e -param robot_description -x $(arg x) -y $(arg y) -z $(arg z)
+        -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" respawn="false" output="screen" />
 
   <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
     <param name="publish_frequency" type="double" value="30.0" />
