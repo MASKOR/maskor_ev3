@@ -59,9 +59,12 @@ int wheel_encoder_current_pos[2] = {0,0};
 int wheel_encoder_prev_pos[2] = {0,0};
 int dl = 0;
 int dr = 0;
+int k = 0;
+int q = 0;
 float trans_x = 0.0;
 float trans_y = 0.0;
 float theta = 0.0;
+float t_offset = 0.0;
 float vx = 0.0;
 float wt = 0.0;
 float vl = 0.0;
@@ -74,6 +77,8 @@ maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
 maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_B);
 maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
 
+//init sensors
+maskor_ev3::sensor gsense(maskor_ev3::INPUT_4);
 
 
 /*vx=velocity of centroid, wt=angular velocity of cenintroid, 
@@ -141,6 +146,53 @@ void calc_odometry() {
 #ifdef _DEBUG
   printf("calc_odometry()\n");
 #endif
+
+  //calculating gyro
+  theta = -gsense.value()*deg2rad - t_offset;
+
+  //making sure the angle lies in [-π,π]
+  
+  
+  theta = theta/deg2rad;
+  if(theta>0)
+    {
+      k = theta/360;
+      theta = theta - k*360;
+      if(theta>0&&theta<90)
+	q =1; 
+      if(theta>90&&theta<180)
+	q = 2;
+      if(theta>180&&theta<270)
+	q = 3;
+      if(theta>270&&theta<360)
+	q = 4;
+      if(q==1||q==2)
+	theta = theta + 0;
+      if(q==4||q==3)
+	theta = -360 + theta ;
+    }
+
+  if(theta<0)
+    {
+      k = -theta/360;
+      theta = theta + k*360;
+      if(theta<0 && theta>-90)
+	q =4; 
+      if(theta<-90&&theta>-180)
+	q = 3;
+      if(theta<-180&&theta>-270)
+	q = 2;
+      if(theta<-270&&theta>-360)
+	q = 1;
+      if(q==4||q==3)
+	theta = theta + 0;
+      if(q==1||q==2)
+	theta = 360 + theta ;
+    }
+
+
+  theta*=deg2rad;
+  
   //get current wheel positions  
   wheel_encoder_current_pos[0] = left_motor.position(); 
   wheel_encoder_current_pos[1] = right_motor.position();
@@ -220,9 +272,11 @@ int main(int argc, char* argv[])
 
   printf("Init Sensors...\n");
   
-  //init sensors
-  maskor_ev3::sensor s(maskor_ev3::INPUT_4);
+  t_offset = -gsense.value()*deg2rad;
 
+  printf("t_offset = %f \n", t_offset);
+
+  
   
   while(1)
     {
@@ -237,6 +291,8 @@ int main(int argc, char* argv[])
       printf("fork_motor_speed: %d\n", lift_motor.speed_sp());      
       printf("\n\n\n");
 
+      printf("theta: %f \n" , theta);
+
       //set speed     
       left_motor.set_speed_sp(left_motor_speed);
       left_motor.set_command("run-forever");
@@ -249,7 +305,7 @@ int main(int argc, char* argv[])
      
       //ros stuff
       calc_odometry();
-      usleep(100000); //microseconds
+      usleep(10000); //microseconds
       nh.spinOnce(); // check for incoming messages
     }
  
