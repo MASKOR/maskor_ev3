@@ -85,9 +85,12 @@ int wheel_encoder_current_pos[2] = {0,0};
 int wheel_encoder_prev_pos[2] = {0,0};
 int dl = 0;
 int dr = 0;
+int k = 0;
+int q = 0;
 float trans_x = 0.0;
 float trans_y = 0.0;
 float theta = 0.0;
+float t_offset = 0.0;
 float vx = 0.0;
 float wt = 0.0;
 float vl = 0.0;
@@ -114,11 +117,9 @@ double joint_efforts[NUM_JOINTS];
 maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
 maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_B);
 maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
+  //init sensors
+maskor_ev3::sensor gyro_sensor(maskor_ev3::INPUT_4);
 #endif
-
-
-/*vx=velocity of centroid, wt=angular velocity of cenintroid, 
- vr,vl= velocity of wheels,L=distance between wheels R = radius of wheel*/
 
 
 void cmd_velCb(const geometry_msgs::Twist& cmd) {
@@ -185,6 +186,51 @@ void calc_odometry() {
  
 #ifndef _OFFLINETEST
  //get current wheel positions  
+
+  //calculating gyro
+  theta = -gsense.value()*deg2rad - t_offset;
+
+  //making sure the angle lies in [-π,π]  
+  theta = theta/deg2rad;
+  if(theta>0)
+    {
+      k = theta/360;
+      theta = theta - k*360;
+      if(theta>0&&theta<90)
+	q =1; 
+      if(theta>90&&theta<180)
+	q = 2;
+      if(theta>180&&theta<270)
+	q = 3;
+      if(theta>270&&theta<360)
+	q = 4;
+      if(q==1||q==2)
+	theta = theta + 0;
+      if(q==4||q==3)
+	theta = -360 + theta ;
+    }
+
+  if(theta<0)
+    {
+      k = -theta/360;
+      theta = theta + k*360;
+      if(theta<0 && theta>-90)
+	q =4; 
+      if(theta<-90&&theta>-180)
+	q = 3;
+      if(theta<-180&&theta>-270)
+	q = 2;
+      if(theta<-270&&theta>-360)
+	q = 1;
+      if(q==4||q==3)
+	theta = theta + 0;
+      if(q==1||q==2)
+	theta = 360 + theta ;
+    }
+
+  theta*=deg2rad;
+  
+  //get current wheel positions  
   wheel_encoder_current_pos[0] = left_motor.position(); 
   wheel_encoder_current_pos[1] = right_motor.position();
 #endif
@@ -207,7 +253,8 @@ void calc_odometry() {
   vr = right_motor.speed();
 #endif
 
-  //TODO: what is happening here??      
+  /*vx=velocity of centroid, wt=angular velocity of cenintroid, 
+    vr,vl= velocity of wheels,L=distance between wheels R = radius of wheel*/
   //remmapping linear and angular velocity of centroid from vl, vr
   vx = (vl+vr) / 2*(wheelradius * deg2rad);
   wt = (vl-vr) / wheelbase * (wheelradius * deg2rad);
@@ -215,7 +262,7 @@ void calc_odometry() {
   //since all odometry is 6DOF we'll need a quaternion created from yaw
   geometry_msgs::Quaternion odom_quat = tf::createQuaternionFromYaw(theta);
 
-  //first, we'll publish the transform over tf
+  //publish odom TF
   odom_tf.header.stamp = nh.now();
   odom_tf.header.frame_id = odom;
   odom_tf.child_frame_id = base_link;
@@ -225,7 +272,7 @@ void calc_odometry() {
   odom_tf.transform.rotation = odom_quat;
   broadcaster.sendTransform(odom_tf);
 
-  //publish corresponding odom msg
+  //publish odom msg
   odom_msg.header.stamp = nh.now();
   odom_msg.header.frame_id = odom;
   odom_msg.child_frame_id = base_link;
@@ -282,6 +329,21 @@ void publish_joint_states() {
   joint_state_msg.effort_length = NUM_JOINTS;
   
   //TODO: read joint states from motors
+// # The state of each joint (revolute or prismatic) is defined by:
+// #  * the position of the joint (rad or m),
+// #  * the velocity of the joint (rad/s or m/s) and 
+// #  * the effort that is applied in the joint (Nm or N).  
+#ifndef _OFFLINETEST
+  joint_positions[LEFT_WHEEL] = left_motor.position(); //deg or rad??
+  joint_positions[RIGHT_WHEEL] = right_motor.position(); 
+  joint_positions[FORK_LIFT] = lift_motor.positon();
+  joint_velocities[LEFT_WHEEL] = left_motor.speed();
+  joint_velocities[RIGHT_WHEEL] = right_motor.speed(); 
+  joint_velocities[FORK_LIFT] = lift_motor.speed();
+  joint_efforts[LEFT_WHEEL] = 0;
+  joint_efforts[RIGHT_WHEEL] = 0; 
+  joint_efforts[FORK_LIFT] = 0;
+#else
   joint_positions[LEFT_WHEEL] = 0;
   joint_positions[RIGHT_WHEEL] = 0; 
   joint_positions[FORK_LIFT] = 0;
@@ -291,6 +353,7 @@ void publish_joint_states() {
   joint_efforts[LEFT_WHEEL] = 0;
   joint_efforts[RIGHT_WHEEL] = 0; 
   joint_efforts[FORK_LIFT] = 0;
+#endif
 
   joint_state_msg.name = joint_names;
   joint_state_msg.position = joint_positions;
@@ -321,11 +384,19 @@ void init_motors() {
 void init_sensors() {
   printf("Init Sensors...\n");
 
- //init sensors
-  maskor_ev3::sensor s(maskor_ev3::INPUT_4); 
+
 }
 
 void motor_test() {
+  
+  t_offset = -gyro_sensor.value()*deg2rad;
+
+  printf("t_offset = %f \n", t_offset);
+
+  
+  
+  while(1)
+    {
       //print values
       // printf("sensor value: %d\n", s.value());
       printf("left_motor_position: %d\n", left_motor.position());
@@ -336,6 +407,8 @@ void motor_test() {
       printf("fork_motor_position: %d\n", lift_motor.position());
       printf("fork_motor_speed: %d\n", lift_motor.speed_sp());      
       printf("\n\n\n");
+
+      printf("theta: %f \n" , theta);
 
       //set speed     
       left_motor.set_speed_sp(left_motor_speed);
