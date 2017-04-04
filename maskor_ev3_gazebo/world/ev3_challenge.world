@@ -116,7 +116,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>brown</name>
+              <name>green</name>
             </script>
           </material>
         </visual>
@@ -145,7 +145,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>green</name>
+              <name>brown</name>
             </script>
           </material>
         </visual>
@@ -174,7 +174,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>blue</name>
+              <name>yellow</name>
             </script>
           </material>
         </visual>
@@ -5394,7 +5394,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>green</name>
+              <name>brown</name>
             </script>
           </material>
         </visual>
@@ -5423,7 +5423,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>brown</name>
+              <name>blue</name>
             </script>
           </material>
         </visual>
