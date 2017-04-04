@@ -40,7 +40,6 @@ void publish_joint_states();
 #ifndef _OFFLINETEST
 void init_motors();
 void init_sensors();
-void motortest();
 #endif
 
 
@@ -65,6 +64,17 @@ ros::Publisher touch_sensor_pub("/bobb3e/touch_sensor", &touch_sensor_msg);
 ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
 ros::Publisher ultrasonic_sensor_pub("/bobb3e/ultrasonic_sensor", &ultrasonic_sensor_msg);
 ros::Publisher joint_state_pub("/bobb3e/joint_states", &joint_state_msg);
+
+#ifndef _OFFLINETEST
+//motors
+maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
+maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_B);
+maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
+//sensors
+maskor_ev3::sensor gyro_sensor(maskor_ev3::INPUT_4);
+#endif
+
+
 
 
 //global variables
@@ -110,16 +120,6 @@ char *joint_names[] = {"left_wheel_link",
 double joint_positions[NUM_JOINTS];
 double joint_velocities[NUM_JOINTS];
 double joint_efforts[NUM_JOINTS];
-
-
-#ifndef _OFFLINETEST
-//Init motors
-maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
-maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_B);
-maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
-  //init sensors
-maskor_ev3::sensor gyro_sensor(maskor_ev3::INPUT_4);
-#endif
 
 
 void cmd_velCb(const geometry_msgs::Twist& cmd) {
@@ -185,8 +185,6 @@ void calc_odometry() {
 #endif
  
 #ifndef _OFFLINETEST
- //get current wheel positions  
-
   //calculating gyro
   theta = -gsense.value()*deg2rad - t_offset;
 
@@ -383,44 +381,7 @@ void init_motors() {
 
 void init_sensors() {
   printf("Init Sensors...\n");
-
-
 }
-
-void motor_test() {
-  
-  t_offset = -gyro_sensor.value()*deg2rad;
-
-  printf("t_offset = %f \n", t_offset);
-
-  
-  
-  while(1)
-    {
-      //print values
-      // printf("sensor value: %d\n", s.value());
-      printf("left_motor_position: %d\n", left_motor.position());
-      printf("left_motor_speed: %d\n", -left_motor.speed_sp());
-      printf("right_motor_position: %d\n", right_motor.position());
-      printf("right_motor_speed: %d\n", -right_motor.speed_sp());
-
-      printf("fork_motor_position: %d\n", lift_motor.position());
-      printf("fork_motor_speed: %d\n", lift_motor.speed_sp());      
-      printf("\n\n\n");
-
-      printf("theta: %f \n" , theta);
-
-      //set speed     
-      left_motor.set_speed_sp(left_motor_speed);
-      left_motor.set_command("run-forever");
-      right_motor.set_speed_sp(right_motor_speed);
-      right_motor.set_command("run-forever");
-
-      //move lift
-      lift_motor.set_speed_sp(lift_motor_speed);
-      lift_motor.set_command("run-forever");
-} 
-
 #endif
 
 void init_node() {
