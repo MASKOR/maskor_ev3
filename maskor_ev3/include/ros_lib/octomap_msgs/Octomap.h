@@ -13,18 +13,13 @@ namespace octomap_msgs
   class Octomap : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef bool _binary_type;
-      _binary_type binary;
-      typedef const char* _id_type;
-      _id_type id;
-      typedef double _resolution_type;
-      _resolution_type resolution;
-      uint32_t data_length;
-      typedef int8_t _data_type;
-      _data_type st_data;
-      _data_type * data;
+      std_msgs::Header header;
+      bool binary;
+      const char* id;
+      double resolution;
+      uint8_t data_length;
+      int8_t st_data;
+      int8_t * data;
 
     Octomap():
       header(),
@@ -47,7 +42,7 @@ namespace octomap_msgs
       *(outbuffer + offset + 0) = (u_binary.base >> (8 * 0)) & 0xFF;
       offset += sizeof(this->binary);
       uint32_t length_id = strlen(this->id);
-      varToArr(outbuffer + offset, length_id);
+      memcpy(outbuffer + offset, &length_id, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->id, length_id);
       offset += length_id;
@@ -65,12 +60,11 @@ namespace octomap_msgs
       *(outbuffer + offset + 6) = (u_resolution.base >> (8 * 6)) & 0xFF;
       *(outbuffer + offset + 7) = (u_resolution.base >> (8 * 7)) & 0xFF;
       offset += sizeof(this->resolution);
-      *(outbuffer + offset + 0) = (this->data_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->data_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->data_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->data_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->data_length);
-      for( uint32_t i = 0; i < data_length; i++){
+      *(outbuffer + offset++) = data_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < data_length; i++){
       union {
         int8_t real;
         uint8_t base;
@@ -95,7 +89,7 @@ namespace octomap_msgs
       this->binary = u_binary.real;
       offset += sizeof(this->binary);
       uint32_t length_id;
-      arrToVar(length_id, (inbuffer + offset));
+      memcpy(&length_id, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_id; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -118,15 +112,12 @@ namespace octomap_msgs
       u_resolution.base |= ((uint64_t) (*(inbuffer + offset + 7))) << (8 * 7);
       this->resolution = u_resolution.real;
       offset += sizeof(this->resolution);
-      uint32_t data_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      data_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      data_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      data_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->data_length);
+      uint8_t data_lengthT = *(inbuffer + offset++);
       if(data_lengthT > data_length)
         this->data = (int8_t*)realloc(this->data, data_lengthT * sizeof(int8_t));
+      offset += 3;
       data_length = data_lengthT;
-      for( uint32_t i = 0; i < data_length; i++){
+      for( uint8_t i = 0; i < data_length; i++){
       union {
         int8_t real;
         uint8_t base;

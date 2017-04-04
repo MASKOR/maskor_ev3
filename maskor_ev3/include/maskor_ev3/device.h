@@ -1,11 +1,11 @@
 #ifndef _DEVICE_H_
 #define _DEVICE_H_
 
-#include <maskor_ev3/common.h>
-#include <string>
-#include <string.h>
-#include <map>
-#include <dirent.h>
+/*
+ * C++ API to the sensors, motors, buttons, LEDs and battery of the ev3dev
+ * Linux kernel for the LEGO Mindstorms EV3 hardware
+ * Copyright (c) 2014 - Franz Detro
+*/
 
 // Generic device class.
 // The sensor class provides a uniform interface for using most of the
@@ -22,6 +22,13 @@
 // have more than one sensor of each type, you can just look for a matching
 // `driver_name`. Then it will not matter which port a sensor is plugged in to
 // your program will still work.
+
+#include <maskor_ev3/common.h>
+#include <string>
+#include <string.h>
+#include <map>
+#include <dirent.h>
+
 
 namespace maskor_ev3 {
 

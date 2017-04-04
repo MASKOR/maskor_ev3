@@ -13,10 +13,9 @@ namespace opencv_apps
   class CircleArray : public ros::Msg
   {
     public:
-      uint32_t circles_length;
-      typedef opencv_apps::Circle _circles_type;
-      _circles_type st_circles;
-      _circles_type * circles;
+      uint8_t circles_length;
+      opencv_apps::Circle st_circles;
+      opencv_apps::Circle * circles;
 
     CircleArray():
       circles_length(0), circles(NULL)
@@ -26,12 +25,11 @@ namespace opencv_apps
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset + 0) = (this->circles_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->circles_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->circles_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->circles_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->circles_length);
-      for( uint32_t i = 0; i < circles_length; i++){
+      *(outbuffer + offset++) = circles_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < circles_length; i++){
       offset += this->circles[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -40,15 +38,12 @@ namespace opencv_apps
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t circles_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      circles_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      circles_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      circles_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->circles_length);
+      uint8_t circles_lengthT = *(inbuffer + offset++);
       if(circles_lengthT > circles_length)
         this->circles = (opencv_apps::Circle*)realloc(this->circles, circles_lengthT * sizeof(opencv_apps::Circle));
+      offset += 3;
       circles_length = circles_lengthT;
-      for( uint32_t i = 0; i < circles_length; i++){
+      for( uint8_t i = 0; i < circles_length; i++){
       offset += this->st_circles.deserialize(inbuffer + offset);
         memcpy( &(this->circles[i]), &(this->st_circles), sizeof(opencv_apps::Circle));
       }

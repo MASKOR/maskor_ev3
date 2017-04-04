@@ -14,12 +14,9 @@ namespace opencv_apps
   class RotatedRect : public ros::Msg
   {
     public:
-      typedef double _angle_type;
-      _angle_type angle;
-      typedef opencv_apps::Point2D _center_type;
-      _center_type center;
-      typedef opencv_apps::Size _size_type;
-      _size_type size;
+      double angle;
+      opencv_apps::Point2D center;
+      opencv_apps::Size size;
 
     RotatedRect():
       angle(0),

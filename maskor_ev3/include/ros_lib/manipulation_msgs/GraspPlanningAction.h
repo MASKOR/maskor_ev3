@@ -15,12 +15,9 @@ namespace manipulation_msgs
   class GraspPlanningAction : public ros::Msg
   {
     public:
-      typedef manipulation_msgs::GraspPlanningActionGoal _action_goal_type;
-      _action_goal_type action_goal;
-      typedef manipulation_msgs::GraspPlanningActionResult _action_result_type;
-      _action_result_type action_result;
-      typedef manipulation_msgs::GraspPlanningActionFeedback _action_feedback_type;
-      _action_feedback_type action_feedback;
+      manipulation_msgs::GraspPlanningActionGoal action_goal;
+      manipulation_msgs::GraspPlanningActionResult action_result;
+      manipulation_msgs::GraspPlanningActionFeedback action_feedback;
 
     GraspPlanningAction():
       action_goal(),

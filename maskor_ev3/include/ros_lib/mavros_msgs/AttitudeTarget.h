@@ -15,16 +15,11 @@ namespace mavros_msgs
   class AttitudeTarget : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef uint8_t _type_mask_type;
-      _type_mask_type type_mask;
-      typedef geometry_msgs::Quaternion _orientation_type;
-      _orientation_type orientation;
-      typedef geometry_msgs::Vector3 _body_rate_type;
-      _body_rate_type body_rate;
-      typedef float _thrust_type;
-      _thrust_type thrust;
+      std_msgs::Header header;
+      uint8_t type_mask;
+      geometry_msgs::Quaternion orientation;
+      geometry_msgs::Vector3 body_rate;
+      float thrust;
       enum { IGNORE_ROLL_RATE =  1	 };
       enum { IGNORE_PITCH_RATE =  2	 };
       enum { IGNORE_YAW_RATE =  4	 };

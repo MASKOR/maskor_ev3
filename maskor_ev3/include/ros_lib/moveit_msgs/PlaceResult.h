@@ -16,20 +16,15 @@ namespace moveit_msgs
   class PlaceResult : public ros::Msg
   {
     public:
-      typedef moveit_msgs::MoveItErrorCodes _error_code_type;
-      _error_code_type error_code;
-      typedef moveit_msgs::RobotState _trajectory_start_type;
-      _trajectory_start_type trajectory_start;
-      uint32_t trajectory_stages_length;
-      typedef moveit_msgs::RobotTrajectory _trajectory_stages_type;
-      _trajectory_stages_type st_trajectory_stages;
-      _trajectory_stages_type * trajectory_stages;
-      uint32_t trajectory_descriptions_length;
-      typedef char* _trajectory_descriptions_type;
-      _trajectory_descriptions_type st_trajectory_descriptions;
-      _trajectory_descriptions_type * trajectory_descriptions;
-      typedef moveit_msgs::PlaceLocation _place_location_type;
-      _place_location_type place_location;
+      moveit_msgs::MoveItErrorCodes error_code;
+      moveit_msgs::RobotState trajectory_start;
+      uint8_t trajectory_stages_length;
+      moveit_msgs::RobotTrajectory st_trajectory_stages;
+      moveit_msgs::RobotTrajectory * trajectory_stages;
+      uint8_t trajectory_descriptions_length;
+      char* st_trajectory_descriptions;
+      char* * trajectory_descriptions;
+      moveit_msgs::PlaceLocation place_location;
 
     PlaceResult():
       error_code(),
@@ -45,22 +40,20 @@ namespace moveit_msgs
       int offset = 0;
       offset += this->error_code.serialize(outbuffer + offset);
       offset += this->trajectory_start.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->trajectory_stages_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->trajectory_stages_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->trajectory_stages_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->trajectory_stages_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->trajectory_stages_length);
-      for( uint32_t i = 0; i < trajectory_stages_length; i++){
+      *(outbuffer + offset++) = trajectory_stages_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < trajectory_stages_length; i++){
       offset += this->trajectory_stages[i].serialize(outbuffer + offset);
       }
-      *(outbuffer + offset + 0) = (this->trajectory_descriptions_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->trajectory_descriptions_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->trajectory_descriptions_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->trajectory_descriptions_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->trajectory_descriptions_length);
-      for( uint32_t i = 0; i < trajectory_descriptions_length; i++){
+      *(outbuffer + offset++) = trajectory_descriptions_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < trajectory_descriptions_length; i++){
       uint32_t length_trajectory_descriptionsi = strlen(this->trajectory_descriptions[i]);
-      varToArr(outbuffer + offset, length_trajectory_descriptionsi);
+      memcpy(outbuffer + offset, &length_trajectory_descriptionsi, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->trajectory_descriptions[i], length_trajectory_descriptionsi);
       offset += length_trajectory_descriptionsi;
@@ -74,29 +67,23 @@ namespace moveit_msgs
       int offset = 0;
       offset += this->error_code.deserialize(inbuffer + offset);
       offset += this->trajectory_start.deserialize(inbuffer + offset);
-      uint32_t trajectory_stages_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      trajectory_stages_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      trajectory_stages_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      trajectory_stages_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->trajectory_stages_length);
+      uint8_t trajectory_stages_lengthT = *(inbuffer + offset++);
       if(trajectory_stages_lengthT > trajectory_stages_length)
         this->trajectory_stages = (moveit_msgs::RobotTrajectory*)realloc(this->trajectory_stages, trajectory_stages_lengthT * sizeof(moveit_msgs::RobotTrajectory));
+      offset += 3;
       trajectory_stages_length = trajectory_stages_lengthT;
-      for( uint32_t i = 0; i < trajectory_stages_length; i++){
+      for( uint8_t i = 0; i < trajectory_stages_length; i++){
       offset += this->st_trajectory_stages.deserialize(inbuffer + offset);
         memcpy( &(this->trajectory_stages[i]), &(this->st_trajectory_stages), sizeof(moveit_msgs::RobotTrajectory));
       }
-      uint32_t trajectory_descriptions_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      trajectory_descriptions_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      trajectory_descriptions_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      trajectory_descriptions_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->trajectory_descriptions_length);
+      uint8_t trajectory_descriptions_lengthT = *(inbuffer + offset++);
       if(trajectory_descriptions_lengthT > trajectory_descriptions_length)
         this->trajectory_descriptions = (char**)realloc(this->trajectory_descriptions, trajectory_descriptions_lengthT * sizeof(char*));
+      offset += 3;
       trajectory_descriptions_length = trajectory_descriptions_lengthT;
-      for( uint32_t i = 0; i < trajectory_descriptions_length; i++){
+      for( uint8_t i = 0; i < trajectory_descriptions_length; i++){
       uint32_t length_st_trajectory_descriptions;
-      arrToVar(length_st_trajectory_descriptions, (inbuffer + offset));
+      memcpy(&length_st_trajectory_descriptions, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_trajectory_descriptions; ++k){
           inbuffer[k-1]=inbuffer[k];

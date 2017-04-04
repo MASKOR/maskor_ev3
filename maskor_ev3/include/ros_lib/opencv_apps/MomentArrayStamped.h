@@ -14,12 +14,10 @@ namespace opencv_apps
   class MomentArrayStamped : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      uint32_t moments_length;
-      typedef opencv_apps::Moment _moments_type;
-      _moments_type st_moments;
-      _moments_type * moments;
+      std_msgs::Header header;
+      uint8_t moments_length;
+      opencv_apps::Moment st_moments;
+      opencv_apps::Moment * moments;
 
     MomentArrayStamped():
       header(),
@@ -31,12 +29,11 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->moments_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->moments_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->moments_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->moments_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->moments_length);
-      for( uint32_t i = 0; i < moments_length; i++){
+      *(outbuffer + offset++) = moments_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < moments_length; i++){
       offset += this->moments[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -46,15 +43,12 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint32_t moments_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      moments_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      moments_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      moments_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->moments_length);
+      uint8_t moments_lengthT = *(inbuffer + offset++);
       if(moments_lengthT > moments_length)
         this->moments = (opencv_apps::Moment*)realloc(this->moments, moments_lengthT * sizeof(opencv_apps::Moment));
+      offset += 3;
       moments_length = moments_lengthT;
-      for( uint32_t i = 0; i < moments_length; i++){
+      for( uint8_t i = 0; i < moments_length; i++){
       offset += this->st_moments.deserialize(inbuffer + offset);
         memcpy( &(this->moments[i]), &(this->st_moments), sizeof(opencv_apps::Moment));
       }

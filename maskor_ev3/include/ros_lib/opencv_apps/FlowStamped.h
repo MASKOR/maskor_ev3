@@ -14,10 +14,8 @@ namespace opencv_apps
   class FlowStamped : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef opencv_apps::Flow _flow_type;
-      _flow_type flow;
+      std_msgs::Header header;
+      opencv_apps::Flow flow;
 
     FlowStamped():
       header(),

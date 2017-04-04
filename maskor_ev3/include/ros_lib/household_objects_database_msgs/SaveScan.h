@@ -15,16 +15,11 @@ static const char SAVESCAN[] = "household_objects_database_msgs/SaveScan";
   class SaveScanRequest : public ros::Msg
   {
     public:
-      typedef int32_t _scaled_model_id_type;
-      _scaled_model_id_type scaled_model_id;
-      typedef geometry_msgs::PoseStamped _ground_truth_pose_type;
-      _ground_truth_pose_type ground_truth_pose;
-      typedef const char* _bagfile_location_type;
-      _bagfile_location_type bagfile_location;
-      typedef const char* _scan_source_type;
-      _scan_source_type scan_source;
-      typedef const char* _cloud_topic_type;
-      _cloud_topic_type cloud_topic;
+      int32_t scaled_model_id;
+      geometry_msgs::PoseStamped ground_truth_pose;
+      const char* bagfile_location;
+      const char* scan_source;
+      const char* cloud_topic;
 
     SaveScanRequest():
       scaled_model_id(0),
@@ -50,17 +45,17 @@ static const char SAVESCAN[] = "household_objects_database_msgs/SaveScan";
       offset += sizeof(this->scaled_model_id);
       offset += this->ground_truth_pose.serialize(outbuffer + offset);
       uint32_t length_bagfile_location = strlen(this->bagfile_location);
-      varToArr(outbuffer + offset, length_bagfile_location);
+      memcpy(outbuffer + offset, &length_bagfile_location, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->bagfile_location, length_bagfile_location);
       offset += length_bagfile_location;
       uint32_t length_scan_source = strlen(this->scan_source);
-      varToArr(outbuffer + offset, length_scan_source);
+      memcpy(outbuffer + offset, &length_scan_source, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->scan_source, length_scan_source);
       offset += length_scan_source;
       uint32_t length_cloud_topic = strlen(this->cloud_topic);
-      varToArr(outbuffer + offset, length_cloud_topic);
+      memcpy(outbuffer + offset, &length_cloud_topic, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->cloud_topic, length_cloud_topic);
       offset += length_cloud_topic;
@@ -83,7 +78,7 @@ static const char SAVESCAN[] = "household_objects_database_msgs/SaveScan";
       offset += sizeof(this->scaled_model_id);
       offset += this->ground_truth_pose.deserialize(inbuffer + offset);
       uint32_t length_bagfile_location;
-      arrToVar(length_bagfile_location, (inbuffer + offset));
+      memcpy(&length_bagfile_location, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_bagfile_location; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -92,7 +87,7 @@ static const char SAVESCAN[] = "household_objects_database_msgs/SaveScan";
       this->bagfile_location = (char *)(inbuffer + offset-1);
       offset += length_bagfile_location;
       uint32_t length_scan_source;
-      arrToVar(length_scan_source, (inbuffer + offset));
+      memcpy(&length_scan_source, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_scan_source; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -101,7 +96,7 @@ static const char SAVESCAN[] = "household_objects_database_msgs/SaveScan";
       this->scan_source = (char *)(inbuffer + offset-1);
       offset += length_scan_source;
       uint32_t length_cloud_topic;
-      arrToVar(length_cloud_topic, (inbuffer + offset));
+      memcpy(&length_cloud_topic, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_cloud_topic; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -120,8 +115,7 @@ static const char SAVESCAN[] = "household_objects_database_msgs/SaveScan";
   class SaveScanResponse : public ros::Msg
   {
     public:
-      typedef household_objects_database_msgs::DatabaseReturnCode _return_code_type;
-      _return_code_type return_code;
+      household_objects_database_msgs::DatabaseReturnCode return_code;
 
     SaveScanResponse():
       return_code()

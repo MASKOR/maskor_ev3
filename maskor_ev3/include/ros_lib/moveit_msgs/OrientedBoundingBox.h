@@ -14,10 +14,8 @@ namespace moveit_msgs
   class OrientedBoundingBox : public ros::Msg
   {
     public:
-      typedef geometry_msgs::Pose _pose_type;
-      _pose_type pose;
-      typedef geometry_msgs::Point32 _extents_type;
-      _extents_type extents;
+      geometry_msgs::Pose pose;
+      geometry_msgs::Point32 extents;
 
     OrientedBoundingBox():
       pose(),

@@ -13,10 +13,9 @@ namespace moveit_msgs
   class TrajectoryConstraints : public ros::Msg
   {
     public:
-      uint32_t constraints_length;
-      typedef moveit_msgs::Constraints _constraints_type;
-      _constraints_type st_constraints;
-      _constraints_type * constraints;
+      uint8_t constraints_length;
+      moveit_msgs::Constraints st_constraints;
+      moveit_msgs::Constraints * constraints;
 
     TrajectoryConstraints():
       constraints_length(0), constraints(NULL)
@@ -26,12 +25,11 @@ namespace moveit_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset + 0) = (this->constraints_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->constraints_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->constraints_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->constraints_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->constraints_length);
-      for( uint32_t i = 0; i < constraints_length; i++){
+      *(outbuffer + offset++) = constraints_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < constraints_length; i++){
       offset += this->constraints[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -40,15 +38,12 @@ namespace moveit_msgs
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t constraints_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      constraints_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      constraints_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      constraints_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->constraints_length);
+      uint8_t constraints_lengthT = *(inbuffer + offset++);
       if(constraints_lengthT > constraints_length)
         this->constraints = (moveit_msgs::Constraints*)realloc(this->constraints, constraints_lengthT * sizeof(moveit_msgs::Constraints));
+      offset += 3;
       constraints_length = constraints_lengthT;
-      for( uint32_t i = 0; i < constraints_length; i++){
+      for( uint8_t i = 0; i < constraints_length; i++){
       offset += this->st_constraints.deserialize(inbuffer + offset);
         memcpy( &(this->constraints[i]), &(this->st_constraints), sizeof(moveit_msgs::Constraints));
       }

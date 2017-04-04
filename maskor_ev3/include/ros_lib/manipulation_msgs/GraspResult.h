@@ -12,10 +12,8 @@ namespace manipulation_msgs
   class GraspResult : public ros::Msg
   {
     public:
-      typedef int32_t _result_code_type;
-      _result_code_type result_code;
-      typedef bool _continuation_possible_type;
-      _continuation_possible_type continuation_possible;
+      int32_t result_code;
+      bool continuation_possible;
       enum { SUCCESS =  1 };
       enum { GRASP_OUT_OF_REACH =  2 };
       enum { GRASP_IN_COLLISION =  3 };

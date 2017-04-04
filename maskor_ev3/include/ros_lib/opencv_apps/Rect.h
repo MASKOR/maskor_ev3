@@ -12,14 +12,10 @@ namespace opencv_apps
   class Rect : public ros::Msg
   {
     public:
-      typedef double _x_type;
-      _x_type x;
-      typedef double _y_type;
-      _y_type y;
-      typedef double _width_type;
-      _width_type width;
-      typedef double _height_type;
-      _height_type height;
+      double x;
+      double y;
+      double width;
+      double height;
 
     Rect():
       x(0),

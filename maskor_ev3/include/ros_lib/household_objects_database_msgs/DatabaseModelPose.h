@@ -14,16 +14,11 @@ namespace household_objects_database_msgs
   class DatabaseModelPose : public ros::Msg
   {
     public:
-      typedef int32_t _model_id_type;
-      _model_id_type model_id;
-      typedef object_recognition_msgs::ObjectType _type_type;
-      _type_type type;
-      typedef geometry_msgs::PoseStamped _pose_type;
-      _pose_type pose;
-      typedef float _confidence_type;
-      _confidence_type confidence;
-      typedef const char* _detector_name_type;
-      _detector_name_type detector_name;
+      int32_t model_id;
+      object_recognition_msgs::ObjectType type;
+      geometry_msgs::PoseStamped pose;
+      float confidence;
+      const char* detector_name;
 
     DatabaseModelPose():
       model_id(0),
@@ -60,7 +55,7 @@ namespace household_objects_database_msgs
       *(outbuffer + offset + 3) = (u_confidence.base >> (8 * 3)) & 0xFF;
       offset += sizeof(this->confidence);
       uint32_t length_detector_name = strlen(this->detector_name);
-      varToArr(outbuffer + offset, length_detector_name);
+      memcpy(outbuffer + offset, &length_detector_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->detector_name, length_detector_name);
       offset += length_detector_name;
@@ -95,7 +90,7 @@ namespace household_objects_database_msgs
       this->confidence = u_confidence.real;
       offset += sizeof(this->confidence);
       uint32_t length_detector_name;
-      arrToVar(length_detector_name, (inbuffer + offset));
+      memcpy(&length_detector_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_detector_name; ++k){
           inbuffer[k-1]=inbuffer[k];

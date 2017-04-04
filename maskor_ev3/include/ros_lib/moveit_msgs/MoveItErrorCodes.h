@@ -12,8 +12,7 @@ namespace moveit_msgs
   class MoveItErrorCodes : public ros::Msg
   {
     public:
-      typedef int32_t _val_type;
-      _val_type val;
+      int32_t val;
       enum { SUCCESS = 1 };
       enum { FAILURE = 99999 };
       enum { PLANNING_FAILED = -1 };

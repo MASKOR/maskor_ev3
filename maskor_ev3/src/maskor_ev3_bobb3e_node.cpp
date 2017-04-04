@@ -10,6 +10,7 @@
  */
 
 #define _DEBUG
+//#define _OFFLINETEST
 
 #include <stdio.h>
 #include <maskor_ev3/maskor_ev3.h>
@@ -21,32 +22,54 @@
 #include <std_msgs/String.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
+#include <maskor_ev3_msgs/ColorSensor.h>
+#include <maskor_ev3_msgs/GyroSensor.h>
+#include <maskor_ev3_msgs/InfraredSensor.h>
+#include <maskor_ev3_msgs/TouchSensor.h>
+#include <maskor_ev3_msgs/UltrasonicSensor.h>
+
 
 // FUNCTION DECLARATIONS
+
 void cmd_velCb(const geometry_msgs::Twist& cmd);
 void calc_odometry();
+void publish_test_messages();
 
-// EV3 STUFF
-/*
-maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_C);
-maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);//randomly initialised 
-maskor_ev3::infrared_sensor ir_sensor(maskor_ev3::INPUT_1);
-*/
+#ifndef _OFFLINETEST
+void init_motors();
+void init_sensors();
+void motortest();
+#endif
+
 
 // ROS STUFF
-ros::NodeHandle nh;
 geometry_msgs::TransformStamped odom_tf;
 tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
+maskor_ev3_msgs::ColorSensor color_sensor_msg;
+maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
+maskor_ev3_msgs::TouchSensor touch_sensor_msg;
+maskor_ev3_msgs::InfraredSensor infrared_sensor_msg;
+maskor_ev3_msgs::UltrasonicSensor ultrasonic_sensor_msg;
+
+
+ros::NodeHandle nh;
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
-ros::Publisher odom_pub("odom", &odom_msg);
+ros::Publisher odom_pub("/bobb3e/odom", &odom_msg);
+ros::Publisher color_sensor_pub("/bobb3e/color_sensor", &color_sensor_msg);
+ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
+ros::Publisher touch_sensor_pub("/bobb3e/touch_sensor", &touch_sensor_msg);
+ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
+ros::Publisher ultrasonic_sensor_pub("/bobb3e/ultrasonic_sensor", &ultrasonic_sensor_msg);
+
 
 
 //global variables
 const float deg2rad = M_PI/180.0;
 char base_link[] = "/base_link";
 char odom[] = "/odom";
-char rosSrvrIp[] = "10.42.0.1";
+//char rosSrvrIp[] = "10.42.0.1";
+char rosSrvrIp[] = "127.0.0.1";
 
 double left_motor_speed=0.0;
 double right_motor_speed=0.0;
@@ -72,6 +95,7 @@ float vr = 0.0;
 float wheelbase = 0.12;
 float wheelradius = 0.03;
 
+#ifndef _OFFLINETEST
 //Init motors
 maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
 maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_B);
@@ -79,6 +103,8 @@ maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
 
 //init sensors
 maskor_ev3::sensor gsense(maskor_ev3::INPUT_4);
+
+#endif
 
 
 /*vx=velocity of centroid, wt=angular velocity of cenintroid, 
@@ -194,8 +220,12 @@ void calc_odometry() {
   theta*=deg2rad;
   
   //get current wheel positions  
+ 
+#ifndef _OFFLINETEST
+ //get current wheel positions  
   wheel_encoder_current_pos[0] = left_motor.position(); 
   wheel_encoder_current_pos[1] = right_motor.position();
+#endif
 
   //obtaining angle rotated by left and right wheels
   dl = wheel_encoder_current_pos[0] - wheel_encoder_prev_pos[0];
@@ -209,9 +239,11 @@ void calc_odometry() {
   wheel_encoder_prev_pos[0] = wheel_encoder_current_pos[0];
   wheel_encoder_prev_pos[1] = wheel_encoder_current_pos[1];
 
+#ifndef _OFFLINETEST
   //motor.speed() returns speed in rad/s
   vl = left_motor.speed();
   vr = right_motor.speed();
+#endif
 
   //TODO: what is happening here??      
   //remmapping linear and angular velocity of centroid from vl, vr
@@ -246,15 +278,39 @@ void calc_odometry() {
 } 
 
 
-int main(int argc, char* argv[])
-{
-  printf("Init Node...\n");
+void publish_test_messages() {
+  printf("publish_test_messages()\n");
 
-  nh.initNode(rosSrvrIp);
-  nh.subscribe(cmd_vel_sub);
-  nh.advertise(odom_pub);
-  broadcaster.init(nh);
-    
+  color_sensor_msg.header.stamp = nh.now();
+  color_sensor_msg.header.frame_id = "color_sensor_link";
+  color_sensor_msg.color = 3;
+  color_sensor_pub.publish(&color_sensor_msg);
+
+  gyro_sensor_msg.header.stamp = nh.now();
+  gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
+  gyro_sensor_msg.angle = 180;
+  gyro_sensor_msg.rotational_speed = 3;
+  gyro_sensor_pub.publish(&gyro_sensor_msg);
+
+  touch_sensor_msg.header.stamp = nh.now();
+  touch_sensor_msg.header.frame_id = "touch_sensor_link";
+  touch_sensor_msg.state = 0;
+  touch_sensor_pub.publish(&touch_sensor_msg);
+
+  infrared_sensor_msg.header.stamp = nh.now();
+  infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
+  infrared_sensor_msg.proximity = 0;
+  infrared_sensor_pub.publish(&infrared_sensor_msg);
+
+  ultrasonic_sensor_msg.header.stamp = nh.now();
+  ultrasonic_sensor_msg.header.frame_id = "ultrasonic_sensor_link";
+  ultrasonic_sensor_msg.distance = 0;
+  ultrasonic_sensor_pub.publish(&ultrasonic_sensor_msg);
+
+}
+
+#ifndef _OFFLINETEST
+void init_motors() {
   printf("Init Motors...\n");
 
   //init motor position
@@ -262,24 +318,24 @@ int main(int argc, char* argv[])
   right_motor.set_position(0);
   lift_motor.set_position(0);
 
-  
   /*
   //configuring the motors
   left_motor.reset();
   left_motor.set_position(0);
   left_motor.set_speed_regulation_enabled("on");
   */
+}
 
+void init_sensors() {
   printf("Init Sensors...\n");
   
   t_offset = -gsense.value()*deg2rad;
 
   printf("t_offset = %f \n", t_offset);
 
-  
-  
-  while(1)
-    {
+}
+
+void motor_test() {
       //print values
       // printf("sensor value: %d\n", s.value());
       printf("left_motor_position: %d\n", left_motor.position());
@@ -302,10 +358,39 @@ int main(int argc, char* argv[])
       //move lift
       lift_motor.set_speed_sp(lift_motor_speed);
       lift_motor.set_command("run-forever");
-     
+} 
+
+#endif
+
+void init_node() {
+  printf("Init Node...\n");
+
+  nh.initNode(rosSrvrIp);
+  nh.subscribe(cmd_vel_sub);
+  nh.advertise(odom_pub);
+  nh.advertise(color_sensor_pub); 
+  nh.advertise(gyro_sensor_pub); 
+  nh.advertise(touch_sensor_pub); 
+  nh.advertise(infrared_sensor_pub);
+  nh.advertise(ultrasonic_sensor_pub); 
+ 
+  broadcaster.init(nh);
+}
+
+int main(int argc, char* argv[])
+{
+  init_node();
+#ifndef _OFFLINETEST
+  init_motors();
+  init_sensors();
+#endif
+
+  while(1)
+    {
       //ros stuff
       calc_odometry();
-      usleep(10000); //microseconds
+      publish_test_messages();
+      usleep(100000); //microseconds
       nh.spinOnce(); // check for incoming messages
     }
  

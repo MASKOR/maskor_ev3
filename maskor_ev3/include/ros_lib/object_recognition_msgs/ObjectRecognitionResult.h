@@ -13,8 +13,7 @@ namespace object_recognition_msgs
   class ObjectRecognitionResult : public ros::Msg
   {
     public:
-      typedef object_recognition_msgs::RecognizedObjectArray _recognized_objects_type;
-      _recognized_objects_type recognized_objects;
+      object_recognition_msgs::RecognizedObjectArray recognized_objects;
 
     ObjectRecognitionResult():
       recognized_objects()

@@ -14,8 +14,7 @@ static const char GETMODELDESCRIPTION[] = "household_objects_database_msgs/GetMo
   class GetModelDescriptionRequest : public ros::Msg
   {
     public:
-      typedef int32_t _model_id_type;
-      _model_id_type model_id;
+      int32_t model_id;
 
     GetModelDescriptionRequest():
       model_id(0)
@@ -63,16 +62,12 @@ static const char GETMODELDESCRIPTION[] = "household_objects_database_msgs/GetMo
   class GetModelDescriptionResponse : public ros::Msg
   {
     public:
-      typedef household_objects_database_msgs::DatabaseReturnCode _return_code_type;
-      _return_code_type return_code;
-      uint32_t tags_length;
-      typedef char* _tags_type;
-      _tags_type st_tags;
-      _tags_type * tags;
-      typedef const char* _name_type;
-      _name_type name;
-      typedef const char* _maker_type;
-      _maker_type maker;
+      household_objects_database_msgs::DatabaseReturnCode return_code;
+      uint8_t tags_length;
+      char* st_tags;
+      char* * tags;
+      const char* name;
+      const char* maker;
 
     GetModelDescriptionResponse():
       return_code(),
@@ -86,25 +81,24 @@ static const char GETMODELDESCRIPTION[] = "household_objects_database_msgs/GetMo
     {
       int offset = 0;
       offset += this->return_code.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->tags_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->tags_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->tags_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->tags_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->tags_length);
-      for( uint32_t i = 0; i < tags_length; i++){
+      *(outbuffer + offset++) = tags_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < tags_length; i++){
       uint32_t length_tagsi = strlen(this->tags[i]);
-      varToArr(outbuffer + offset, length_tagsi);
+      memcpy(outbuffer + offset, &length_tagsi, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->tags[i], length_tagsi);
       offset += length_tagsi;
       }
       uint32_t length_name = strlen(this->name);
-      varToArr(outbuffer + offset, length_name);
+      memcpy(outbuffer + offset, &length_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->name, length_name);
       offset += length_name;
       uint32_t length_maker = strlen(this->maker);
-      varToArr(outbuffer + offset, length_maker);
+      memcpy(outbuffer + offset, &length_maker, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->maker, length_maker);
       offset += length_maker;
@@ -115,17 +109,14 @@ static const char GETMODELDESCRIPTION[] = "household_objects_database_msgs/GetMo
     {
       int offset = 0;
       offset += this->return_code.deserialize(inbuffer + offset);
-      uint32_t tags_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      tags_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      tags_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      tags_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->tags_length);
+      uint8_t tags_lengthT = *(inbuffer + offset++);
       if(tags_lengthT > tags_length)
         this->tags = (char**)realloc(this->tags, tags_lengthT * sizeof(char*));
+      offset += 3;
       tags_length = tags_lengthT;
-      for( uint32_t i = 0; i < tags_length; i++){
+      for( uint8_t i = 0; i < tags_length; i++){
       uint32_t length_st_tags;
-      arrToVar(length_st_tags, (inbuffer + offset));
+      memcpy(&length_st_tags, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_tags; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -136,7 +127,7 @@ static const char GETMODELDESCRIPTION[] = "household_objects_database_msgs/GetMo
         memcpy( &(this->tags[i]), &(this->st_tags), sizeof(char*));
       }
       uint32_t length_name;
-      arrToVar(length_name, (inbuffer + offset));
+      memcpy(&length_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -145,7 +136,7 @@ static const char GETMODELDESCRIPTION[] = "household_objects_database_msgs/GetMo
       this->name = (char *)(inbuffer + offset-1);
       offset += length_name;
       uint32_t length_maker;
-      arrToVar(length_maker, (inbuffer + offset));
+      memcpy(&length_maker, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_maker; ++k){
           inbuffer[k-1]=inbuffer[k];

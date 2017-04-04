@@ -14,12 +14,10 @@ namespace opencv_apps
   class FaceArrayStamped : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      uint32_t faces_length;
-      typedef opencv_apps::Face _faces_type;
-      _faces_type st_faces;
-      _faces_type * faces;
+      std_msgs::Header header;
+      uint8_t faces_length;
+      opencv_apps::Face st_faces;
+      opencv_apps::Face * faces;
 
     FaceArrayStamped():
       header(),
@@ -31,12 +29,11 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->faces_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->faces_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->faces_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->faces_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->faces_length);
-      for( uint32_t i = 0; i < faces_length; i++){
+      *(outbuffer + offset++) = faces_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < faces_length; i++){
       offset += this->faces[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -46,15 +43,12 @@ namespace opencv_apps
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint32_t faces_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      faces_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      faces_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      faces_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->faces_length);
+      uint8_t faces_lengthT = *(inbuffer + offset++);
       if(faces_lengthT > faces_length)
         this->faces = (opencv_apps::Face*)realloc(this->faces, faces_lengthT * sizeof(opencv_apps::Face));
+      offset += 3;
       faces_length = faces_lengthT;
-      for( uint32_t i = 0; i < faces_length; i++){
+      for( uint8_t i = 0; i < faces_length; i++){
       offset += this->st_faces.deserialize(inbuffer + offset);
         memcpy( &(this->faces[i]), &(this->st_faces), sizeof(opencv_apps::Face));
       }

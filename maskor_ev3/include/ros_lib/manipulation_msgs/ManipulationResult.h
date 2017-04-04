@@ -12,8 +12,7 @@ namespace manipulation_msgs
   class ManipulationResult : public ros::Msg
   {
     public:
-      typedef int32_t _value_type;
-      _value_type value;
+      int32_t value;
       enum { SUCCESS =  1 };
       enum { UNFEASIBLE =  -1 };
       enum { FAILED =  -2 };

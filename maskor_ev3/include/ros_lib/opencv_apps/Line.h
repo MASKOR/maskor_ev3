@@ -13,10 +13,8 @@ namespace opencv_apps
   class Line : public ros::Msg
   {
     public:
-      typedef opencv_apps::Point2D _pt1_type;
-      _pt1_type pt1;
-      typedef opencv_apps::Point2D _pt2_type;
-      _pt2_type pt2;
+      opencv_apps::Point2D pt1;
+      opencv_apps::Point2D pt2;
 
     Line():
       pt1(),

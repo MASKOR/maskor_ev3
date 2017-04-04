@@ -13,10 +13,8 @@ namespace mavros_msgs
   class ActuatorControl : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef uint8_t _group_mix_type;
-      _group_mix_type group_mix;
+      std_msgs::Header header;
+      uint8_t group_mix;
       float controls[8];
       enum { PX4_MIX_FLIGHT_CONTROL =  0 };
       enum { PX4_MIX_FLIGHT_CONTROL_VTOL_ALT =  1 };
@@ -36,7 +34,7 @@ namespace mavros_msgs
       offset += this->header.serialize(outbuffer + offset);
       *(outbuffer + offset + 0) = (this->group_mix >> (8 * 0)) & 0xFF;
       offset += sizeof(this->group_mix);
-      for( uint32_t i = 0; i < 8; i++){
+      for( uint8_t i = 0; i < 8; i++){
       union {
         float real;
         uint32_t base;
@@ -57,7 +55,7 @@ namespace mavros_msgs
       offset += this->header.deserialize(inbuffer + offset);
       this->group_mix =  ((uint8_t) (*(inbuffer + offset)));
       offset += sizeof(this->group_mix);
-      for( uint32_t i = 0; i < 8; i++){
+      for( uint8_t i = 0; i < 8; i++){
       union {
         float real;
         uint32_t base;

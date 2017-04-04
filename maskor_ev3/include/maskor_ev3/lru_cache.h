@@ -1,11 +1,18 @@
 #ifndef _LRU_CACHE_H_
 #define _LRU_CACHE_H_
 
-#include <list>
-#include <algorithm>
+/*
+ * C++ API to the sensors, motors, buttons, LEDs and battery of the ev3dev
+ * Linux kernel for the LEGO Mindstorms EV3 hardware
+ * Copyright (c) 2014 - Franz Detro
+*/
 
 // This class implements a small LRU cache. It assumes the number of elements
 // is small, and so uses a simple linear search.
+
+#include <list>
+#include <algorithm>
+
 template <typename K, typename V>
 class lru_cache {
 

@@ -13,8 +13,7 @@ static const char PARAMPULL[] = "mavros_msgs/ParamPull";
   class ParamPullRequest : public ros::Msg
   {
     public:
-      typedef bool _force_pull_type;
-      _force_pull_type force_pull;
+      bool force_pull;
 
     ParamPullRequest():
       force_pull(0)
@@ -56,10 +55,8 @@ static const char PARAMPULL[] = "mavros_msgs/ParamPull";
   class ParamPullResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef uint32_t _param_received_type;
-      _param_received_type param_received;
+      bool success;
+      uint32_t param_received;
 
     ParamPullResponse():
       success(0),

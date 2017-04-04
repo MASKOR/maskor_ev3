@@ -68,8 +68,9 @@ const sensor::sensor_type sensor::nxt_ultrasonic  { "lego-nxt-us" };
 const sensor::sensor_type sensor::nxt_i2c_sensor  { "nxt-i2c-sensor" };
 const sensor::sensor_type sensor::nxt_analog      { "nxt-analog" };
 
-// STRINGS
 
+
+// STRINGS
 const std::string touch_sensor::mode_touch{ "TOUCH" };
 
 const std::string infrared_sensor::mode_ir_prox{ "IR-PROX" };

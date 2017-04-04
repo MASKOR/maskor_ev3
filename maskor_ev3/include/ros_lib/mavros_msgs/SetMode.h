@@ -13,10 +13,8 @@ static const char SETMODE[] = "mavros_msgs/SetMode";
   class SetModeRequest : public ros::Msg
   {
     public:
-      typedef uint8_t _base_mode_type;
-      _base_mode_type base_mode;
-      typedef const char* _custom_mode_type;
-      _custom_mode_type custom_mode;
+      uint8_t base_mode;
+      const char* custom_mode;
       enum { MAV_MODE_PREFLIGHT =  0 };
       enum { MAV_MODE_STABILIZE_DISARMED =  80 };
       enum { MAV_MODE_STABILIZE_ARMED =  208 };
@@ -41,7 +39,7 @@ static const char SETMODE[] = "mavros_msgs/SetMode";
       *(outbuffer + offset + 0) = (this->base_mode >> (8 * 0)) & 0xFF;
       offset += sizeof(this->base_mode);
       uint32_t length_custom_mode = strlen(this->custom_mode);
-      varToArr(outbuffer + offset, length_custom_mode);
+      memcpy(outbuffer + offset, &length_custom_mode, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->custom_mode, length_custom_mode);
       offset += length_custom_mode;
@@ -54,7 +52,7 @@ static const char SETMODE[] = "mavros_msgs/SetMode";
       this->base_mode =  ((uint8_t) (*(inbuffer + offset)));
       offset += sizeof(this->base_mode);
       uint32_t length_custom_mode;
-      arrToVar(length_custom_mode, (inbuffer + offset));
+      memcpy(&length_custom_mode, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_custom_mode; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -73,8 +71,7 @@ static const char SETMODE[] = "mavros_msgs/SetMode";
   class SetModeResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
+      bool success;
 
     SetModeResponse():
       success(0)

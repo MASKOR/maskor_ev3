@@ -12,18 +12,13 @@ namespace controller_manager_msgs
   class ControllerState : public ros::Msg
   {
     public:
-      typedef const char* _name_type;
-      _name_type name;
-      typedef const char* _state_type;
-      _state_type state;
-      typedef const char* _type_type;
-      _type_type type;
-      typedef const char* _hardware_interface_type;
-      _hardware_interface_type hardware_interface;
-      uint32_t resources_length;
-      typedef char* _resources_type;
-      _resources_type st_resources;
-      _resources_type * resources;
+      const char* name;
+      const char* state;
+      const char* type;
+      const char* hardware_interface;
+      uint8_t resources_length;
+      char* st_resources;
+      char* * resources;
 
     ControllerState():
       name(""),
@@ -38,33 +33,32 @@ namespace controller_manager_msgs
     {
       int offset = 0;
       uint32_t length_name = strlen(this->name);
-      varToArr(outbuffer + offset, length_name);
+      memcpy(outbuffer + offset, &length_name, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->name, length_name);
       offset += length_name;
       uint32_t length_state = strlen(this->state);
-      varToArr(outbuffer + offset, length_state);
+      memcpy(outbuffer + offset, &length_state, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->state, length_state);
       offset += length_state;
       uint32_t length_type = strlen(this->type);
-      varToArr(outbuffer + offset, length_type);
+      memcpy(outbuffer + offset, &length_type, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->type, length_type);
       offset += length_type;
       uint32_t length_hardware_interface = strlen(this->hardware_interface);
-      varToArr(outbuffer + offset, length_hardware_interface);
+      memcpy(outbuffer + offset, &length_hardware_interface, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->hardware_interface, length_hardware_interface);
       offset += length_hardware_interface;
-      *(outbuffer + offset + 0) = (this->resources_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->resources_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->resources_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->resources_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->resources_length);
-      for( uint32_t i = 0; i < resources_length; i++){
+      *(outbuffer + offset++) = resources_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < resources_length; i++){
       uint32_t length_resourcesi = strlen(this->resources[i]);
-      varToArr(outbuffer + offset, length_resourcesi);
+      memcpy(outbuffer + offset, &length_resourcesi, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->resources[i], length_resourcesi);
       offset += length_resourcesi;
@@ -76,7 +70,7 @@ namespace controller_manager_msgs
     {
       int offset = 0;
       uint32_t length_name;
-      arrToVar(length_name, (inbuffer + offset));
+      memcpy(&length_name, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -85,7 +79,7 @@ namespace controller_manager_msgs
       this->name = (char *)(inbuffer + offset-1);
       offset += length_name;
       uint32_t length_state;
-      arrToVar(length_state, (inbuffer + offset));
+      memcpy(&length_state, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_state; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -94,7 +88,7 @@ namespace controller_manager_msgs
       this->state = (char *)(inbuffer + offset-1);
       offset += length_state;
       uint32_t length_type;
-      arrToVar(length_type, (inbuffer + offset));
+      memcpy(&length_type, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_type; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -103,7 +97,7 @@ namespace controller_manager_msgs
       this->type = (char *)(inbuffer + offset-1);
       offset += length_type;
       uint32_t length_hardware_interface;
-      arrToVar(length_hardware_interface, (inbuffer + offset));
+      memcpy(&length_hardware_interface, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_hardware_interface; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -111,17 +105,14 @@ namespace controller_manager_msgs
       inbuffer[offset+length_hardware_interface-1]=0;
       this->hardware_interface = (char *)(inbuffer + offset-1);
       offset += length_hardware_interface;
-      uint32_t resources_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      resources_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      resources_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      resources_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->resources_length);
+      uint8_t resources_lengthT = *(inbuffer + offset++);
       if(resources_lengthT > resources_length)
         this->resources = (char**)realloc(this->resources, resources_lengthT * sizeof(char*));
+      offset += 3;
       resources_length = resources_lengthT;
-      for( uint32_t i = 0; i < resources_length; i++){
+      for( uint8_t i = 0; i < resources_length; i++){
       uint32_t length_st_resources;
-      arrToVar(length_st_resources, (inbuffer + offset));
+      memcpy(&length_st_resources, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_resources; ++k){
           inbuffer[k-1]=inbuffer[k];

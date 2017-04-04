@@ -15,12 +15,9 @@ namespace moveit_msgs
   class PlaceAction : public ros::Msg
   {
     public:
-      typedef moveit_msgs::PlaceActionGoal _action_goal_type;
-      _action_goal_type action_goal;
-      typedef moveit_msgs::PlaceActionResult _action_result_type;
-      _action_result_type action_result;
-      typedef moveit_msgs::PlaceActionFeedback _action_feedback_type;
-      _action_feedback_type action_feedback;
+      moveit_msgs::PlaceActionGoal action_goal;
+      moveit_msgs::PlaceActionResult action_result;
+      moveit_msgs::PlaceActionFeedback action_feedback;
 
     PlaceAction():
       action_goal(),

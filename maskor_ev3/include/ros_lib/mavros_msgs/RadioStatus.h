@@ -13,26 +13,16 @@ namespace mavros_msgs
   class RadioStatus : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef uint8_t _rssi_type;
-      _rssi_type rssi;
-      typedef uint8_t _remrssi_type;
-      _remrssi_type remrssi;
-      typedef uint8_t _txbuf_type;
-      _txbuf_type txbuf;
-      typedef uint8_t _noise_type;
-      _noise_type noise;
-      typedef uint8_t _remnoise_type;
-      _remnoise_type remnoise;
-      typedef uint16_t _rxerrors_type;
-      _rxerrors_type rxerrors;
-      typedef uint16_t _fixed_type;
-      _fixed_type fixed;
-      typedef float _rssi_dbm_type;
-      _rssi_dbm_type rssi_dbm;
-      typedef float _remrssi_dbm_type;
-      _remrssi_dbm_type remrssi_dbm;
+      std_msgs::Header header;
+      uint8_t rssi;
+      uint8_t remrssi;
+      uint8_t txbuf;
+      uint8_t noise;
+      uint8_t remnoise;
+      uint16_t rxerrors;
+      uint16_t fixed;
+      float rssi_dbm;
+      float remrssi_dbm;
 
     RadioStatus():
       header(),

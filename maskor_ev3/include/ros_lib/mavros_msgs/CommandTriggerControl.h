@@ -13,10 +13,8 @@ static const char COMMANDTRIGGERCONTROL[] = "mavros_msgs/CommandTriggerControl";
   class CommandTriggerControlRequest : public ros::Msg
   {
     public:
-      typedef bool _trigger_enable_type;
-      _trigger_enable_type trigger_enable;
-      typedef float _integration_time_type;
-      _integration_time_type integration_time;
+      bool trigger_enable;
+      float integration_time;
 
     CommandTriggerControlRequest():
       trigger_enable(0),
@@ -80,10 +78,8 @@ static const char COMMANDTRIGGERCONTROL[] = "mavros_msgs/CommandTriggerControl";
   class CommandTriggerControlResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef uint8_t _result_type;
-      _result_type result;
+      bool success;
+      uint8_t result;
 
     CommandTriggerControlResponse():
       success(0),

@@ -1,6 +1,13 @@
 #ifndef _REMOTE_CONTROL_H_
 #define _REMOTE_CONTROL_H_
 
+/*
+ * C++ API to the sensors, motors, buttons, LEDs and battery of the ev3dev
+ * Linux kernel for the LEGO Mindstorms EV3 hardware
+ * Copyright (c) 2014 - Franz Detro
+*/
+
+
 #include <maskor_ev3/infrared_sensor.h>
 
 namespace maskor_ev3 {

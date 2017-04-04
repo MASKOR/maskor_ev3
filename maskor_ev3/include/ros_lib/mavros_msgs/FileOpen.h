@@ -13,10 +13,8 @@ static const char FILEOPEN[] = "mavros_msgs/FileOpen";
   class FileOpenRequest : public ros::Msg
   {
     public:
-      typedef const char* _file_path_type;
-      _file_path_type file_path;
-      typedef uint8_t _mode_type;
-      _mode_type mode;
+      const char* file_path;
+      uint8_t mode;
       enum { MODE_READ =  0	 };
       enum { MODE_WRITE =  1	 };
       enum { MODE_CREATE =  2	 };
@@ -31,7 +29,7 @@ static const char FILEOPEN[] = "mavros_msgs/FileOpen";
     {
       int offset = 0;
       uint32_t length_file_path = strlen(this->file_path);
-      varToArr(outbuffer + offset, length_file_path);
+      memcpy(outbuffer + offset, &length_file_path, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->file_path, length_file_path);
       offset += length_file_path;
@@ -44,7 +42,7 @@ static const char FILEOPEN[] = "mavros_msgs/FileOpen";
     {
       int offset = 0;
       uint32_t length_file_path;
-      arrToVar(length_file_path, (inbuffer + offset));
+      memcpy(&length_file_path, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_file_path; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -65,12 +63,9 @@ static const char FILEOPEN[] = "mavros_msgs/FileOpen";
   class FileOpenResponse : public ros::Msg
   {
     public:
-      typedef uint32_t _size_type;
-      _size_type size;
-      typedef bool _success_type;
-      _success_type success;
-      typedef int32_t _r_errno_type;
-      _r_errno_type r_errno;
+      uint32_t size;
+      bool success;
+      int32_t r_errno;
 
     FileOpenResponse():
       size(0),

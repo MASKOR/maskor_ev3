@@ -14,10 +14,8 @@ namespace ackermann_msgs
   class AckermannDriveStamped : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef ackermann_msgs::AckermannDrive _drive_type;
-      _drive_type drive;
+      std_msgs::Header header;
+      ackermann_msgs::AckermannDrive drive;
 
     AckermannDriveStamped():
       header(),

@@ -12,8 +12,7 @@ namespace manipulation_msgs
   class ManipulationPhase : public ros::Msg
   {
     public:
-      typedef int32_t _phase_type;
-      _phase_type phase;
+      int32_t phase;
       enum { CHECKING_FEASIBILITY =  0 };
       enum { MOVING_TO_PREGRASP =  1 };
       enum { MOVING_TO_GRASP =  2 };

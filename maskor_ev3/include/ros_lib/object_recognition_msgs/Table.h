@@ -15,14 +15,11 @@ namespace object_recognition_msgs
   class Table : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef geometry_msgs::Pose _pose_type;
-      _pose_type pose;
-      uint32_t convex_hull_length;
-      typedef geometry_msgs::Point _convex_hull_type;
-      _convex_hull_type st_convex_hull;
-      _convex_hull_type * convex_hull;
+      std_msgs::Header header;
+      geometry_msgs::Pose pose;
+      uint8_t convex_hull_length;
+      geometry_msgs::Point st_convex_hull;
+      geometry_msgs::Point * convex_hull;
 
     Table():
       header(),
@@ -36,12 +33,11 @@ namespace object_recognition_msgs
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
       offset += this->pose.serialize(outbuffer + offset);
-      *(outbuffer + offset + 0) = (this->convex_hull_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->convex_hull_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->convex_hull_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->convex_hull_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->convex_hull_length);
-      for( uint32_t i = 0; i < convex_hull_length; i++){
+      *(outbuffer + offset++) = convex_hull_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < convex_hull_length; i++){
       offset += this->convex_hull[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -52,15 +48,12 @@ namespace object_recognition_msgs
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
       offset += this->pose.deserialize(inbuffer + offset);
-      uint32_t convex_hull_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      convex_hull_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      convex_hull_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      convex_hull_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->convex_hull_length);
+      uint8_t convex_hull_lengthT = *(inbuffer + offset++);
       if(convex_hull_lengthT > convex_hull_length)
         this->convex_hull = (geometry_msgs::Point*)realloc(this->convex_hull, convex_hull_lengthT * sizeof(geometry_msgs::Point));
+      offset += 3;
       convex_hull_length = convex_hull_lengthT;
-      for( uint32_t i = 0; i < convex_hull_length; i++){
+      for( uint8_t i = 0; i < convex_hull_length; i++){
       offset += this->st_convex_hull.deserialize(inbuffer + offset);
         memcpy( &(this->convex_hull[i]), &(this->st_convex_hull), sizeof(geometry_msgs::Point));
       }

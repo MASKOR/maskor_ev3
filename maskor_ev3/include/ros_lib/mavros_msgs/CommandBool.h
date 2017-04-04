@@ -13,8 +13,7 @@ static const char COMMANDBOOL[] = "mavros_msgs/CommandBool";
   class CommandBoolRequest : public ros::Msg
   {
     public:
-      typedef bool _value_type;
-      _value_type value;
+      bool value;
 
     CommandBoolRequest():
       value(0)
@@ -56,10 +55,8 @@ static const char COMMANDBOOL[] = "mavros_msgs/CommandBool";
   class CommandBoolResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef uint8_t _result_type;
-      _result_type result;
+      bool success;
+      uint8_t result;
 
     CommandBoolResponse():
       success(0),

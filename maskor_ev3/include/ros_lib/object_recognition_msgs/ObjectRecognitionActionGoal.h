@@ -15,12 +15,9 @@ namespace object_recognition_msgs
   class ObjectRecognitionActionGoal : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef actionlib_msgs::GoalID _goal_id_type;
-      _goal_id_type goal_id;
-      typedef object_recognition_msgs::ObjectRecognitionGoal _goal_type;
-      _goal_type goal;
+      std_msgs::Header header;
+      actionlib_msgs::GoalID goal_id;
+      object_recognition_msgs::ObjectRecognitionGoal goal;
 
     ObjectRecognitionActionGoal():
       header(),

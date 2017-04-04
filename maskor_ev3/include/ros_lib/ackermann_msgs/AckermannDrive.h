@@ -12,16 +12,11 @@ namespace ackermann_msgs
   class AckermannDrive : public ros::Msg
   {
     public:
-      typedef float _steering_angle_type;
-      _steering_angle_type steering_angle;
-      typedef float _steering_angle_velocity_type;
-      _steering_angle_velocity_type steering_angle_velocity;
-      typedef float _speed_type;
-      _speed_type speed;
-      typedef float _acceleration_type;
-      _acceleration_type acceleration;
-      typedef float _jerk_type;
-      _jerk_type jerk;
+      float steering_angle;
+      float steering_angle_velocity;
+      float speed;
+      float acceleration;
+      float jerk;
 
     AckermannDrive():
       steering_angle(0),

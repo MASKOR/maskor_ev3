@@ -12,8 +12,7 @@ namespace manipulation_msgs
   class GraspPlanningErrorCode : public ros::Msg
   {
     public:
-      typedef int32_t _value_type;
-      _value_type value;
+      int32_t value;
       enum { SUCCESS =  0 };
       enum { TF_ERROR =  1 };
       enum { OTHER_ERROR =  2 };

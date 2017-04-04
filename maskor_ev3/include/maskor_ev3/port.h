@@ -1,7 +1,11 @@
 #ifndef _PORT_H_
 #define _PORT_H_
 
-#include <maskor_ev3/device.h>
+/*
+ * C++ API to the sensors, motors, buttons, LEDs and battery of the ev3dev
+ * Linux kernel for the LEGO Mindstorms EV3 hardware
+ * Copyright (c) 2014 - Franz Detro
+*/
 
 // The `lego-port` class provides an interface for working with input and
 // output ports that are compatible with LEGO MINDSTORMS RCX/NXT/EV3, LEGO
@@ -28,6 +32,8 @@
 // incremented each time a new port is registered. Note: The number is not
 // related to the actual port at all - use the `address` attribute to find
 // a specific port.
+
+#include <maskor_ev3/device.h>
 
 namespace maskor_ev3 {
 

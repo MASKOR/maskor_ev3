@@ -14,10 +14,8 @@ namespace moveit_msgs
   class MoveGroupGoal : public ros::Msg
   {
     public:
-      typedef moveit_msgs::MotionPlanRequest _request_type;
-      _request_type request;
-      typedef moveit_msgs::PlanningOptions _planning_options_type;
-      _planning_options_type planning_options;
+      moveit_msgs::MotionPlanRequest request;
+      moveit_msgs::PlanningOptions planning_options;
 
     MoveGroupGoal():
       request(),

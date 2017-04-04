@@ -12,10 +12,8 @@ namespace opencv_apps
   class Point2D : public ros::Msg
   {
     public:
-      typedef double _x_type;
-      _x_type x;
-      typedef double _y_type;
-      _y_type y;
+      double x;
+      double y;
 
     Point2D():
       x(0),

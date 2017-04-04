@@ -15,12 +15,9 @@ namespace moveit_msgs
   class PickupAction : public ros::Msg
   {
     public:
-      typedef moveit_msgs::PickupActionGoal _action_goal_type;
-      _action_goal_type action_goal;
-      typedef moveit_msgs::PickupActionResult _action_result_type;
-      _action_result_type action_result;
-      typedef moveit_msgs::PickupActionFeedback _action_feedback_type;
-      _action_feedback_type action_feedback;
+      moveit_msgs::PickupActionGoal action_goal;
+      moveit_msgs::PickupActionResult action_result;
+      moveit_msgs::PickupActionFeedback action_feedback;
 
     PickupAction():
       action_goal(),

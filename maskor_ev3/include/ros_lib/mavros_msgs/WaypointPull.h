@@ -38,10 +38,8 @@ static const char WAYPOINTPULL[] = "mavros_msgs/WaypointPull";
   class WaypointPullResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef uint32_t _wp_received_type;
-      _wp_received_type wp_received;
+      bool success;
+      uint32_t wp_received;
 
     WaypointPullResponse():
       success(0),

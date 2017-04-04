@@ -14,10 +14,9 @@ static const char WAYPOINTPUSH[] = "mavros_msgs/WaypointPush";
   class WaypointPushRequest : public ros::Msg
   {
     public:
-      uint32_t waypoints_length;
-      typedef mavros_msgs::Waypoint _waypoints_type;
-      _waypoints_type st_waypoints;
-      _waypoints_type * waypoints;
+      uint8_t waypoints_length;
+      mavros_msgs::Waypoint st_waypoints;
+      mavros_msgs::Waypoint * waypoints;
 
     WaypointPushRequest():
       waypoints_length(0), waypoints(NULL)
@@ -27,12 +26,11 @@ static const char WAYPOINTPUSH[] = "mavros_msgs/WaypointPush";
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset + 0) = (this->waypoints_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->waypoints_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->waypoints_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->waypoints_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->waypoints_length);
-      for( uint32_t i = 0; i < waypoints_length; i++){
+      *(outbuffer + offset++) = waypoints_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < waypoints_length; i++){
       offset += this->waypoints[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -41,15 +39,12 @@ static const char WAYPOINTPUSH[] = "mavros_msgs/WaypointPush";
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t waypoints_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      waypoints_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      waypoints_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      waypoints_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->waypoints_length);
+      uint8_t waypoints_lengthT = *(inbuffer + offset++);
       if(waypoints_lengthT > waypoints_length)
         this->waypoints = (mavros_msgs::Waypoint*)realloc(this->waypoints, waypoints_lengthT * sizeof(mavros_msgs::Waypoint));
+      offset += 3;
       waypoints_length = waypoints_lengthT;
-      for( uint32_t i = 0; i < waypoints_length; i++){
+      for( uint8_t i = 0; i < waypoints_length; i++){
       offset += this->st_waypoints.deserialize(inbuffer + offset);
         memcpy( &(this->waypoints[i]), &(this->st_waypoints), sizeof(mavros_msgs::Waypoint));
       }
@@ -64,10 +59,8 @@ static const char WAYPOINTPUSH[] = "mavros_msgs/WaypointPush";
   class WaypointPushResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef uint32_t _wp_transfered_type;
-      _wp_transfered_type wp_transfered;
+      bool success;
+      uint32_t wp_transfered;
 
     WaypointPushResponse():
       success(0),

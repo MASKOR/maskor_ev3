@@ -13,8 +13,7 @@ static const char WAYPOINTSETCURRENT[] = "mavros_msgs/WaypointSetCurrent";
   class WaypointSetCurrentRequest : public ros::Msg
   {
     public:
-      typedef uint16_t _wp_seq_type;
-      _wp_seq_type wp_seq;
+      uint16_t wp_seq;
 
     WaypointSetCurrentRequest():
       wp_seq(0)
@@ -47,8 +46,7 @@ static const char WAYPOINTSETCURRENT[] = "mavros_msgs/WaypointSetCurrent";
   class WaypointSetCurrentResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
+      bool success;
 
     WaypointSetCurrentResponse():
       success(0)

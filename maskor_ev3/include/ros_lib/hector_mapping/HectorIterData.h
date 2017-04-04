@@ -13,14 +13,10 @@ namespace hector_mapping
   {
     public:
       double hessian[9];
-      typedef double _conditionNum_type;
-      _conditionNum_type conditionNum;
-      typedef double _determinant_type;
-      _determinant_type determinant;
-      typedef double _conditionNum2d_type;
-      _conditionNum2d_type conditionNum2d;
-      typedef double _determinant2d_type;
-      _determinant2d_type determinant2d;
+      double conditionNum;
+      double determinant;
+      double conditionNum2d;
+      double determinant2d;
 
     HectorIterData():
       hessian(),
@@ -34,7 +30,7 @@ namespace hector_mapping
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      for( uint32_t i = 0; i < 9; i++){
+      for( uint8_t i = 0; i < 9; i++){
       union {
         double real;
         uint64_t base;
@@ -112,7 +108,7 @@ namespace hector_mapping
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      for( uint32_t i = 0; i < 9; i++){
+      for( uint8_t i = 0; i < 9; i++){
       union {
         double real;
         uint64_t base;

@@ -12,28 +12,17 @@ namespace mavros_msgs
   class Waypoint : public ros::Msg
   {
     public:
-      typedef uint8_t _frame_type;
-      _frame_type frame;
-      typedef uint16_t _command_type;
-      _command_type command;
-      typedef bool _is_current_type;
-      _is_current_type is_current;
-      typedef bool _autocontinue_type;
-      _autocontinue_type autocontinue;
-      typedef float _param1_type;
-      _param1_type param1;
-      typedef float _param2_type;
-      _param2_type param2;
-      typedef float _param3_type;
-      _param3_type param3;
-      typedef float _param4_type;
-      _param4_type param4;
-      typedef double _x_lat_type;
-      _x_lat_type x_lat;
-      typedef double _y_long_type;
-      _y_long_type y_long;
-      typedef double _z_alt_type;
-      _z_alt_type z_alt;
+      uint8_t frame;
+      uint16_t command;
+      bool is_current;
+      bool autocontinue;
+      float param1;
+      float param2;
+      float param3;
+      float param4;
+      double x_lat;
+      double y_long;
+      double z_alt;
       enum { FRAME_GLOBAL =  0 };
       enum { FRAME_LOCAL_NED =  1 };
       enum { FRAME_MISSION =  2 };

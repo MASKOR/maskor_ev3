@@ -12,8 +12,7 @@ namespace household_objects_database_msgs
   class DatabaseReturnCode : public ros::Msg
   {
     public:
-      typedef int32_t _code_type;
-      _code_type code;
+      int32_t code;
       enum { UNKNOWN_ERROR =  1 };
       enum { DATABASE_NOT_CONNECTED =  2 };
       enum { DATABASE_QUERY_ERROR =  3 };

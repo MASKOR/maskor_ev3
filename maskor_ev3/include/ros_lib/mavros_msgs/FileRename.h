@@ -13,10 +13,8 @@ static const char FILERENAME[] = "mavros_msgs/FileRename";
   class FileRenameRequest : public ros::Msg
   {
     public:
-      typedef const char* _old_path_type;
-      _old_path_type old_path;
-      typedef const char* _new_path_type;
-      _new_path_type new_path;
+      const char* old_path;
+      const char* new_path;
 
     FileRenameRequest():
       old_path(""),
@@ -28,12 +26,12 @@ static const char FILERENAME[] = "mavros_msgs/FileRename";
     {
       int offset = 0;
       uint32_t length_old_path = strlen(this->old_path);
-      varToArr(outbuffer + offset, length_old_path);
+      memcpy(outbuffer + offset, &length_old_path, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->old_path, length_old_path);
       offset += length_old_path;
       uint32_t length_new_path = strlen(this->new_path);
-      varToArr(outbuffer + offset, length_new_path);
+      memcpy(outbuffer + offset, &length_new_path, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->new_path, length_new_path);
       offset += length_new_path;
@@ -44,7 +42,7 @@ static const char FILERENAME[] = "mavros_msgs/FileRename";
     {
       int offset = 0;
       uint32_t length_old_path;
-      arrToVar(length_old_path, (inbuffer + offset));
+      memcpy(&length_old_path, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_old_path; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -53,7 +51,7 @@ static const char FILERENAME[] = "mavros_msgs/FileRename";
       this->old_path = (char *)(inbuffer + offset-1);
       offset += length_old_path;
       uint32_t length_new_path;
-      arrToVar(length_new_path, (inbuffer + offset));
+      memcpy(&length_new_path, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_new_path; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -72,10 +70,8 @@ static const char FILERENAME[] = "mavros_msgs/FileRename";
   class FileRenameResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef int32_t _r_errno_type;
-      _r_errno_type r_errno;
+      bool success;
+      int32_t r_errno;
 
     FileRenameResponse():
       success(0),

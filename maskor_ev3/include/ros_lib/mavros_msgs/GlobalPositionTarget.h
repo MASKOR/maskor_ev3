@@ -14,26 +14,16 @@ namespace mavros_msgs
   class GlobalPositionTarget : public ros::Msg
   {
     public:
-      typedef std_msgs::Header _header_type;
-      _header_type header;
-      typedef uint8_t _coordinate_frame_type;
-      _coordinate_frame_type coordinate_frame;
-      typedef uint16_t _type_mask_type;
-      _type_mask_type type_mask;
-      typedef double _latitude_type;
-      _latitude_type latitude;
-      typedef double _longitude_type;
-      _longitude_type longitude;
-      typedef float _altitude_type;
-      _altitude_type altitude;
-      typedef geometry_msgs::Vector3 _velocity_type;
-      _velocity_type velocity;
-      typedef geometry_msgs::Vector3 _acceleration_or_force_type;
-      _acceleration_or_force_type acceleration_or_force;
-      typedef float _yaw_type;
-      _yaw_type yaw;
-      typedef float _yaw_rate_type;
-      _yaw_rate_type yaw_rate;
+      std_msgs::Header header;
+      uint8_t coordinate_frame;
+      uint16_t type_mask;
+      double latitude;
+      double longitude;
+      float altitude;
+      geometry_msgs::Vector3 velocity;
+      geometry_msgs::Vector3 acceleration_or_force;
+      float yaw;
+      float yaw_rate;
       enum { FRAME_GLOBAL_INT =  5 };
       enum { FRAME_GLOBAL_REL_ALT =  6 };
       enum { FRAME_GLOBAL_TERRAIN_ALT =  11 };

@@ -13,8 +13,7 @@ static const char FILEREMOVEDIR[] = "mavros_msgs/FileRemoveDir";
   class FileRemoveDirRequest : public ros::Msg
   {
     public:
-      typedef const char* _dir_path_type;
-      _dir_path_type dir_path;
+      const char* dir_path;
 
     FileRemoveDirRequest():
       dir_path("")
@@ -25,7 +24,7 @@ static const char FILEREMOVEDIR[] = "mavros_msgs/FileRemoveDir";
     {
       int offset = 0;
       uint32_t length_dir_path = strlen(this->dir_path);
-      varToArr(outbuffer + offset, length_dir_path);
+      memcpy(outbuffer + offset, &length_dir_path, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->dir_path, length_dir_path);
       offset += length_dir_path;
@@ -36,7 +35,7 @@ static const char FILEREMOVEDIR[] = "mavros_msgs/FileRemoveDir";
     {
       int offset = 0;
       uint32_t length_dir_path;
-      arrToVar(length_dir_path, (inbuffer + offset));
+      memcpy(&length_dir_path, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_dir_path; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -55,10 +54,8 @@ static const char FILEREMOVEDIR[] = "mavros_msgs/FileRemoveDir";
   class FileRemoveDirResponse : public ros::Msg
   {
     public:
-      typedef bool _success_type;
-      _success_type success;
-      typedef int32_t _r_errno_type;
-      _r_errno_type r_errno;
+      bool success;
+      int32_t r_errno;
 
     FileRemoveDirResponse():
       success(0),

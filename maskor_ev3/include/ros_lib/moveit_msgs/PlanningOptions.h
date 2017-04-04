@@ -13,22 +13,14 @@ namespace moveit_msgs
   class PlanningOptions : public ros::Msg
   {
     public:
-      typedef moveit_msgs::PlanningScene _planning_scene_diff_type;
-      _planning_scene_diff_type planning_scene_diff;
-      typedef bool _plan_only_type;
-      _plan_only_type plan_only;
-      typedef bool _look_around_type;
-      _look_around_type look_around;
-      typedef int32_t _look_around_attempts_type;
-      _look_around_attempts_type look_around_attempts;
-      typedef double _max_safe_execution_cost_type;
-      _max_safe_execution_cost_type max_safe_execution_cost;
-      typedef bool _replan_type;
-      _replan_type replan;
-      typedef int32_t _replan_attempts_type;
-      _replan_attempts_type replan_attempts;
-      typedef double _replan_delay_type;
-      _replan_delay_type replan_delay;
+      moveit_msgs::PlanningScene planning_scene_diff;
+      bool plan_only;
+      bool look_around;
+      int32_t look_around_attempts;
+      double max_safe_execution_cost;
+      bool replan;
+      int32_t replan_attempts;
+      double replan_delay;
 
     PlanningOptions():
       planning_scene_diff(),

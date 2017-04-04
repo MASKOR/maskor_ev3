@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(maskor_ev3)
 
 #comment this in to cross compile for ARM
-set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
-set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
+#set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
+#set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
 
 add_definitions(-D_GLIBCXX_USE_NANOSLEEP)
 add_compile_options(-std=c++11)
@@ -11,13 +11,14 @@ add_compile_options(-std=c++11)
 #comment this in if using raspberry pi
 #add_definitions(-DEV3DEV_PLATFORM_BRICKPI)
 
-
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  )
+  rosserial_client
+)
+
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -54,9 +55,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 # add_message_files(
 #   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+#   ColorSensorMsg.msg
+#)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -76,6 +76,11 @@ find_package(catkin REQUIRED COMPONENTS
 # generate_messages(
 #   DEPENDENCIES
 #   std_msgs  # Or other packages containing msgs
+# )
+
+# rosserial_generate_ros_lib(
+#   PACKAGE rosserial_client
+#   SCRIPT make_libraries.py
 # )
 
 ################################################
@@ -166,6 +171,7 @@ add_executable(maskor_ev3_bobb3e_node src/maskor_ev3_bobb3e_node.cpp)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(maskor_ev3_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(maskor_ev3_bobb3e_node maskor_ev3_msgs_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(maskor_ev3

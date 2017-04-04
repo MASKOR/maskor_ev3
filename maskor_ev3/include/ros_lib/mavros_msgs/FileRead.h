@@ -13,12 +13,9 @@ static const char FILEREAD[] = "mavros_msgs/FileRead";
   class FileReadRequest : public ros::Msg
   {
     public:
-      typedef const char* _file_path_type;
-      _file_path_type file_path;
-      typedef uint64_t _offset_type;
-      _offset_type offset;
-      typedef uint64_t _size_type;
-      _size_type size;
+      const char* file_path;
+      uint64_t offset;
+      uint64_t size;
 
     FileReadRequest():
       file_path(""),
@@ -31,29 +28,27 @@ static const char FILEREAD[] = "mavros_msgs/FileRead";
     {
       int offset = 0;
       uint32_t length_file_path = strlen(this->file_path);
-      varToArr(outbuffer + offset, length_file_path);
+      memcpy(outbuffer + offset, &length_file_path, sizeof(uint32_t));
       offset += 4;
       memcpy(outbuffer + offset, this->file_path, length_file_path);
       offset += length_file_path;
-      union {
-        uint64_t real;
-        uint32_t base;
-      } u_offset;
-      u_offset.real = this->offset;
-      *(outbuffer + offset + 0) = (u_offset.base >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (u_offset.base >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (u_offset.base >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (u_offset.base >> (8 * 3)) & 0xFF;
+      *(outbuffer + offset + 0) = (this->offset >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->offset >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->offset >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->offset >> (8 * 3)) & 0xFF;
+      *(outbuffer + offset + 4) = (this->offset >> (8 * 4)) & 0xFF;
+      *(outbuffer + offset + 5) = (this->offset >> (8 * 5)) & 0xFF;
+      *(outbuffer + offset + 6) = (this->offset >> (8 * 6)) & 0xFF;
+      *(outbuffer + offset + 7) = (this->offset >> (8 * 7)) & 0xFF;
       offset += sizeof(this->offset);
-      union {
-        uint64_t real;
-        uint32_t base;
-      } u_size;
-      u_size.real = this->size;
-      *(outbuffer + offset + 0) = (u_size.base >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (u_size.base >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (u_size.base >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (u_size.base >> (8 * 3)) & 0xFF;
+      *(outbuffer + offset + 0) = (this->size >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->size >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->size >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->size >> (8 * 3)) & 0xFF;
+      *(outbuffer + offset + 4) = (this->size >> (8 * 4)) & 0xFF;
+      *(outbuffer + offset + 5) = (this->size >> (8 * 5)) & 0xFF;
+      *(outbuffer + offset + 6) = (this->size >> (8 * 6)) & 0xFF;
+      *(outbuffer + offset + 7) = (this->size >> (8 * 7)) & 0xFF;
       offset += sizeof(this->size);
       return offset;
     }
@@ -62,7 +57,7 @@ static const char FILEREAD[] = "mavros_msgs/FileRead";
     {
       int offset = 0;
       uint32_t length_file_path;
-      arrToVar(length_file_path, (inbuffer + offset));
+      memcpy(&length_file_path, (inbuffer + offset), sizeof(uint32_t));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_file_path; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -70,27 +65,23 @@ static const char FILEREAD[] = "mavros_msgs/FileRead";
       inbuffer[offset+length_file_path-1]=0;
       this->file_path = (char *)(inbuffer + offset-1);
       offset += length_file_path;
-      union {
-        uint64_t real;
-        uint32_t base;
-      } u_offset;
-      u_offset.base = 0;
-      u_offset.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
-      u_offset.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
-      u_offset.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
-      u_offset.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
-      this->offset = u_offset.real;
+      this->offset =  ((uint64_t) (*(inbuffer + offset)));
+      this->offset |= ((uint64_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      this->offset |= ((uint64_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      this->offset |= ((uint64_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->offset |= ((uint64_t) (*(inbuffer + offset + 4))) << (8 * 4);
+      this->offset |= ((uint64_t) (*(inbuffer + offset + 5))) << (8 * 5);
+      this->offset |= ((uint64_t) (*(inbuffer + offset + 6))) << (8 * 6);
+      this->offset |= ((uint64_t) (*(inbuffer + offset + 7))) << (8 * 7);
       offset += sizeof(this->offset);
-      union {
-        uint64_t real;
-        uint32_t base;
-      } u_size;
-      u_size.base = 0;
-      u_size.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
-      u_size.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
-      u_size.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
-      u_size.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
-      this->size = u_size.real;
+      this->size =  ((uint64_t) (*(inbuffer + offset)));
+      this->size |= ((uint64_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 4))) << (8 * 4);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 5))) << (8 * 5);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 6))) << (8 * 6);
+      this->size |= ((uint64_t) (*(inbuffer + offset + 7))) << (8 * 7);
       offset += sizeof(this->size);
      return offset;
     }
@@ -103,14 +94,11 @@ static const char FILEREAD[] = "mavros_msgs/FileRead";
   class FileReadResponse : public ros::Msg
   {
     public:
-      uint32_t data_length;
-      typedef uint8_t _data_type;
-      _data_type st_data;
-      _data_type * data;
-      typedef bool _success_type;
-      _success_type success;
-      typedef int32_t _r_errno_type;
-      _r_errno_type r_errno;
+      uint8_t data_length;
+      uint8_t st_data;
+      uint8_t * data;
+      bool success;
+      int32_t r_errno;
 
     FileReadResponse():
       data_length(0), data(NULL),
@@ -122,12 +110,11 @@ static const char FILEREAD[] = "mavros_msgs/FileRead";
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset + 0) = (this->data_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->data_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->data_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->data_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->data_length);
-      for( uint32_t i = 0; i < data_length; i++){
+      *(outbuffer + offset++) = data_length;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      *(outbuffer + offset++) = 0;
+      for( uint8_t i = 0; i < data_length; i++){
       *(outbuffer + offset + 0) = (this->data[i] >> (8 * 0)) & 0xFF;
       offset += sizeof(this->data[i]);
       }
@@ -154,15 +141,12 @@ static const char FILEREAD[] = "mavros_msgs/FileRead";
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint32_t data_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      data_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      data_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      data_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->data_length);
+      uint8_t data_lengthT = *(inbuffer + offset++);
       if(data_lengthT > data_length)
         this->data = (uint8_t*)realloc(this->data, data_lengthT * sizeof(uint8_t));
+      offset += 3;
       data_length = data_lengthT;
-      for( uint32_t i = 0; i < data_length; i++){
+      for( uint8_t i = 0; i < data_length; i++){
       this->st_data =  ((uint8_t) (*(inbuffer + offset)));
       offset += sizeof(this->st_data);
         memcpy( &(this->data[i]), &(this->st_data), sizeof(uint8_t));
