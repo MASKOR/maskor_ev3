@@ -10,7 +10,7 @@
  */
 
 #define _DEBUG
-#define _OFFLINETEST
+//#define _OFFLINETEST
 
 #include <stdio.h>
 #include <maskor_ev3/maskor_ev3.h>
@@ -82,7 +82,7 @@ const float deg2rad = M_PI/180.0;
 char base_link[] = "/base_link";
 char odom[] = "/odom";
 //char rosSrvrIp[] = "10.42.0.1";
-char rosSrvrIp[] = "127.0.0.1";
+char rosSrvrIp[] = "149.201.178.169";
 
 double left_motor_speed=0.0;
 double right_motor_speed=0.0;
@@ -186,7 +186,7 @@ void calc_odometry() {
  
 #ifndef _OFFLINETEST
   //calculating gyro
-  theta = -gsense.value()*deg2rad - t_offset;
+  theta = -gyro_sensor.value()*deg2rad - t_offset;
 
   //making sure the angle lies in [-π,π]  
   theta = theta/deg2rad;
@@ -334,7 +334,7 @@ void publish_joint_states() {
 #ifndef _OFFLINETEST
   joint_positions[LEFT_WHEEL] = left_motor.position(); //deg or rad??
   joint_positions[RIGHT_WHEEL] = right_motor.position(); 
-  joint_positions[FORK_LIFT] = lift_motor.positon();
+  joint_positions[FORK_LIFT] = lift_motor.position();
   joint_velocities[LEFT_WHEEL] = left_motor.speed();
   joint_velocities[RIGHT_WHEEL] = right_motor.speed(); 
   joint_velocities[FORK_LIFT] = lift_motor.speed();
