@@ -1,6 +1,7 @@
 <launch>
 
-  <param name="robot_description" textfile="$(find maskor_ev3)/description/urdf/bobb3e/mindstorm_second.urdf" />
+
+  <param name="robot_description" textfile="$(find maskor_ev3)/description/urdf/bobb3e/mindstorm_second.urdf" /> 
 
   <!--
   <node pkg="joint_state_publisher" type="joint_state_publisher"  name="joint_state_publisher">
