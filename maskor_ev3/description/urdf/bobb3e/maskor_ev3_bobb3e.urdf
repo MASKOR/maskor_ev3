@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<robot name="maskor_ev3_bobb3e" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+
+
+<!-- ************** -->
+<!-- BASE LINK      -->   
+<!-- ************** -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.005 0.005 0.005"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.005 0.005 0.005"/>
+      </geometry>
+    </collision>
+  
+  </link>
+
+
+
+<!-- ************** -->
+<!-- BASE FOOTPRINT -->   
+<!-- ************** -->
+  <link name="base_footprint">
+    <visual>
+      <geometry>
+        <box size="0.005 0.005 0.005"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.005 0.005 0.005"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+
+<!-- ************** -->
+<!-- LEFT WHEEL     -->   
+<!-- ************** -->
+  <link name="left_wheel_link">
+    <visual>
+      <geometry>
+     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/> 
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0.03 0"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="0.08" radius="0.075"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+<!-- ************** -->
+<!-- RIGHT WHEEL     -->   
+<!-- ************** -->
+  <link name="right_wheel_link">
+    <visual>
+      <geometry>
+     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/> 
+      </geometry>
+      <material name="black"/>
+     <origin rpy="0 0 0" xyz="0 -0.03 0"/> 
+   </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="0.08" radius="0.075"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+
+<!-- ************** -->
+<!-- COLOR SENSOR     -->   
+<!-- ************** -->
+  <link name="color_sensor_link">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.035"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.01 0.01 0.035"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+
+<!-- ************** -->
+<!-- FORK LIFT     -->   
+<!-- ************** -->
+  <link name="fork_lift_link">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+
+<!-- ************** -->
+<!-- GYRO SENSOR     -->   
+<!-- ************** -->
+  <link name="gyro_sensor_link">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+
+
+<!-- ************** -->
+<!-- JOINTS         -->   
+<!-- ************** -->
+  <joint name="base_link_to_base_footprint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+   <origin xyz="0 0 0.05"/>
+  </joint>
+
+  <joint name="base_link_to_left_wheel" type="fixed">
+    <parent link="base_link"/>
+    <child link="left_wheel_link"/>
+    <origin xyz="0 0.03 0"/>
+    <axis xyz="0 1 0"/>
+</joint>
+
+  <joint name="base_link_to_right_wheel" type="fixed">
+    <parent link="base_link"/>
+    <child link="right_wheel_link"/>
+    <origin xyz="0 -0.03 0"/>
+  </joint>
+
+ <joint name="base_link_to_color_sensor" type="fixed">
+    <parent link="base_link"/>
+    <child link="color_sensor_link"/>
+    <origin xyz="0.05 -0.00 0.005"/>
+  </joint>
+
+ <joint name="base_link_to_fork_lift" type="fixed">
+    <parent link="base_link"/>
+    <child link="fork_lift_link"/>
+    <origin xyz="0.05 -0.00 0.05"/>
+  </joint>
+
+ <joint name="base_link_to_gyro_sensor" type="fixed">
+    <parent link="base_link"/>
+    <child link="gyro_sensor_link"/>
+    <origin xyz="-0.03 -0.01 0.1"/>
+  </joint>
+</robot>
