@@ -1,21 +1,16 @@
-#include<iostream>
-#include <algorithm>
-#include <assert.h>
-
-//#include <maskor_ev3_gazebo/maskor_ev3_plugin.h>
-
-#include <gazebo/math/gzmath.hh>
-#include <sdf/sdf.hh>
-
-#include <ros/ros.h>
-
-
-/*int main() {
-  std::cout << "Ev3 Plugin" << std::endl;
-  return 0;
-}*/
-
 /*
+
+    MASKOR EV3 BOBB3E PLUGIN
+    Marcel Stüttgen
+    stuettgen@fh-aachen.de
+    Dennis Miltz
+    dennis.miltz@alumni.fh-aachen.de
+
+    FH Aachen University of Applied Sciences
+    2017
+
+    based on:
+
     Copyright (c) 2010, Daniel Hewlett, Antons Rebguns
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -52,7 +47,6 @@
  * $ Id: 06/21/2013 11:23:40 AM piyushk $
  */
 
-
 /*
  *
  * The support of acceleration limit was added by
@@ -61,32 +55,36 @@
  * \date 22th of May 2014
  */
 
+
+#include <iostream>
+#include <algorithm>
+#include <assert.h>
 #include <algorithm>
 #include <assert.h>
 
 #include <maskor_ev3_gazebo/maskor_ev3_bobb3e_plugin.h>
-
 #include <gazebo/math/gzmath.hh>
 #include <sdf/sdf.hh>
-
 #include <ros/ros.h>
 
 namespace gazebo
 {
 
 enum {
-    RIGHT,
-    LEFT,
-    LIFT,
+    RIGHT_FRONT_WHEEL,
+    RIGHT_REAR_WHEEL,
+    LEFT_FRONT_WHEEL,
+    LEFT_REAR_WHEEL,
+    NUM_WHEELS
 };
 
-GazeboRosDiffDrive::GazeboRosDiffDrive() {}
+MaskorEV3Bobb3ePlugin::MaskorEV3Bobb3ePlugin() {}
 
 // Destructor
-GazeboRosDiffDrive::~GazeboRosDiffDrive() {}
+MaskorEV3Bobb3ePlugin::~MaskorEV3Bobb3ePlugin() {}
 
 // Load the controller
-void GazeboRosDiffDrive::Load ( physics::ModelPtr _parent, sdf::ElementPtr _sdf )
+void MaskorEV3Bobb3ePlugin::Load ( physics::ModelPtr _parent, sdf::ElementPtr _sdf )
 {
 
     this->parent = _parent;
@@ -104,7 +102,7 @@ void GazeboRosDiffDrive::Load ( physics::ModelPtr _parent, sdf::ElementPtr _sdf 
 
     if (!_sdf->HasElement("legacyMode"))
     {
-      ROS_ERROR_NAMED("diff_drive", "GazeboRosDiffDrive Plugin missing <legacyMode>, defaults to true\n"
+      ROS_ERROR_NAMED("diff_drive", "MaskorEV3Bobb3ePlugin Plugin missing <legacyMode>, defaults to true\n"
          "This setting assumes you have a old package, where the right and left wheel are changed to fix a former code issue\n"
          "To get rid of this error just set <legacyMode> to false if you just created a new package.\n"
          "To fix an old package you have to exchange left wheel by the right wheel.\n"
@@ -124,25 +122,29 @@ void GazeboRosDiffDrive::Load ( physics::ModelPtr _parent, sdf::ElementPtr _sdf 
     gazebo_ros_->getParameter<OdomSource> ( odom_source_, "odometrySource", odomOptions, WORLD );
 
 
-    joints_.resize ( 3 );
-    joints_[LEFT] = gazebo_ros_->getJoint ( parent, "leftJoint", "left_joint" );
-    joints_[RIGHT] = gazebo_ros_->getJoint ( parent, "rightJoint", "right_joint" );
-    joints_[LIFT] = gazebo_ros_->getJoint ( parent, "sliderJoint", "sliderJoint" );
-#if GAZEBO_MAJOR_VERSION > 2
-    joints_[LEFT]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[RIGHT]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[LIFT]->SetParam ( "fmax", 0, wheel_torque );
-#else
-    joints_[LEFT]->SetMaxForce ( 0, wheel_torque );
-    joints_[RIGHT]->SetMaxForce ( 0, wheel_torque );
-    joints_[LIFT]->SetMaxForce ( 0, wheel_torque *5);
-#endif
+    joints_.resize ( NUM_WHEELS );
+    joints_[RIGHT_FRONT_WHEEL] = gazebo_ros_->getJoint ( parent, "right_front_wheel_link", "right_front_wheel_link" );
+    joints_[RIGHT_REAR_WHEEL] = gazebo_ros_->getJoint ( parent, "right_rear_wheel_link", "right_rear_wheel_link" );
+    joints_[LEFT_FRONT_WHEEL] = gazebo_ros_->getJoint ( parent, "left_front_wheel_link", "left_front_wheel_link" );
+    joints_[LEFT_REAR_WHEEL] = gazebo_ros_->getJoint ( parent, "left_rear_wheel_link", "left_rear_wheel_link" );
 
+
+#if GAZEBO_MAJOR_VERSION > 2
+    joints_[RIGHT_FRONT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[RIGHT_REAR_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[LEFT_FRONT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[LEFT_REAR_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+#else
+    joints_[RIGHT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[RIGHT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[LEFT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque *5);
+    joints_[LEFT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque *5);
+#endif
 
 
     this->publish_tf_ = true;
     if (!_sdf->HasElement("publishTf")) {
-      ROS_WARN_NAMED("diff_drive", "GazeboRosDiffDrive Plugin (ns = %s) missing <publishTf>, defaults to %d",
+      ROS_WARN_NAMED("diff_drive", "MaskorEV3Bobb3ePlugin Plugin (ns = %s) missing <publishTf>, defaults to %d",
           this->robot_namespace_.c_str(), this->publish_tf_);
     } else {
       this->publish_tf_ = _sdf->GetElement("publishTf")->Get<bool>();
@@ -154,13 +156,18 @@ void GazeboRosDiffDrive::Load ( physics::ModelPtr _parent, sdf::ElementPtr _sdf 
     last_update_time_ = parent->GetWorld()->GetSimTime();
 
     // Initialize velocity stuff
-    wheel_speed_[RIGHT] = 0;
-    wheel_speed_[LEFT] = 0;
-    wheel_speed_[LIFT] = 0;
+    wheel_speed_[RIGHT_FRONT_WHEEL] = 0;
+    wheel_speed_[RIGHT_REAR_WHEEL] = 0;
+    wheel_speed_[LEFT_FRONT_WHEEL] = 0;
+    wheel_speed_[LEFT_REAR_WHEEL] = 0;
 
     // Initialize velocity support stuff
-    wheel_speed_instr_[RIGHT] = 0;
-    wheel_speed_instr_[LEFT] = 0;
+    wheel_speed_instr_[RIGHT_FRONT_WHEEL] = 0;
+    wheel_speed_instr_[RIGHT_FRONT_WHEEL] = 0;
+    wheel_speed_instr_[LEFT_FRONT_WHEEL] = 0;
+    wheel_speed_instr_[LEFT_REAR_WHEEL] = 0;
+
+
 //    wheel_speed_instr_[LIFT] = 0; // Macht probleme!
 
     x_ = 0;
@@ -182,7 +189,7 @@ void GazeboRosDiffDrive::Load ( physics::ModelPtr _parent, sdf::ElementPtr _sdf 
 
     ros::SubscribeOptions so =
         ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 1,
-                boost::bind(&GazeboRosDiffDrive::cmdVelCallback, this, _1),
+                boost::bind(&MaskorEV3Bobb3ePlugin::cmdVelCallback, this, _1),
                 ros::VoidPtr(), &queue_);
 
     cmd_vel_subscriber_ = gazebo_ros_->node()->subscribe(so);
@@ -196,15 +203,15 @@ void GazeboRosDiffDrive::Load ( physics::ModelPtr _parent, sdf::ElementPtr _sdf 
 
     // start custom queue for diff drive
     this->callback_queue_thread_ =
-        boost::thread ( boost::bind ( &GazeboRosDiffDrive::QueueThread, this ) );
+        boost::thread ( boost::bind ( &MaskorEV3Bobb3ePlugin::QueueThread, this ) );
 
     // listen to the update event (broadcast every simulation iteration)
     this->update_connection_ =
-        event::Events::ConnectWorldUpdateBegin ( boost::bind ( &GazeboRosDiffDrive::UpdateChild, this ) );
+        event::Events::ConnectWorldUpdateBegin ( boost::bind ( &MaskorEV3Bobb3ePlugin::UpdateChild, this ) );
 
 }
 //todo
-void GazeboRosDiffDrive::Reset()
+void MaskorEV3Bobb3ePlugin::Reset()
 {
   last_update_time_ = parent->GetWorld()->GetSimTime();
   pose_encoder_.x = 0;
@@ -214,16 +221,22 @@ void GazeboRosDiffDrive::Reset()
   z_ = 0;
   rot_ = 0;
 #if GAZEBO_MAJOR_VERSION > 2
-  joints_[LEFT]->SetParam ( "fmax", 0, wheel_torque );
-  joints_[RIGHT]->SetParam ( "fmax", 0, wheel_torque );
+  joints_[RIGHT_FRONT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+  joints_[RIGHT_REAR_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+  joints_[LEFT_FRONT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+  joints_[LEFT_REAR_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+
 #else
-  joints_[LEFT]->SetMaxForce ( 0, wheel_torque );
-  joints_[RIGHT]->SetMaxForce ( 0, wheel_torque );
-  joints_[LIFT]->SetMaxForce ( 0, wheel_torque *5);
+  joints_[RIGHT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );
+  joints_[RIGHT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );  
+  joints_[LEFT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );  
+  joints_[LEFT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );  
+
+// joints_[LIFT]->SetMaxForce ( 0, wheel_torque *5);
 #endif
 }
 //todo joint erweitern
-void GazeboRosDiffDrive::publishWheelJointState()
+void MaskorEV3Bobb3ePlugin::publishWheelJointState()
 {
     ros::Time current_time = ros::Time::now();
 
@@ -232,7 +245,7 @@ void GazeboRosDiffDrive::publishWheelJointState()
     joint_state_.position.resize ( joints_.size() );
 
     // Todo: auf 3 ändern
-    for ( int i = 0; i < 3; i++ ) {
+    for ( int i = 0; i < NUM_WHEELS; i++ ) {
         physics::JointPtr joint = joints_[i];
         math::Angle angle = joint->GetAngle ( 0 );
         joint_state_.name[i] = joint->GetName();
@@ -241,11 +254,11 @@ void GazeboRosDiffDrive::publishWheelJointState()
     joint_state_publisher_.publish ( joint_state_ );
 }
 
-void GazeboRosDiffDrive::publishWheelTF()
+void MaskorEV3Bobb3ePlugin::publishWheelTF()
 {
     ros::Time current_time = ros::Time::now();
     // Todo: auf 3 ändern
-    for ( int i = 0; i < 3; i++ ) {
+    for ( int i = 0; i < NUM_WHEELS; i++ ) {
 
         std::string wheel_frame = gazebo_ros_->resolveTF(joints_[i]->GetChild()->GetName ());
         std::string wheel_parent_frame = gazebo_ros_->resolveTF(joints_[i]->GetParent()->GetName ());
@@ -262,13 +275,13 @@ void GazeboRosDiffDrive::publishWheelTF()
 }
 
 // Update the controller
-void GazeboRosDiffDrive::UpdateChild()
+void MaskorEV3Bobb3ePlugin::UpdateChild()
 {
 
     /* force reset SetParam("fmax") since Joint::Reset reset MaxForce to zero at
        https://bitbucket.org/osrf/gazebo/src/8091da8b3c529a362f39b042095e12c94656a5d1/gazebo/physics/Joint.cc?at=gazebo2_2.2.5#cl-331
        (this has been solved in https://bitbucket.org/osrf/gazebo/diff/gazebo/physics/Joint.cc?diff2=b64ff1b7b6ff&at=issue_964 )
-       and Joint::Reset is called after ModelPlugin::Reset, so we need to set maxForce to wheel_torque other than GazeboRosDiffDrive::Reset
+       and Joint::Reset is called after ModelPlugin::Reset, so we need to set maxForce to wheel_torque other than MaskorEV3Bobb3ePlugin::Reset
        (this seems to be solved in https://bitbucket.org/osrf/gazebo/commits/ec8801d8683160eccae22c74bf865d59fac81f1e)
     */
     for ( int i = 0; i < 3; i++ ) {
@@ -295,46 +308,63 @@ void GazeboRosDiffDrive::UpdateChild()
         // Update robot in case new velocities have been requested
         getWheelVelocities();
 
-        double current_speed[3]; //!
+        double current_speed[NUM_WHEELS]; //!
 
-        current_speed[LEFT] = joints_[LEFT]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
-        current_speed[RIGHT] = joints_[RIGHT]->GetVelocity ( 0 ) * ( wheel_diameter_ / 2.0 );
-        current_speed[LIFT] = joints_[LIFT]->GetVelocity ( 0 );
+        current_speed[RIGHT_FRONT_WHEEL] = joints_[RIGHT_FRONT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
+	current_speed[RIGHT_REAR_WHEEL] = joints_[RIGHT_REAR_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
+	current_speed[LEFT_FRONT_WHEEL] = joints_[LEFT_FRONT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
+        current_speed[LEFT_REAR_WHEEL] = joints_[RIGHT_FRONT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
+  
 
         if ( wheel_accel == 0 ||
-                ( fabs ( wheel_speed_[LEFT] - current_speed[LEFT] ) < 0.01 ) ||
-                ( fabs ( wheel_speed_[RIGHT] - current_speed[RIGHT] ) < 0.01 ) ) {
+	     ( fabs ( wheel_speed_[LEFT_FRONT_WHEEL] - current_speed[LEFT_FRONT_WHEEL] ) < 0.01 ) ||
+                ( fabs ( wheel_speed_[RIGHT_FRONT_WHEEL] - current_speed[RIGHT_FRONT_WHEEL] ) < 0.01 ) ) {
             //if max_accel == 0, or target speed is reached
 #if GAZEBO_MAJOR_VERSION > 2
-            joints_[LEFT]->SetParam ( "vel", 0, wheel_speed_[LEFT]/ ( wheel_diameter_ / 2.0 ) );
-            joints_[RIGHT]->SetParam ( "vel", 0, wheel_speed_[RIGHT]/ ( wheel_diameter_ / 2.0 ) );
+            joints_[RIGHT_FRONT_WHEEL]->SetParam ( "vel", 0, wheel_speed_[RIGHT_FRONT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+            joints_[RIGHT_FRONT_WHEEL]->SetParam ( "vel", 0, wheel_speed_[RIGHT_FRONT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
 #else
-            joints_[LEFT]->SetVelocity ( 0, wheel_speed_[LEFT]/ ( wheel_diameter_ / 2.0 ) );
-            joints_[RIGHT]->SetVelocity ( 0, wheel_speed_[RIGHT]/ ( wheel_diameter_ / 2.0 ) );
-            joints_[LIFT]->SetVelocity ( 0, wheel_speed_[LIFT] );
+            joints_[RIGHT_FRONT_WHEEL]->SetVelocity ( 0, wheel_speed_[RIGHT_FRONT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+            joints_[RIGHT_REAR_WHEEL]->SetVelocity ( 0, wheel_speed_[RIGHT_REAR_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+            joints_[LEFT_FRONT_WHEEL]->SetVelocity ( 0, wheel_speed_[LEFT_FRONT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+            joints_[LEFT_REAR_WHEEL]->SetVelocity ( 0, wheel_speed_[LEFT_REAR_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+           
+	    //joints_[LIFT]->SetVelocity ( 0, wheel_speed_[LIFT] );
 #endif
         } else {
-            if ( wheel_speed_[LEFT]>=current_speed[LEFT] )
-                wheel_speed_instr_[LEFT]+=fmin ( wheel_speed_[LEFT]-current_speed[LEFT],  wheel_accel * seconds_since_last_update );
-            else
-                wheel_speed_instr_[LEFT]+=fmax ( wheel_speed_[LEFT]-current_speed[LEFT], -wheel_accel * seconds_since_last_update );
+	  if ( wheel_speed_[LEFT_FRONT_WHEEL]>=current_speed[LEFT_FRONT_WHEEL] ){
+                wheel_speed_instr_[LEFT_FRONT_WHEEL]+=fmin ( wheel_speed_[LEFT_FRONT_WHEEL]-current_speed[LEFT_FRONT_WHEEL],  wheel_accel * seconds_since_last_update );
+                wheel_speed_instr_[LEFT_REAR_WHEEL]+=fmin ( wheel_speed_[LEFT_REAR_WHEEL]-current_speed[LEFT_REAR_WHEEL],  wheel_accel * seconds_since_last_update );
+	  }
+	  else {
+                wheel_speed_instr_[LEFT_FRONT_WHEEL]+=fmax ( wheel_speed_[LEFT_FRONT_WHEEL]-current_speed[LEFT_FRONT_WHEEL], -wheel_accel * seconds_since_last_update );
+		wheel_speed_instr_[LEFT_REAR_WHEEL]+=fmax ( wheel_speed_[LEFT_REAR_WHEEL]-current_speed[LEFT_REAR_WHEEL], -wheel_accel * seconds_since_last_update );
+	  }
 
-            if ( wheel_speed_[RIGHT]>current_speed[RIGHT] )
-                wheel_speed_instr_[RIGHT]+=fmin ( wheel_speed_[RIGHT]-current_speed[RIGHT], wheel_accel * seconds_since_last_update );
-            else
-                wheel_speed_instr_[RIGHT]+=fmax ( wheel_speed_[RIGHT]-current_speed[RIGHT], -wheel_accel * seconds_since_last_update );
+	  if ( wheel_speed_[RIGHT_FRONT_WHEEL]>current_speed[RIGHT_FRONT_WHEEL] ) {
+                wheel_speed_instr_[RIGHT_FRONT_WHEEL]+=fmin ( wheel_speed_[RIGHT_FRONT_WHEEL]-current_speed[RIGHT_FRONT_WHEEL], wheel_accel * seconds_since_last_update );
+                wheel_speed_instr_[RIGHT_REAR_WHEEL]+=fmin ( wheel_speed_[RIGHT_REAR_WHEEL]-current_speed[RIGHT_REAR_WHEEL], wheel_accel * seconds_since_last_update );
+	  }
+	  else {
+                wheel_speed_instr_[RIGHT_FRONT_WHEEL]+=fmax ( wheel_speed_[RIGHT_FRONT_WHEEL]-current_speed[RIGHT_FRONT_WHEEL], -wheel_accel * seconds_since_last_update );
+                wheel_speed_instr_[RIGHT_REAR_WHEEL]+=fmax ( wheel_speed_[RIGHT_REAR_WHEEL]-current_speed[RIGHT_REAR_WHEEL], -wheel_accel * seconds_since_last_update );
 //geändert
-            wheel_speed_instr_[LIFT]+=fmax ( wheel_speed_[LIFT]-current_speed[LIFT], wheel_accel * seconds_since_last_update );
+		//wheel_speed_instr_[LIFT]+=fmax ( wheel_speed_[LIFT]-current_speed[LIFT], wheel_accel * seconds_since_last_update );
             // ROS_INFO_NAMED("diff_drive", "actual wheel speed = %lf, issued wheel speed= %lf", current_speed[LEFT], wheel_speed_[LEFT]);
             // ROS_INFO_NAMED("diff_drive", "actual wheel speed = %lf, issued wheel speed= %lf", current_speed[RIGHT],wheel_speed_[RIGHT]);
+	  }
 
 #if GAZEBO_MAJOR_VERSION > 2
-            joints_[LEFT]->SetParam ( "vel", 0, wheel_speed_instr_[LEFT] / ( wheel_diameter_ / 2.0 ) );
-            joints_[RIGHT]->SetParam ( "vel", 0, wheel_speed_instr_[RIGHT] / ( wheel_diameter_ / 2.0 ) );
+            joints_[RIGHT_FRONT_WHEEL]->SetParam ( "vel", 0, wheel_speed_instr_[RIGHT_FRONT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+            joints_[RIGHT_REAR_WHEEL]->SetParam ( "vel", 0, wheel_speed_instr_[RIGHT_REAR_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	    joints_[LEFT_FRONT_WHEEL]->SetParam ( "vel", 0, wheel_speed_instr_[LEFT_FRONT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+            joints_[LEFT_REAR_WHEEL]->SetParam ( "vel", 0, wheel_speed_instr_[LEFT_REAR_WHEEL] / ( wheel_diameter_ / 2.0 ) );
 #else
-            joints_[LEFT]->SetVelocity ( 0,wheel_speed_instr_[LEFT] / ( wheel_diameter_ / 2.0 ) );
-            joints_[RIGHT]->SetVelocity ( 0,wheel_speed_instr_[RIGHT] / ( wheel_diameter_ / 2.0 ) );
-            joints_[LIFT]->SetVelocity ( 0,wheel_speed_instr_[LIFT]);
+            joints_[RIGHT_FRONT_WHEEL]->SetVelocity ( 0,wheel_speed_instr_[RIGHT_FRONT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+            joints_[RIGHT_REAR_WHEEL]->SetVelocity ( 0,wheel_speed_instr_[RIGHT_REAR_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	    joints_[LEFT_FRONT_WHEEL]->SetVelocity ( 0,wheel_speed_instr_[LEFT_FRONT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+            joints_[LEFT_REAR_WHEEL]->SetVelocity ( 0,wheel_speed_instr_[LEFT_REAR_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	    // joints_[LIFT]->SetVelocity ( 0,wheel_speed_instr_[LIFT]);
 #endif
         }
         last_update_time_+= common::Time ( update_period_ );
@@ -342,7 +372,7 @@ void GazeboRosDiffDrive::UpdateChild()
 }
 
 // Finalize the controller
-void GazeboRosDiffDrive::FiniChild()
+void MaskorEV3Bobb3ePlugin::FiniChild()
 {
     alive_ = false;
     queue_.clear();
@@ -351,7 +381,7 @@ void GazeboRosDiffDrive::FiniChild()
     callback_queue_thread_.join();
 }
 
-void GazeboRosDiffDrive::getWheelVelocities()
+void MaskorEV3Bobb3ePlugin::getWheelVelocities()
 {
     boost::mutex::scoped_lock scoped_lock ( lock );
 
@@ -361,19 +391,23 @@ void GazeboRosDiffDrive::getWheelVelocities()
 
     if(legacy_mode_)
     {
-      wheel_speed_[LEFT] = vr + va * wheel_separation_ / 2.0;
-      wheel_speed_[RIGHT] = vr - va * wheel_separation_ / 2.0;
-      wheel_speed_[LIFT] = lr;
+      wheel_speed_[RIGHT_FRONT_WHEEL] = vr + va * wheel_separation_ / 2.0;
+      wheel_speed_[RIGHT_REAR_WHEEL] = vr + va * wheel_separation_ / 2.0;
+      wheel_speed_[LEFT_FRONT_WHEEL] = vr - va * wheel_separation_ / 2.0;
+      wheel_speed_[LEFT_REAR_WHEEL] = vr - va * wheel_separation_ / 2.0;
+      //wheel_speed_[LIFT] = lr;
     }
     else
     {
-      wheel_speed_[LEFT] = vr - va * wheel_separation_ / 2.0;
-      wheel_speed_[RIGHT] = vr + va * wheel_separation_ / 2.0;
-      wheel_speed_[LIFT] = lr;
+      wheel_speed_[RIGHT_FRONT_WHEEL] = vr + va * wheel_separation_ / 2.0;
+      wheel_speed_[RIGHT_REAR_WHEEL] = vr + va * wheel_separation_ / 2.0;
+      wheel_speed_[LEFT_FRONT_WHEEL] = vr - va * wheel_separation_ / 2.0;
+      wheel_speed_[LEFT_REAR_WHEEL] = vr - va * wheel_separation_ / 2.0;
+      //wheel_speed_[LIFT] = lr;
     }
 }
 
-void GazeboRosDiffDrive::cmdVelCallback ( const geometry_msgs::Twist::ConstPtr& cmd_msg )
+void MaskorEV3Bobb3ePlugin::cmdVelCallback ( const geometry_msgs::Twist::ConstPtr& cmd_msg )
 {
     boost::mutex::scoped_lock scoped_lock ( lock );
     x_ = cmd_msg->linear.x;
@@ -381,7 +415,7 @@ void GazeboRosDiffDrive::cmdVelCallback ( const geometry_msgs::Twist::ConstPtr& 
     rot_ = cmd_msg->angular.z;
 }
 
-void GazeboRosDiffDrive::QueueThread()
+void MaskorEV3Bobb3ePlugin::QueueThread()
 {
     static const double timeout = 0.01;
 
@@ -390,10 +424,11 @@ void GazeboRosDiffDrive::QueueThread()
     }
 }
 
-void GazeboRosDiffDrive::UpdateOdometryEncoder()
+void MaskorEV3Bobb3ePlugin::UpdateOdometryEncoder()
 {
-    double vl = joints_[LEFT]->GetVelocity ( 0 );
-    double vr = joints_[RIGHT]->GetVelocity ( 0 );
+  double vl = (joints_[LEFT_FRONT_WHEEL]->GetVelocity ( 0 ) +  joints_[LEFT_REAR_WHEEL]->GetVelocity ( 0 ) ) / 2.0 ;
+    double vr = (joints_[RIGHT_FRONT_WHEEL]->GetVelocity ( 0 ) +  joints_[RIGHT_REAR_WHEEL]->GetVelocity ( 0 ) ) / 2.0 ;
+    
     common::Time current_time = parent->GetWorld()->GetSimTime();
     double seconds_since_last_update = ( current_time - last_odom_update_ ).Double();
     last_odom_update_ = current_time;
@@ -446,7 +481,7 @@ void GazeboRosDiffDrive::UpdateOdometryEncoder()
     odom_.twist.twist.linear.y = dy/seconds_since_last_update;
 }
 
-void GazeboRosDiffDrive::publishOdometry ( double step_time )
+void MaskorEV3Bobb3ePlugin::publishOdometry ( double step_time )
 {
 
     ros::Time current_time = ros::Time::now();
@@ -511,6 +546,6 @@ void GazeboRosDiffDrive::publishOdometry ( double step_time )
     odometry_publisher_.publish ( odom_ );
 }
 
-GZ_REGISTER_MODEL_PLUGIN ( GazeboRosDiffDrive )
+GZ_REGISTER_MODEL_PLUGIN ( MaskorEV3Bobb3ePlugin )
 }
 

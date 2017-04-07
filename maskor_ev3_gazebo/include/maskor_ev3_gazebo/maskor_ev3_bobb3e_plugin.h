@@ -1,4 +1,15 @@
 /*
+    MASKOR EV3 BOBB3E PLUGIN
+    Marcel Stüttgen
+    stuettgen@fh-aachen.de
+    Dennis Miltz
+    dennis.miltz@alumni.fh-aachen.de
+
+    FH Aachen University of Applied Sciences
+    2017
+
+    based on:
+
  * Copyright (c) 2010, Daniel Hewlett, Antons Rebguns
  *  All rights reserved.
  *
@@ -38,8 +49,8 @@
  * $ Id: 06/21/2013 11:23:40 AM piyushk $
  */
 
-#ifndef DIFFDRIVE_PLUGIN_HH
-#define DIFFDRIVE_PLUGIN_HH
+#ifndef _MASKOR_EV3_BOBB3E_PLUGIN_H_
+#define _MASKOR_EV3_BOBB3E_PLUGIN_H_
 
 #include <map>
 
@@ -70,7 +81,7 @@ namespace gazebo {
   class Joint;
   class Entity;
 
-  class GazeboRosDiffDrive : public ModelPlugin {
+  class MaskorEV3Bobb3ePlugin : public ModelPlugin {
 
     enum OdomSource
     {
@@ -78,8 +89,8 @@ namespace gazebo {
         WORLD = 1,
     };
     public:
-      GazeboRosDiffDrive();
-      ~GazeboRosDiffDrive();
+      MaskorEV3Bobb3ePlugin();
+      ~MaskorEV3Bobb3ePlugin();
       void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
       void Reset();
 
@@ -102,9 +113,9 @@ namespace gazebo {
       double wheel_separation_;
       double wheel_diameter_;
       double wheel_torque;
-      double wheel_speed_[3];
-    double wheel_accel;
-      double wheel_speed_instr_[3];
+      double wheel_speed_[4];
+      double wheel_accel;
+      double wheel_speed_instr_[4];
 
       std::vector<physics::JointPtr> joints_;
 
@@ -156,4 +167,4 @@ namespace gazebo {
 
 }
 
-#endif
+#endif //_MASKOR_EV3_BOBB3E_PLUGIN_H_

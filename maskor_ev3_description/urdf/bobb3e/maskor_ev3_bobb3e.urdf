@@ -435,7 +435,7 @@
   <!-- ************** -->
 
   <gazebo>
-    <plugin name="differential_drive_controller" filename="libmaskor_ev3_plugin.so">
+    <plugin name="differential_drive_controller" filename="libmaskor_ev3_bobb3e_plugin.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>100</updateRate>
       <leftJoint>base_link_to_left_front_wheel</leftJoint>
