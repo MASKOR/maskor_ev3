@@ -1,6 +1,6 @@
-<!-- <?xml version="1.0"?> -->
+<?xml version="1.0"?>
 <launch>
-	<arg name="model" default="$(find maskor_ev3)/description/urdf/bobb3e/maskor_ev3_bobb3e.urdf"/>
+	<arg name="model" default="$(find maskor_ev3_description)/urdf/bobb3e/maskor_ev3_bobb3e.urdf"/>
 	<arg name="gui" default="True" />
 	<param name="robot_description" textfile="$(arg model)" />
 	<param name="use_gui" value="$(arg gui)"/>

@@ -34,7 +34,7 @@
   <link name="base_link">
     <visual>
       <geometry>
-	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_baseLink.dae" scale="1 1 1"/>
+	<mesh filename="package://maskor_ev3_description/meshes/bobb3e_baseLink.dae" scale="1 1 1"/>
         <!--box size="0.005 0.005 0.005"/-->
       </geometry>
       <origin rpy="0 0 0" xyz="-0.016 0 0"/>
@@ -62,7 +62,7 @@
 <link name="left_front_wheel_link">
   <visual>
     <geometry>
-      <mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+      <mesh filename="package://maskor_ev3_description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
     </geometry>
     <material name="black"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -88,7 +88,7 @@
   <link name="right_front_wheel_link">
     <visual>
       <geometry>
-     	  <mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+     	  <mesh filename="package://maskor_ev3_description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
       </geometry>
       <material name="black"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -114,7 +114,7 @@
   <link name="left_rear_wheel_link">
     <visual>
       <geometry>
-     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+     	<mesh filename="package://maskor_ev3_description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </visual>
@@ -139,7 +139,7 @@
   <link name="right_rear_wheel_link">
     <visual>
       <geometry>
-     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+     	<mesh filename="package://maskor_ev3_description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </visual>
@@ -187,7 +187,7 @@
   <link name="fork_lift_link">
     <visual>
       <geometry>
-	       <mesh filename="package://maskor_ev3/description/meshes/bobb3e_fork_lift.dae" scale="1 1 1"/>
+	       <mesh filename="package://maskor_ev3_description/meshes/bobb3e_fork_lift.dae" scale="1 1 1"/>
 	<!-- <box size="0.01 0.01 0.035"/> -->
       </geometry>
       <origin rpy="0 0 0" xyz="0.011 0 0"/>
@@ -297,7 +297,7 @@
   <link name="left_fork_arm_link">
     <visual>
       <geometry>
-        <mesh filename="package://maskor_ev3/description/meshes/bobb3e_arm_left.dae" scale="1 1 1"/>
+        <mesh filename="package://maskor_ev3_description/meshes/bobb3e_arm_left.dae" scale="1 1 1"/>
       </geometry>
       <material name="black"/>
     </visual>
