@@ -45,6 +45,7 @@
       <geometry>
         <box size="0.0198 0.017 0.0198"/>
       </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.02"/>
     </collision>
 
     <inertial>
@@ -186,8 +187,8 @@
   <link name="fork_lift_link">
     <visual>
       <geometry>
-	<!--mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/-->
-	<box size="0.01 0.01 0.035"/>
+	       <mesh filename="package://maskor_ev3/description/meshes/bobb3e_fork_lift.dae" scale="1 1 1"/>
+	<!-- <box size="0.01 0.01 0.035"/> -->
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="black"/>
@@ -195,7 +196,7 @@
 
     <collision>
       <geometry>
-        <box size="0.01 0.01 0.01"/>
+        <box size="0.01 0.089 0.064"/>
       </geometry>
     </collision>
 
@@ -346,13 +347,13 @@
  <joint name="base_link_to_color_sensor" type="fixed">
     <parent link="base_link"/>
     <child link="color_sensor_link"/>
-    <origin xyz="0.1 -0.00 -0.035" rpy="0 1.5708 0"/>
+    <origin xyz="0.1 -0.00 0.02" rpy="0 1.5708 0"/>
   </joint>
 
- <joint name="base_link_to_fork_lift" type="prismatic">
+ <joint name="base_link_to_fork_lift_link" type="prismatic">
     <parent link="base_link"/>
     <child link="fork_lift_link"/>
-    <origin rpy="0 0 0" xyz="0.1 -0.00 -0.035"/>
+    <origin rpy="0 0 0" xyz="0.1 0 0.02"/>
     <axis xyz="0 0 1"/>
     <limit effort="1000.0" lower="0" upper="0.15" velocity="0.5"/>
  </joint>
@@ -366,7 +367,7 @@
  <joint name="base_link_to_infrared_sensor" type="fixed">
     <parent link="base_link"/>
     <child link="infrared_sensor_link"/>
-    <origin xyz="0 0 0.12"/>
+    <origin xyz="0 0 0.18"/>
   </joint>
 
  <joint name="fork_lift_link_to_fork_link" type="fixed">
@@ -378,18 +379,20 @@
  <joint name="fork_link_to_left_fork" type="fixed">
     <parent link="fork_link"/>
     <child link="left_fork_link"/>
-    <origin xyz="0 -0.05 0"/>
+    <origin xyz="0 0.015 0"/>
   </joint>
 
  <joint name="fork_link_to_right_fork" type="fixed">
     <parent link="fork_link"/>
     <child link="right_fork_link"/>
-    <origin xyz="0 0.05 0"/>
+    <origin xyz="0 -0.015 0"/>
   </joint>
 
   <!-- ************** -->
   <!-- Plugins         -->
   <!-- ************** -->
+
+
 
   <gazebo>
     <plugin name="differential_drive_controller" filename="libmaskor_ev3_plugin.so">
@@ -397,12 +400,12 @@
       <updateRate>100</updateRate>
       <leftJoint>base_link_to_left_front_wheel</leftJoint>
       <rightJoint>base_link_to_right_front_wheel</rightJoint>
-      <sliderJoint>base_link_to_fork_lift</sliderJoint>
-      <wheelSeparation>0.003</wheelSeparation>
-      <wheelDiameter>0.002</wheelDiameter>
+      <sliderJoint>base_link_to_fork_lift_link</sliderJoint>
+      <wheelSeparation>0.03</wheelSeparation>
+      <wheelDiameter>0.02</wheelDiameter>
       <torque>50</torque>
-      <wheelAcceleration>10</wheelAcceleration>
-      <wheelTorque>1</wheelTorque>
+      <wheelAcceleration>1</wheelAcceleration>
+      <wheelTorque>1</wheelTorque> -->
       <!-- interface:position name="position_iface_0"/ -->
       <commandTopic>cmd_vel</commandTopic>
       <robotBaseFrame>base_link</robotBaseFrame>
@@ -416,6 +419,5 @@
 			<legacyMode>true </legacyMode>
     </plugin>
   </gazebo>
-
 
 </robot>
