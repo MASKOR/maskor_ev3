@@ -61,9 +61,9 @@
 
     <collision>
       <geometry>
-	<box size="0.20 0.12 0.10"/>
+	<box size="0.165 0.105 0.12"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <origin rpy="0 0 0" xyz="0 0 0.035"/>
     </collision>
 
     <inertial>
@@ -186,7 +186,7 @@
   <link name="color_sensor_link">
     <visual>
       <geometry>
-	<box size="0.01 0.01 0.035"/>
+	<box size="0.001 0.001 0.001"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="black"/>
@@ -194,9 +194,9 @@
 
     <collision>
       <geometry>
-	<box size="0.002 0.002 0.004"/>
+	<box size="0.025 0.025 0.045"/>
       </geometry>
-    </collision>
+     <origin rpy="0 1.5708 0" xyz="-0.025 0 -0.01"/></collision>
 
   </link>
 
@@ -226,7 +226,7 @@
   <link name="infrared_sensor_link">
     <visual>
       <geometry>
-	<box size="0.0045 0.0055 0.0023"/>
+	<box size="0.01 0.01 0.01"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="black"/>
@@ -234,8 +234,9 @@
 
     <collision>
       <geometry>
-	<box size="0.0045 0.0055 0.0023"/>
+	<box size="0.055 0.065 0.03"/>
       </geometry>
+      <origin rpy="0 0 0" xyz="-0.01 0 0"/>
     </collision>
 
   </link>
@@ -365,7 +366,7 @@
   <joint name="base_link_to_color_sensor" type="fixed">
     <parent link="base_link"/>
     <child link="color_sensor_link"/>
-    <origin xyz="0.1 -0.00 0.02" rpy="0 1.5708 0"/>
+    <origin xyz="0.1 -0.00 -0.02" rpy="0 1.5708 0"/>
   </joint>
 
   <joint name="base_link_to_left_fork_arm" type="continuous">
