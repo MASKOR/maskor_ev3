@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <!-- ******************************************* -->
-<!-- MASKOR EV3 BOBB3E URDF MODEL                -->   
+<!-- MASKOR EV3 BOBB3E URDF MODEL                -->
 <!-- Marcel Stuettgen                            -->
-<!-- stuettgen@fh-aachen.de                      -->   
+<!-- stuettgen@fh-aachen.de                      -->
 <!-- Dennis Miltz                                -->
-<!-- dennis.miltz@alumni.fh-aachen.de            -->   
+<!-- dennis.miltz@alumni.fh-aachen.de            -->
 <!-- Christoph Gollok                            -->
-<!-- christoph.gollok@alumni.fh-aachen.de        -->   
+<!-- christoph.gollok@alumni.fh-aachen.de        -->
 <!-- ******************************************* -->
 
 
@@ -22,19 +22,19 @@
 
 
 <!-- ************** -->
-<!-- BASE FOOTPRINT -->   
+<!-- BASE FOOTPRINT -->
 <!-- ************** -->
   <link name="base_footprint">
   </link>
 
 
 <!-- ************** -->
-<!-- BASE LINK      -->   
+<!-- BASE LINK      -->
 <!-- ************** -->
   <link name="base_link">
     <visual>
       <geometry>
-	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_baseLink.dae" scale="1 1 1"/> 
+	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_baseLink.dae" scale="1 1 1"/>
         <!--box size="0.005 0.005 0.005"/-->
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 -0.05"/>
@@ -51,17 +51,17 @@
       <mass value="0.1"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
-  
+
   </link>
 
 
 <!-- ******************** -->
-<!-- LEFT FRONT WHEEL     -->   
+<!-- LEFT FRONT WHEEL     -->
 <!-- ******************** -->
   <link name="left_front_wheel_link">
     <visual>
       <geometry>
-     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/> 
+     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </visual>
@@ -75,15 +75,15 @@
   </link>
 
 <!-- ****************** -->
-<!-- RIGHT FRONT WHEEL  -->   
+<!-- RIGHT FRONT WHEEL  -->
 <!-- *****************  -->
   <link name="right_front_wheel_link">
     <visual>
       <geometry>
-     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/> 
+     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
       </geometry>
       <material name="black"/>
-     <origin rpy="0 0 0" xyz="0 0 0"/> 
+     <origin rpy="0 0 0" xyz="0 0 0"/>
    </visual>
 
     <collision>
@@ -95,12 +95,12 @@
   </link>
 
 <!-- ******************** -->
-<!-- LEFT REAR  WHEEL     -->   
+<!-- LEFT REAR  WHEEL     -->
 <!-- ******************** -->
   <link name="left_rear_wheel_link">
     <visual>
       <geometry>
-     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/> 
+     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </visual>
@@ -114,12 +114,12 @@
   </link>
 
 <!-- ******************** -->
-<!-- RIGHT REAR WHEEL     -->   
+<!-- RIGHT REAR WHEEL     -->
 <!-- ******************** -->
   <link name="right_rear_wheel_link">
     <visual>
       <geometry>
-     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/> 
+     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
     </visual>
@@ -135,7 +135,7 @@
 
 
 <!-- ************** -->
-<!-- COLOR SENSOR     -->   
+<!-- COLOR SENSOR     -->
 <!-- ************** -->
   <link name="color_sensor_link">
     <visual>
@@ -156,12 +156,12 @@
 
 
 <!-- ************** -->
-<!-- FORK LIFT     -->   
+<!-- FORK LIFT     -->
 <!-- ************** -->
   <link name="fork_lift_link">
     <visual>
       <geometry>
-	<!--mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/--> 
+	<!--mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/-->
 	<box size="0.01 0.01 0.035"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -183,7 +183,7 @@
 
 
 <!-- ************** -->
-<!-- GYRO SENSOR     -->   
+<!-- GYRO SENSOR     -->
 <!-- ************** -->
   <link name="gyro_sensor_link">
     <visual>
@@ -203,7 +203,7 @@
   </link>
 
 <!-- ***************  -->
-<!-- INFRARED SENSOR -->   
+<!-- INFRARED SENSOR -->
 <!-- ***************  -->
   <link name="infrared_sensor_link">
     <visual>
@@ -224,7 +224,7 @@
 
 
 <!-- ***************  -->
-<!-- FORK LINK  -->   
+<!-- FORK LINK  -->
 <!-- ***************  -->
 <link name="fork_link">
   <visual>
@@ -256,7 +256,7 @@
       <geometry>
 	<box size="0.1 0.01 0.01"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0.05 0 0"/> 
+      <origin rpy="0 0 0" xyz="0.05 0 0"/>
     </collision>
 
   </link>
@@ -274,7 +274,7 @@
       <geometry>
 	<box size="0.1 0.01 0.01"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0.05 0 0"/>  
+      <origin rpy="0 0 0" xyz="0.05 0 0"/>
     </collision>
 
   </link>
@@ -282,7 +282,7 @@
 
 
 <!-- ************** -->
-<!-- JOINTS         -->   
+<!-- JOINTS         -->
 <!-- ************** -->
   <joint name="base_link_to_base_footprint" type="fixed">
     <parent link="base_footprint"/>
@@ -301,7 +301,7 @@
     <parent link="base_link"/>
     <child link="right_front_wheel_link"/>
     <origin xyz="0.03 -0.065 -0.05"/>
-    <axis xyz="0 1 0"/>  
+    <axis xyz="0 1 0"/>
   </joint>
 
   <joint name="base_link_to_left_rear_wheel" type="continuous">
@@ -315,7 +315,7 @@
     <parent link="base_link"/>
     <child link="right_rear_wheel_link"/>
     <origin xyz="-0.03 -0.065 -0.05"/>
-    <axis xyz="0 1 0"/>  
+    <axis xyz="0 1 0"/>
   </joint>
 
  <joint name="base_link_to_color_sensor" type="fixed">
@@ -361,6 +361,30 @@
     <child link="right_fork_link"/>
     <origin xyz="0 0.05 0"/>
   </joint>
+
+  <!-- ************** -->
+  <!-- Plugins         -->
+  <!-- ************** -->
+
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libmaskor_ev3_plugin.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100</updateRate>
+      <leftJoint>base_link_to_left_front_wheel</leftJoint>
+      <rightJoint>base_link_to_right_front_wheel</rightJoint>
+      <sliderJoint>base_link_to_fork_lift</sliderJoint>
+      <wheelSeparation>0.6</wheelSeparation>
+      <wheelDiameter>0.2</wheelDiameter>
+      <torque>50</torque>
+      <!-- interface:position name="position_iface_0"/ -->
+      <commandTopic>cmd_vel</commandTopic>
+      <robotBaseFrame>base_link</robotBaseFrame>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <publishWheelJointState>true</publishWheelJointState>
+			<legacyMode>true </legacyMode>
+    </plugin>
+  </gazebo>
 
 
 </robot>
