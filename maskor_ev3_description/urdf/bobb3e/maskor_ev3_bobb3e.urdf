@@ -319,6 +319,7 @@
       <geometry>
 	<mesh filename="package://maskor_ev3_description/meshes/bobb3e_arm_left.dae" scale="1 1 1"/>
       </geometry>
+      <origin rpy="0 0 0" xyz="0.07 0 0"/>
       <material name="black"/>
     </visual>
 
@@ -369,11 +370,12 @@
     <origin xyz="0.1 -0.00 -0.02" rpy="0 1.5708 0"/>
   </joint>
 
-  <joint name="base_link_to_left_fork_arm" type="continuous">
+  <joint name="base_link_to_left_fork_arm" type="revolute">
     <parent link="base_link"/>
     <child link="left_fork_arm_link"/>
     <axis xyz="0 1 0"/>
-    <origin rpy="0 0 3.14159" xyz="-0.024 0.05 0.1125"/>
+    <origin rpy="0 0 0" xyz="-0.01 0.05 0.07"/>
+    <limit effort="50.0" lower="-0.50" upper="0.50" velocity="0.5"/>
   </joint>
 
   <joint name="base_link_to_fork_lift_link" type="prismatic">
@@ -381,7 +383,7 @@
     <child link="fork_lift_link"/>
     <origin rpy="0 0 0" xyz="0.11 0 0.02"/>
     <axis xyz="0 0 1"/>
-    <limit effort="50.0" lower="0.01" upper="0.15" velocity="0.5"/>
+    <limit effort="50.0" lower="-0.025" upper="0.11" velocity="0.5"/>
   </joint>
 
   <joint name="base_link_to_gyro_sensor" type="fixed">
