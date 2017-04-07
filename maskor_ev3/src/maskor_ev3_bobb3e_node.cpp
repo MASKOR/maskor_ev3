@@ -10,7 +10,7 @@
  */
 
 #define _DEBUG
-//#define _OFFLINETEST
+#define _OFFLINETEST
 
 #include <stdio.h>
 #include <maskor_ev3/maskor_ev3.h>
@@ -109,14 +109,22 @@ float wheelbase = 0.12;
 float wheelradius = 0.03;
 
 enum {
-    LEFT_WHEEL,
-    RIGHT_WHEEL,
-    FORK_LIFT,
-    NUM_JOINTS
+   RIGHT_FRONT_WHEEL, 
+   RIGHT_REAR_WHEEL,
+   LEFT_FRONT_WHEEL,
+   LEFT_REAR_WHEEL,
+   FORK_LIFT,
+   LEFT_ARM_LINK,
+   RIGHT_ARM_LINK,
+   NUM_JOINTS
 };
-char *joint_names[] = {"left_wheel_link", 
-		       "right_wheel_link", 
-		       "fork_lift_link"};
+char *joint_names[] = {"right_front_wheel_link", 
+		       "right_rear_wheel_link", 
+		       "left_front_wheel_link", 
+		       "left_rear_wheel_link",       
+		       "fork_lift_link",
+		       "left_fork_arm_link",
+		       "right_fork_arm_link"};
 double joint_positions[NUM_JOINTS];
 double joint_velocities[NUM_JOINTS];
 double joint_efforts[NUM_JOINTS];
@@ -299,20 +307,20 @@ void publish_test_messages() {
   gyro_sensor_msg.rotational_speed = 3;
   gyro_sensor_pub.publish(&gyro_sensor_msg);
 
-  touch_sensor_msg.header.stamp = nh.now();
-  touch_sensor_msg.header.frame_id = "touch_sensor_link";
-  touch_sensor_msg.state = 0;
-  touch_sensor_pub.publish(&touch_sensor_msg);
+  // touch_sensor_msg.header.stamp = nh.now();
+  // touch_sensor_msg.header.frame_id = "touch_sensor_link";
+  // touch_sensor_msg.state = 0;
+  // touch_sensor_pub.publish(&touch_sensor_msg);
 
   infrared_sensor_msg.header.stamp = nh.now();
   infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
   infrared_sensor_msg.proximity = 0;
   infrared_sensor_pub.publish(&infrared_sensor_msg);
 
-  ultrasonic_sensor_msg.header.stamp = nh.now();
-  ultrasonic_sensor_msg.header.frame_id = "ultrasonic_sensor_link";
-  ultrasonic_sensor_msg.distance = 0;
-  ultrasonic_sensor_pub.publish(&ultrasonic_sensor_msg);
+  // ultrasonic_sensor_msg.header.stamp = nh.now();
+  // ultrasonic_sensor_msg.header.frame_id = "ultrasonic_sensor_link";
+  // ultrasonic_sensor_msg.distance = 0;
+  // ultrasonic_sensor_pub.publish(&ultrasonic_sensor_msg);
 
 }
 
@@ -332,25 +340,53 @@ void publish_joint_states() {
 // #  * the velocity of the joint (rad/s or m/s) and 
 // #  * the effort that is applied in the joint (Nm or N).  
 #ifndef _OFFLINETEST
-  joint_positions[LEFT_WHEEL] = left_motor.position(); //deg or rad??
-  joint_positions[RIGHT_WHEEL] = right_motor.position(); 
-  joint_positions[FORK_LIFT] = lift_motor.position();
-  joint_velocities[LEFT_WHEEL] = left_motor.speed();
-  joint_velocities[RIGHT_WHEEL] = right_motor.speed(); 
-  joint_velocities[FORK_LIFT] = lift_motor.speed();
-  joint_efforts[LEFT_WHEEL] = 0;
-  joint_efforts[RIGHT_WHEEL] = 0; 
-  joint_efforts[FORK_LIFT] = 0;
-#else
-  joint_positions[LEFT_WHEEL] = 0;
-  joint_positions[RIGHT_WHEEL] = 0; 
+  joint_positions[RIGHT_FRONT_WHEEL] = right_motor.position(); //deg or rad??
+  joint_positions[RIGHT_REAR_WHEEL] = right_motor.position(); 
+  joint_positions[LEFT_FRONT_WHEEL] = left_motor.position(); //deg or rad??
+  joint_positions[LEFT_REAR_WHEEL] = left_motor.position(); 
+  joint_positions[LEFT_ARM_LINK] = lift_motor.position();
+  joint_positions[RIGHT_ARM_LINK] = lift_motor.position();
   joint_positions[FORK_LIFT] = 0;
-  joint_velocities[LEFT_WHEEL] = 0;
-  joint_velocities[RIGHT_WHEEL] = 0; 
+
+  joint_velocities[RIGHT_FRONT_WHEEL] = right_motor.speed();
+  joint_velocities[RIGHT_REAR_WHEEL] = right_motor.speed(); 
+  joint_velocities[LEFT_FRONT_WHEEL] = left_motor.speed();
+  joint_velocities[LEFT_REAR_WHEEL] = left_motor.speed(); 
   joint_velocities[FORK_LIFT] = 0;
-  joint_efforts[LEFT_WHEEL] = 0;
-  joint_efforts[RIGHT_WHEEL] = 0; 
+  joint_velocities[LEFT_ARM_LINK] = lift_motor.speed();
+  joint_velocities[RIGHT_ARM_LINK] = lift_motor.speed();
+
+  joint_efforts[RIGHT_FRONT_WHEEL] = 0;
+  joint_efforts[RIGHT_REAR_WHEEL] = 0; 
+  joint_efforts[LEFT_FRONT_WHEEL] = 0;
+  joint_efforts[LEFT_REAR_WHEEL] = 0;
   joint_efforts[FORK_LIFT] = 0;
+  joint_efforts[LEFT_ARM_LINK] = 0;
+  joint_efforts[RIGHT_ARM_LINK] = 0;
+#else
+  joint_positions[RIGHT_FRONT_WHEEL] = 0; 
+  joint_positions[RIGHT_REAR_WHEEL] = 0; 
+  joint_positions[LEFT_FRONT_WHEEL] = 0;
+  joint_positions[LEFT_REAR_WHEEL] = 0; 
+  joint_positions[LEFT_ARM_LINK] = 50;
+  joint_positions[RIGHT_ARM_LINK] = 50;
+  joint_positions[FORK_LIFT] = 0;
+
+  joint_velocities[RIGHT_FRONT_WHEEL] = 0;
+  joint_velocities[RIGHT_REAR_WHEEL] = 0; 
+  joint_velocities[LEFT_FRONT_WHEEL] = 0;
+  joint_velocities[LEFT_REAR_WHEEL] = 0; 
+  joint_velocities[FORK_LIFT] = 0;
+  joint_velocities[LEFT_ARM_LINK] = 0;
+  joint_velocities[RIGHT_ARM_LINK] = 0;
+
+  joint_efforts[RIGHT_FRONT_WHEEL] = 0;
+  joint_efforts[RIGHT_REAR_WHEEL] = 0; 
+  joint_efforts[LEFT_FRONT_WHEEL] = 0;
+  joint_efforts[LEFT_REAR_WHEEL] = 0;
+  joint_efforts[FORK_LIFT] = 0;
+  joint_efforts[LEFT_ARM_LINK] = 0;
+  joint_efforts[RIGHT_ARM_LINK] = 0;
 #endif
 
   joint_state_msg.name = joint_names;
