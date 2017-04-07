@@ -45,7 +45,7 @@
       <geometry>
         <box size="0.0198 0.017 0.0198"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.02"/>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
     </collision>
 
     <inertial>
@@ -190,7 +190,7 @@
 	       <mesh filename="package://maskor_ev3/description/meshes/bobb3e_fork_lift.dae" scale="1 1 1"/>
 	<!-- <box size="0.01 0.01 0.035"/> -->
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="0 0 0" xyz="0.011 0 0"/>
       <material name="black"/>
     </visual>
 
@@ -198,6 +198,7 @@
       <geometry>
         <box size="0.01 0.089 0.064"/>
       </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.01"/>
     </collision>
 
     <inertial>
@@ -248,63 +249,60 @@
 
   </link>
 
-
-<!-- ***************  -->
-<!-- FORK LINK  -->
-<!-- ***************  -->
-<link name="fork_link">
-  <visual>
-    <geometry>
-      <box size="0.01 0.1 0.01"/>
-    </geometry>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <material name="black"/>
-  </visual>
-
-  <collision>
-    <geometry>
-      <box size="0.01 0.1 0.01"/>
-    </geometry>
-  </collision>
-
-  </link>
+  <!-- ***************  -->
+  <!-- Fork              -->
+  <!-- ***************  -->
 
   <link name="left_fork_link">
-    <visual>
+<!--     <visual>
       <geometry>
-	<box size="0.1 0.01 0.01"/>
+	       <box size="0.073 0.016 0.01"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0.05 0 0"/>
+      <origin rpy="0 0 0" xyz="0.035 0.02 -0.02"/>
       <material name="black"/>
-    </visual>
+    </visual>-->
 
     <collision>
       <geometry>
-	<box size="0.1 0.01 0.01"/>
+	       <box size="0.073 0.016 0.01"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0.05 0 0"/>
+      <origin rpy="0 0 0" xyz="0.035 0.02 -0.02"/>
     </collision>
 
   </link>
 
   <link name="right_fork_link">
-    <visual>
+  <!--  <visual>
       <geometry>
-	<box size="0.1 0.01 0.01"/>
+	       <box size="0.073 0.016 0.01"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0.05 0 0"/>
+      <origin rpy="0 0 0" xyz="0.035 -0.02 -0.02"/>
       <material name="black"/>
-    </visual>
+    </visual>-->
 
     <collision>
       <geometry>
-	<box size="0.1 0.01 0.01"/>
+	       <box size="0.073 0.016 0.01"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0.05 0 0"/>
+      <origin rpy="0 0 0" xyz="0.035 -0.02 -0.02"/>
     </collision>
 
   </link>
 
+
+  <!-- ************** -->
+  <!-- ARMS            -->
+  <!-- ************** -->
+
+  <link name="left_fork_arm_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://maskor_ev3/description/meshes/bobb3e_arm_left.dae" scale="1 1 1"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+  </link>
 
 
 <!-- ************** -->
@@ -350,12 +348,19 @@
     <origin xyz="0.1 -0.00 0.02" rpy="0 1.5708 0"/>
   </joint>
 
+  <joint name="base_link_to_left_fork_arm" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_fork_arm_link"/>
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 3.14159" xyz="-0.024 0.05 0.1125"/>
+  </joint>
+
  <joint name="base_link_to_fork_lift_link" type="prismatic">
     <parent link="base_link"/>
     <child link="fork_lift_link"/>
-    <origin rpy="0 0 0" xyz="0.1 0 0.02"/>
+    <origin rpy="0 0 0" xyz="0.11 0 0.02"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000.0" lower="0" upper="0.15" velocity="0.5"/>
+    <limit effort="50.0" lower="0.01" upper="0.15" velocity="0.5"/>
  </joint>
 
  <joint name="base_link_to_gyro_sensor" type="fixed">
@@ -370,20 +375,14 @@
     <origin xyz="0 0 0.18"/>
   </joint>
 
- <joint name="fork_lift_link_to_fork_link" type="fixed">
-    <parent link="fork_lift_link"/>
-    <child link="fork_link"/>
-    <origin xyz="0 0 0"/>
-  </joint>
-
  <joint name="fork_link_to_left_fork" type="fixed">
-    <parent link="fork_link"/>
+    <parent link="fork_lift_link"/>
     <child link="left_fork_link"/>
     <origin xyz="0 0.015 0"/>
   </joint>
 
  <joint name="fork_link_to_right_fork" type="fixed">
-    <parent link="fork_link"/>
+    <parent link="fork_lift_link"/>
     <child link="right_fork_link"/>
     <origin xyz="0 -0.015 0"/>
   </joint>
@@ -412,7 +411,7 @@
       <odometryTopic>odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
       <publishWheelJointState>true</publishWheelJointState>
-      <publishWheelTF>true</publishWheelTF>,
+      <publishWheelTF>true</publishWheelTF>
       <publishTf>true</publishTf>
       <rosDebugLevel>false</rosDebugLevel>
       <odometrySource>base_link</odometrySource>
