@@ -392,7 +392,7 @@
   <joint name="base_link_to_infrared_sensor" type="fixed">
     <parent link="base_link"/>
     <child link="infrared_sensor_link"/>
-    <origin xyz="0 0 0.18"/>
+    <origin xyz="0 0 0.15"/>
   </joint>
 
   <joint name="fork_link_to_left_fork" type="fixed">
