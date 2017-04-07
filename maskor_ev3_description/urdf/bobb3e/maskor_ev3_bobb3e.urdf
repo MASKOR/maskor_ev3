@@ -8,17 +8,17 @@
 <!-- Christoph Gollok                            -->
 <!-- christoph.gollok@alumni.fh-aachen.de        -->
 <!-- ******************************************* -->
+<!-- FH Aachen University of Applied Sciences    -->
+<!-- MASCOR Institute                            -->
+<!-- ******************************************* -->
 
 
 <robot name="maskor_ev3_bobb3e" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <material name="white">
-    <color rgba="1 1 1 1"/>
-  </material>
+	<!-- Included URDF/XACRO Files -->
+	<!-- robot -->
+	<xacro:include filename="$(find maskor_ev3_description)/urdf/bobb3e/common.urdf"/>
 
-  <material name="black">
-    <color rgba="0 0 0 1"/>
-  </material>
 
 
 <!-- ************** -->
