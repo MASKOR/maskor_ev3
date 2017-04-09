@@ -35,7 +35,7 @@
 
   <property name="wheel_radius" value="0.12" />
   <property name="wheel_thickness" value="0.05" />
-  <property name="wheel_mass" value="0.02" />
+  <property name="wheel_mass" value="1" />
   <property name="wheel_model_scale" value="1 1 1" />
 
 
@@ -109,13 +109,13 @@
 
     <collision>
       <geometry>
-	<box size="0.165 0.105 0.20"/>
+	<box size="0.165 0.105 0.12"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0.035"/>
     </collision>
 
     <inertial>
-      <mass value="5.0"/>
+      <mass value="20.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -144,7 +144,7 @@
     </collision>
 
     <inertial>
-      <mass value="0.1"/>
+      <mass value="${wheel_mass}"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -170,7 +170,7 @@
     </collision>
 
     <inertial>
-      <mass value="0.1"/>
+      <mass value="${wheel_mass}"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -196,7 +196,7 @@
     </collision>
 
     <inertial>
-      <mass value="0.1"/>
+      <mass value="${wheel_mass}"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -222,7 +222,7 @@
     </collision>
 
     <inertial>
-      <mass value="0.1"/>
+      <mass value="${wheel_mass}"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -498,7 +498,7 @@
   <gazebo>
     <plugin name="differential_drive_controller" filename="libmaskor_ev3_bobb3e_plugin.so">
       <alwaysOn>true</alwaysOn>
-      <updateRate>100</updateRate>
+      <updateRate>30</updateRate>
       <frontLeftWheelJoint>base_link_to_left_front_wheel</frontLeftWheelJoint>
       <frontRightWheelJoint>base_link_to_right_front_wheel</frontRightWheelJoint>
       <rearLeftWheelJoint>base_link_to_left_rear_wheel</rearLeftWheelJoint>
@@ -506,7 +506,6 @@
       <sliderJoint>base_link_to_fork_lift_link</sliderJoint>
       <wheelSeparation>0.03</wheelSeparation>
       <wheelDiameter>0.02</wheelDiameter>
-      <torque>50</torque>
       <wheelAcceleration>1</wheelAcceleration>
       <wheelTorque>1</wheelTorque> -->
       <!-- interface:position name="position_iface_0"/ -->
