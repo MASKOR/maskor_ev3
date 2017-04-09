@@ -115,7 +115,7 @@
     </collision>
 
     <inertial>
-      <mass value="20.0"/>
+      <mass value="5.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -408,6 +408,7 @@
   </joint>
 
   <joint name="base_link_to_left_front_wheel" type="continuous">
+    <dynamics damping="1" friction="0" />
     <parent link="base_link"/>
     <child link="left_front_wheel_link"/>
     <origin xyz="0.078 0.065 -0.018"/>
@@ -415,6 +416,7 @@
   </joint>
 
   <joint name="base_link_to_left_rear_wheel" type="continuous">
+    <dynamics damping="1" friction="0" />
     <parent link="base_link"/>
     <child link="left_rear_wheel_link"/>
     <origin xyz="-0.0175 0.065 -0.018"/>
@@ -422,6 +424,7 @@
   </joint>
 
   <joint name="base_link_to_right_front_wheel" type="continuous">
+    <dynamics damping="1" friction="0" />
     <parent link="base_link"/>
     <child link="right_front_wheel_link"/>
     <origin xyz="0.078 -0.065 -0.018"/>
@@ -429,6 +432,7 @@
   </joint>
 
   <joint name="base_link_to_right_rear_wheel" type="continuous">
+    <dynamics damping="1" friction="0" />
     <parent link="base_link"/>
     <child link="right_rear_wheel_link"/>
     <origin xyz="-0.0175 -0.065 -0.018"/>
@@ -506,8 +510,8 @@
       <sliderJoint>base_link_to_fork_lift_link</sliderJoint>
       <wheelSeparation>0.03</wheelSeparation>
       <wheelDiameter>0.02</wheelDiameter>
-      <wheelAcceleration>1</wheelAcceleration>
-      <wheelTorque>1</wheelTorque> -->
+      <wheelAcceleration>2</wheelAcceleration>
+      <wheelTorque>2</wheelTorque> -->
       <!-- interface:position name="position_iface_0"/ -->
       <commandTopic>cmd_vel</commandTopic>
       <robotBaseFrame>base_link</robotBaseFrame>
