@@ -125,7 +125,7 @@ void MaskorEV3Bobb3ePlugin::Load ( physics::ModelPtr _parent, sdf::ElementPtr _s
   // ROS_INFO_NAMED("***** LOADED PARAMETERS *****");
     ROS_INFO_NAMED("Param wheelSeparation","wheelSeparation: \t\t%f", wheel_separation_);
     ROS_INFO_NAMED("Param wheelDiameter","wheelDiameter: \t\t%f", wheel_diameter_);
-    ROS_INFO_NAMED("Param wheelAcceleration","wheelAcceleration: \t\t%f", wheel_accel);
+    ROS_INFO_NAMED("Param wheelAcceleration","wheelAcceleration: \t%f", wheel_accel);
     ROS_INFO_NAMED("Param wheelTorque","wheelTorque: \t\t%f", wheel_torque);
     ROS_INFO_NAMED("Param updateRate","updateRate: \t\t%f", update_rate_);
 
