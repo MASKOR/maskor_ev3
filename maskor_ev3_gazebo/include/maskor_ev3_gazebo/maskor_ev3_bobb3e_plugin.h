@@ -117,6 +117,11 @@ namespace gazebo {
       double wheel_accel;
       double wheel_speed_instr_[4];
 
+      std::string front_left_wheel_;
+      std::string front_right_wheel_;
+      std::string rear_left_wheel_;
+      std::string rear_right_wheel_;
+
       std::vector<physics::JointPtr> joints_;
 
       // ROS STUFF

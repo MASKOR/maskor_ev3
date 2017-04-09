@@ -121,12 +121,17 @@ void MaskorEV3Bobb3ePlugin::Load ( physics::ModelPtr _parent, sdf::ElementPtr _s
     odomOptions["world"] = WORLD;
     gazebo_ros_->getParameter<OdomSource> ( odom_source_, "odometrySource", odomOptions, WORLD );
 
+    gazebo_ros_->getParameter<std::string> (front_left_wheel_,"frontLeftWheelJoint", "base_link_to_left_front_wheel");
+    gazebo_ros_->getParameter<std::string> (front_right_wheel_,"frontRightWheelJoint", "base_link_to_right_front_wheel");
+    gazebo_ros_->getParameter<std::string> (rear_left_wheel_,"rearLeftWheelJoint", "base_link_to_left_rear_wheel");
+    gazebo_ros_->getParameter<std::string> (rear_right_wheel_,"rearRightWheelJoint", "base_link_to_right_rear_wheel");
+
 
     joints_.resize ( NUM_WHEELS );
-    joints_[RIGHT_FRONT_WHEEL] = gazebo_ros_->getJoint ( parent, "right_front_wheel_link", "right_front_wheel_link" );
-    joints_[RIGHT_REAR_WHEEL] = gazebo_ros_->getJoint ( parent, "right_rear_wheel_link", "right_rear_wheel_link" );
-    joints_[LEFT_FRONT_WHEEL] = gazebo_ros_->getJoint ( parent, "left_front_wheel_link", "left_front_wheel_link" );
-    joints_[LEFT_REAR_WHEEL] = gazebo_ros_->getJoint ( parent, "left_rear_wheel_link", "left_rear_wheel_link" );
+    joints_[RIGHT_FRONT_WHEEL] = gazebo_ros_->getJoint ( parent, front_right_wheel_.c_str(), "base_link_to_right_front_wheel" );
+    joints_[RIGHT_REAR_WHEEL] = gazebo_ros_->getJoint ( parent, front_left_wheel_.c_str(), "base_link_to_left_front_wheel" );
+    joints_[LEFT_FRONT_WHEEL] = gazebo_ros_->getJoint ( parent, rear_left_wheel_.c_str(),  "base_link_to_left_rear_wheel");
+    joints_[LEFT_REAR_WHEEL] = gazebo_ros_->getJoint ( parent, rear_right_wheel_.c_str(),  "base_link_to_right_rear_wheel");
 
 
 #if GAZEBO_MAJOR_VERSION > 2
@@ -228,9 +233,9 @@ void MaskorEV3Bobb3ePlugin::Reset()
 
 #else
   joints_[RIGHT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );
-  joints_[RIGHT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );  
-  joints_[LEFT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );  
-  joints_[LEFT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );  
+  joints_[RIGHT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );
+  joints_[LEFT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );
+  joints_[LEFT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );
 
 // joints_[LIFT]->SetMaxForce ( 0, wheel_torque *5);
 #endif
@@ -314,7 +319,7 @@ void MaskorEV3Bobb3ePlugin::UpdateChild()
 	current_speed[RIGHT_REAR_WHEEL] = joints_[RIGHT_REAR_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
 	current_speed[LEFT_FRONT_WHEEL] = joints_[LEFT_FRONT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
         current_speed[LEFT_REAR_WHEEL] = joints_[RIGHT_FRONT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
-  
+
 
         if ( wheel_accel == 0 ||
 	     ( fabs ( wheel_speed_[LEFT_FRONT_WHEEL] - current_speed[LEFT_FRONT_WHEEL] ) < 0.01 ) ||
@@ -328,7 +333,7 @@ void MaskorEV3Bobb3ePlugin::UpdateChild()
             joints_[RIGHT_REAR_WHEEL]->SetVelocity ( 0, wheel_speed_[RIGHT_REAR_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
             joints_[LEFT_FRONT_WHEEL]->SetVelocity ( 0, wheel_speed_[LEFT_FRONT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
             joints_[LEFT_REAR_WHEEL]->SetVelocity ( 0, wheel_speed_[LEFT_REAR_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
-           
+
 	    //joints_[LIFT]->SetVelocity ( 0, wheel_speed_[LIFT] );
 #endif
         } else {
@@ -428,7 +433,7 @@ void MaskorEV3Bobb3ePlugin::UpdateOdometryEncoder()
 {
   double vl = (joints_[LEFT_FRONT_WHEEL]->GetVelocity ( 0 ) +  joints_[LEFT_REAR_WHEEL]->GetVelocity ( 0 ) ) / 2.0 ;
     double vr = (joints_[RIGHT_FRONT_WHEEL]->GetVelocity ( 0 ) +  joints_[RIGHT_REAR_WHEEL]->GetVelocity ( 0 ) ) / 2.0 ;
-    
+
     common::Time current_time = parent->GetWorld()->GetSimTime();
     double seconds_since_last_update = ( current_time - last_odom_update_ ).Double();
     last_odom_update_ = current_time;
@@ -548,4 +553,3 @@ void MaskorEV3Bobb3ePlugin::publishOdometry ( double step_time )
 
 GZ_REGISTER_MODEL_PLUGIN ( MaskorEV3Bobb3ePlugin )
 }
-

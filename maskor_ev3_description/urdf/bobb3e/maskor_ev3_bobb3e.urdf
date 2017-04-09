@@ -25,16 +25,16 @@
 
 
   <property name="M_PI" value="3.14159" />
-  
-  <property name="dummy_mass" value="0.1" /> 
-  <property name="dummy_inertia" value="0.0001" /> 
-  
-  <property name="base_to_wheel_x" value="0.17" /> 
-  <property name="base_to_wheel_y" value="0.125" /> 
+
+  <property name="dummy_mass" value="0.1" />
+  <property name="dummy_inertia" value="0.0001" />
+
+  <property name="base_to_wheel_x" value="0.17" />
+  <property name="base_to_wheel_y" value="0.125" />
   <property name="base_to_wheel_z" value="0.03" />
 
-  <property name="wheel_radius" value="0.12" /> 
-  <property name="wheel_thickness" value="0.05" /> 
+  <property name="wheel_radius" value="0.12" />
+  <property name="wheel_thickness" value="0.05" />
   <property name="wheel_mass" value="0.02" />
   <property name="wheel_model_scale" value="1 1 1" />
 
@@ -499,8 +499,10 @@
     <plugin name="differential_drive_controller" filename="libmaskor_ev3_bobb3e_plugin.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>100</updateRate>
-      <leftJoint>base_link_to_left_front_wheel</leftJoint>
-      <rightJoint>base_link_to_right_front_wheel</rightJoint>
+      <frontLeftWheelJoint>base_link_to_left_front_wheel</frontLeftWheelJoint>
+      <frontRightWheelJoint>base_link_to_right_front_wheel</frontRightWheelJoint>
+      <rearLeftWheelJoint>base_link_to_left_rear_wheel</rearLeftWheelJoint>
+      <rearRightWheelJoint>base_link_to_right_rear_wheel</rearRightWheelJoint>
       <sliderJoint>base_link_to_fork_lift_link</sliderJoint>
       <wheelSeparation>0.03</wheelSeparation>
       <wheelDiameter>0.02</wheelDiameter>
@@ -514,7 +516,7 @@
       <odometryFrame>odom</odometryFrame>
       <publishWheelJointState>true</publishWheelJointState>
       <publishWheelTF>true</publishWheelTF>
-      <publishTf>true</publishTf>
+      <publishTf>1</publishTf>
       <rosDebugLevel>false</rosDebugLevel>
       <odometrySource>base_link</odometrySource>
       <legacyMode>true </legacyMode>
