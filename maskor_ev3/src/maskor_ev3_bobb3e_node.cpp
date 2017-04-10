@@ -9,8 +9,8 @@
  * patrick.hannak@alumni.fh-aachen.de
  */
 
-#define _DEBUG
-#define _OFFLINETEST
+//#define _DEBUG
+//#define _OFFLINETEST
 
 #include <stdio.h>
 #include <maskor_ev3/maskor_ev3.h>
@@ -75,9 +75,9 @@ maskor_ev3::sensor gyro_sensor(maskor_ev3::INPUT_4);
 const float deg2rad = M_PI/180.0;
 char base_link[] = "/base_footprint";
 char odom[] = "/odom";
-//char rosSrvrIp[] = "10.42.0.1";
+char rosSrvrIp[] = "10.42.0.1";
 //char rosSrvrIp[] = "149.201.178.169";
-char rosSrvrIp[] = "127.0.0.1";
+//char rosSrvrIp[] = "127.0.0.1";
 
 double left_motor_speed=0.0;
 double right_motor_speed=0.0;
@@ -87,7 +87,7 @@ bool lift_rot_flag = true;
 
 float t=0; // simulated time for sinus
 double pos_min = 0;
-double pos_max = 0;
+double pos_max = M_PI/4;
 
 int lift_rot_limit = 0;
 int wheel_encoder_current_pos[2] = {0,0};
@@ -104,8 +104,8 @@ float vx = 0.0;
 float wt = 0.0;
 float vl = 0.0;
 float vr = 0.0; 
-float wheelbase = 0.12;
-float wheelradius = 0.03;
+float wheelbase = 0.95;
+float wheelradius = 0.015;
 
 enum {
    LEFT_FRONT_WHEEL,
@@ -130,6 +130,15 @@ double joint_positions[NUM_JOINTS];
 double joint_velocities[NUM_JOINTS];
 double joint_efforts[NUM_JOINTS];
 
+void set_motor_speed()
+{
+  left_motor.set_speed_sp(left_motor_speed);
+  left_motor.set_command("run-forever");
+  right_motor.set_speed_sp(right_motor_speed);
+  right_motor.set_command("run-forever");
+  //    lift_motor.set_speed_sp(lift_motor_speed);
+  //lift_motor.set_command("run-forever");
+}
 
 void cmd_velCb(const geometry_msgs::Twist& cmd) {
 
@@ -327,7 +336,7 @@ void publish_test_messages() {
 }
 
 void publish_joint_states() {
-  printf("publish_joint_states()\n");
+  // printf("publish_joint_states()\n");
  
   //TODO: read joint states from motors
 // # The state of each joint (revolute or prismatic) is defined by:
@@ -335,14 +344,28 @@ void publish_joint_states() {
 // #  * the velocity of the joint (rad/s or m/s) and 
 // #  * the effort that is applied in the joint (Nm or N).  
 #ifndef _OFFLINETEST
+  /*
+  joint_positions[RIGHT_FRONT_WHEEL] = right_motor.position()*deg2rad; //deg or rad??
+  joint_positions[RIGHT_REAR_WHEEL] = right_motor.position()*deg2rad; 
+  joint_positions[LEFT_FRONT_WHEEL] = left_motor.position()*deg2rad; //deg or rad??
+  joint_positions[LEFT_REAR_WHEEL] = left_motor.position()*deg2rad; 
+  joint_positions[LEFT_ARM_LINK] = lift_motor.position()*deg2rad;
+  joint_positions[RIGHT_ARM_LINK] = lift_motor.position()*deg2rad;
+  joint_positions[FORK_LIFT] = calc_fork_lift_link_position(joint_positions[LEFT_ARM_LINK])*deg2rad;;
+*/
+  
   joint_positions[RIGHT_FRONT_WHEEL] = right_motor.position(); //deg or rad??
   joint_positions[RIGHT_REAR_WHEEL] = right_motor.position(); 
   joint_positions[LEFT_FRONT_WHEEL] = left_motor.position(); //deg or rad??
   joint_positions[LEFT_REAR_WHEEL] = left_motor.position(); 
-  joint_positions[LEFT_ARM_LINK] = lift_motor.position();
-  joint_positions[RIGHT_ARM_LINK] = lift_motor.position();
-  joint_positions[FORK_LIFT] = 0;
+  joint_positions[LEFT_ARM_LINK] = lift_motor.position()*deg2rad;
+  joint_positions[RIGHT_ARM_LINK] = lift_motor.position()*deg2rad;
+  joint_positions[FORK_LIFT] = calc_fork_lift_link_position(joint_positions[LEFT_ARM_LINK])*deg2rad;;
+  
+  printf("pos Lift: %f\n", lift_motor.position()*deg2rad);
+  printf("vel Lift: %f\n", lift_motor.speed()*deg2rad);
 
+  
   joint_velocities[RIGHT_FRONT_WHEEL] = right_motor.speed();
   joint_velocities[RIGHT_REAR_WHEEL] = right_motor.speed(); 
   joint_velocities[LEFT_FRONT_WHEEL] = left_motor.speed();
@@ -426,7 +449,7 @@ double calc_fork_lift_link_position(double arm_position) {
   //y=m*x+b
   double delta_x = arm_max - arm_min;
   double delta_y = lift_max - lift_min;
-  double x = arm_position;
+  double x = (lift_motor.position())%360;
   double m = delta_y / delta_x;
   double b = lift_max - (m * arm_max);
 
@@ -480,9 +503,17 @@ int main(int argc, char* argv[])
   init_motors();
   init_sensors();
 #endif
-
+  /*
+  if(argc < 2)
+    char rosSrvrIp[] = "127.0.0.1";
+  else
+    char* rosSrvrIp = *argv[1];
+  */
+  
   while(1)
     {
+
+      set_motor_speed();
       //ros stuff
       calc_odometry();
       publish_test_messages();
