@@ -52,16 +52,16 @@
 namespace gazebo
 {
 
-    enum JointID{
-      RIGHT_FRONT_WHEEL,
-      RIGHT_REAR_WHEEL,
-      LEFT_FRONT_WHEEL,
-      LEFT_REAR_WHEEL,
-      LEFT_ARM,
-      RIGHT_ARM,
-      FORK_LIFT,
-      NUM_JOINTS
-    };
+  enum JointID{
+    FRONT_LEFT_WHEEL,
+    FRONT_RIGHT_WHEEL,
+    REAR_LEFT_WHEEL,
+    REAR_RIGHT_WHEEL,
+    LEFT_ARM,
+    RIGHT_ARM,
+    FORK_LIFT,
+    NUM_JOINTS
+  };
 
   MaskorEV3Bobb3ePlugin::MaskorEV3Bobb3ePlugin() {}
 
@@ -77,87 +77,82 @@ namespace gazebo
     // Make sure the ROS node for Gazebo has already been initialized
     gazebo_ros_->isInitialized();
 
-    gazebo_ros_->getParameter<std::string> ( command_topic_, "commandTopic", "cmd_vel" );
-    gazebo_ros_->getParameter<std::string> ( odometry_topic_, "odometryTopic", "odom" );
-    gazebo_ros_->getParameter<std::string> ( odometry_frame_, "odometryFrame", "odom" );
-    gazebo_ros_->getParameter<std::string> ( robot_base_frame_, "robotBaseFrame", "base_footprint" );
-    gazebo_ros_->getParameterBoolean ( publishWheelTF_, "publishWheelTF", false );
-    gazebo_ros_->getParameterBoolean ( publishWheelJointState_, "publishWheelJointState", false );
-    gazebo_ros_->getParameterBoolean ( legacy_mode_, "legacyMode", false );
-
-    if (!_sdf->HasElement("legacyMode"))
-      {
-	ROS_ERROR_NAMED("MaskorEV3Bobb3ePlugin", "MaskorEV3Bobb3ePlugin Plugin missing <legacyMode>, defaults to true\n"
-			"This setting assumes you have a old package, where the right and left wheel are changed to fix a former code issue\n"
-			"To get rid of this error just set <legacyMode> to false if you just created a new package.\n"
-			"To fix an old package you have to exchange left wheel by the right wheel.\n"
-			"If you do not want to fix this issue in an old package or your z axis points down instead of the ROS standard defined in REP 103\n"
-			"just set <legacyMode> to true.\n"
-			);
-      }
-
-    gazebo_ros_->getParameter<double> ( wheel_separation_, "wheelSeparation", 0.095 );
-    gazebo_ros_->getParameter<double> ( wheel_diameter_, "wheelDiameter", 0.03 );
-    gazebo_ros_->getParameter<double> ( wheel_accel, "wheelAcceleration", 1.0 );
-    gazebo_ros_->getParameter<double> ( wheel_torque, "wheelTorque", 1.0 );
-    gazebo_ros_->getParameter<double> ( update_rate_, "updateRate", 30.0 );
     std::map<std::string, OdomSource> odomOptions;
     odomOptions["encoder"] = ENCODER;
     odomOptions["world"] = WORLD;
     gazebo_ros_->getParameter<OdomSource> ( odom_source_, "odometrySource", odomOptions, WORLD );
 
+    // Read params from launchfile / urdf
+    gazebo_ros_->getParameter<std::string> ( command_topic_, "commandTopic", "cmd_vel" );
+    gazebo_ros_->getParameter<std::string> ( odometry_topic_, "odometryTopic", "odom" );
+    gazebo_ros_->getParameter<std::string> ( odometry_frame_, "odometryFrame", "odom" );
+    gazebo_ros_->getParameter<std::string> ( robot_base_frame_, "robotBaseFrame", "base_footprint" );
+    gazebo_ros_->getParameterBoolean ( publishWheelTF_, "publishWheelTF", false );
+    gazebo_ros_->getParameterBoolean ( publishJointStates_, "publishJointStates", false );
+    gazebo_ros_->getParameterBoolean ( publish_odom_tf_, "publishOdomTF", false );
+  
+    gazebo_ros_->getParameter<double> ( wheel_separation_, "wheelSeparation", 0.095 );
+    gazebo_ros_->getParameter<double> ( wheel_diameter_, "wheelDiameter", 0.03 );
+    gazebo_ros_->getParameter<double> ( wheel_accel, "wheelAcceleration", 1.0 );
+    gazebo_ros_->getParameter<double> ( wheel_torque, "wheelTorque", 1.0 );
+    gazebo_ros_->getParameter<double> ( update_rate_, "updateRate", 30.0 );
+    gazebo_ros_->getParameter<std::string> (joint_names_[FRONT_LEFT_WHEEL],"frontLeftWheelJoint", "base_link_to_left_front_wheel");
+    gazebo_ros_->getParameter<std::string> (joint_names_[FRONT_RIGHT_WHEEL],"frontRightWheelJoint", "base_link_to_right_front_wheel");
+    gazebo_ros_->getParameter<std::string> (joint_names_[REAR_LEFT_WHEEL],"rearLeftWheelJoint", "base_link_to_left_rear_wheel");
+    gazebo_ros_->getParameter<std::string> (joint_names_[REAR_RIGHT_WHEEL],"rearRightWheelJoint", "base_link_to_right_rear_wheel");
+    gazebo_ros_->getParameter<std::string> (joint_names_[LEFT_ARM],"leftArmJoint", "base_link_to_left_fork_arm");
+    gazebo_ros_->getParameter<std::string> (joint_names_[RIGHT_ARM],"rightArmJoint", "base_link_to_right_fork_arm");
+    gazebo_ros_->getParameter<std::string> (joint_names_[FORK_LIFT],"forkLiftJoint", "base_link_to_fork_lift_link");
+   
 
-    // ROS_INFO_NAMED("***** LOADED PARAMETERS *****");
+    ROS_INFO_NAMED("Maskor EV3 Bobb3e Plugin", "***** LOADED PARAMETERS *****");
     ROS_INFO_NAMED("Param wheelSeparation","wheelSeparation: \t\t%f", wheel_separation_);
     ROS_INFO_NAMED("Param wheelDiameter","wheelDiameter: \t\t%f", wheel_diameter_);
     ROS_INFO_NAMED("Param wheelAcceleration","wheelAcceleration: \t%f", wheel_accel);
     ROS_INFO_NAMED("Param wheelTorque","wheelTorque: \t\t%f", wheel_torque);
     ROS_INFO_NAMED("Param updateRate","updateRate: \t\t%f", update_rate_);
-
-
-    gazebo_ros_->getParameter<std::string> (front_left_wheel_,"frontLeftWheelJoint", "base_link_to_left_front_wheel");
-    gazebo_ros_->getParameter<std::string> (front_right_wheel_,"frontRightWheelJoint", "base_link_to_right_front_wheel");
-    gazebo_ros_->getParameter<std::string> (rear_left_wheel_,"rearLeftWheelJoint", "base_link_to_left_rear_wheel");
-    gazebo_ros_->getParameter<std::string> (rear_right_wheel_,"rearRightWheelJoint", "base_link_to_right_rear_wheel");
+    ROS_INFO_NAMED("Param frontLeftWheelJoint","frontLeftWheelJoint: \t%s", joint_names_[FRONT_LEFT_WHEEL].c_str());
+    ROS_INFO_NAMED("Param frontRightWheelJoint","frontRightWheelJoint: \t%s", joint_names_[FRONT_RIGHT_WHEEL].c_str());
+    ROS_INFO_NAMED("Param rearLeftWheelJoint","rearLeftWheelJoint: \t%s", joint_names_[REAR_LEFT_WHEEL].c_str());
+    ROS_INFO_NAMED("Param rearRightWheelJoint","rearRightWheelJoint: \t%s", joint_names_[REAR_RIGHT_WHEEL].c_str());
+    ROS_INFO_NAMED("Param leftArmJoint","leftArmJoint: \t\t%s", joint_names_[LEFT_ARM].c_str());
+    ROS_INFO_NAMED("Param rightArmJoint","rightArmJoint: \t\t%s", joint_names_[RIGHT_ARM].c_str());
+    ROS_INFO_NAMED("Param forkLiftJoint","forkLiftJoint: \t\t%s", joint_names_[FORK_LIFT].c_str());
+    ROS_INFO_NAMED("Param publishWheelTF","publishWheelTF: \t\t%s", publishWheelTF_ ? "true" : "false");
+    ROS_INFO_NAMED("Param publishJointStates","publishJointStates: \t\t%s", publishJointStates_ ? "true" : "false");
+    ROS_INFO_NAMED("Param publishOdomTF","publishOdomTF: \t\t%s", publish_odom_tf_ ? "true" : "false");
+   
 
 
     joints_.resize ( NUM_JOINTS );
-    joints_[RIGHT_FRONT_WHEEL] = gazebo_ros_->getJoint ( parent, front_right_wheel_.c_str(), "base_link_to_right_front_wheel" );
-    joints_[LEFT_FRONT_WHEEL] = gazebo_ros_->getJoint ( parent, front_left_wheel_.c_str(), "base_link_to_left_front_wheel" );
-    joints_[LEFT_REAR_WHEEL] = gazebo_ros_->getJoint ( parent, rear_left_wheel_.c_str(),  "base_link_to_left_rear_wheel");
-    joints_[RIGHT_REAR_WHEEL] = gazebo_ros_->getJoint ( parent, rear_right_wheel_.c_str(),  "base_link_to_right_rear_wheel");
-    joints_[LEFT_ARM] = gazebo_ros_->getJoint ( parent, rear_right_wheel_.c_str(),  "base_link_to_left_fork_arm");
-    joints_[RIGHT_ARM] = gazebo_ros_->getJoint ( parent, rear_right_wheel_.c_str(),  "base_link_to_right_fork_arm");
-    joints_[FORK_LIFT] = gazebo_ros_->getJoint ( parent, rear_right_wheel_.c_str(),  "base_link_to_fork_lift_link");
+    joints_[FRONT_RIGHT_WHEEL] = gazebo_ros_->getJoint ( parent, joint_names_[FRONT_RIGHT_WHEEL].c_str(), "base_link_to_right_front_wheel" );
+    joints_[FRONT_LEFT_WHEEL] = gazebo_ros_->getJoint ( parent, joint_names_[FRONT_LEFT_WHEEL].c_str(), "base_link_to_left_front_wheel" );
+    joints_[REAR_LEFT_WHEEL] = gazebo_ros_->getJoint ( parent, joint_names_[REAR_LEFT_WHEEL].c_str(),  "base_link_to_left_rear_wheel");
+    joints_[REAR_RIGHT_WHEEL] = gazebo_ros_->getJoint ( parent, joint_names_[REAR_RIGHT_WHEEL].c_str(),  "base_link_to_right_rear_wheel");
+    joints_[LEFT_ARM] = gazebo_ros_->getJoint ( parent, joint_names_[LEFT_ARM].c_str(),  "base_link_to_left_fork_arm");
+    joints_[RIGHT_ARM] = gazebo_ros_->getJoint ( parent, joint_names_[RIGHT_ARM].c_str(),  "base_link_to_right_fork_arm");
+    joints_[FORK_LIFT] = gazebo_ros_->getJoint ( parent, joint_names_[FORK_LIFT].c_str(),  "base_link_to_fork_lift_link");
 
 
 #if GAZEBO_MAJOR_VERSION > 2
-    joints_[RIGHT_FRONT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[RIGHT_REAR_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[LEFT_FRONT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[LEFT_REAR_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[FRONT_RIGHT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[REAR_RIGHT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[FRONT_LEFT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[REAR_LEFT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
     joints_[LEFT_ARM]->SetParam ( "fmax", 0, wheel_torque );
     joints_[RIGHT_ARM]->SetParam ( "fmax", 0, wheel_torque );
     joints_[FORK_LIFT]->SetParam ( "fmax", 0, wheel_torque );
 
 #else
-    joints_[RIGHT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );
-    joints_[RIGHT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );
-    joints_[LEFT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );
-    joints_[LEFT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[FRONT_RIGHT_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[REAR_RIGHT_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[FRONT_LEFT_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[REAR_LEFT_WHEEL]->SetMaxForce ( 0, wheel_torque );
     joints_[LEFT_ARM]->SetMaxForce ( 0, wheel_torque );
     joints_[RIGHT_ARM]->SetMaxForce ( 0, wheel_torque );
     joints_[FORK_LIFT]->SetMaxForce ( 0, wheel_torque );
 #endif
 
-
-    this->publish_odom_tf_ = true;
-    if (!_sdf->HasElement("publishTf")) {
-      ROS_WARN_NAMED("diff_drive", "MaskorEV3Bobb3ePlugin Plugin (ns = %s) missing <publishTf>, defaults to %d",
-		     this->robot_namespace_.c_str(), this->publish_odom_tf_);
-    } else {
-      this->publish_odom_tf_ = _sdf->GetElement("publishTf")->Get<bool>();
-    }
 
     // Initialize update rate stuff
     if ( this->update_rate_ > 0.0 ) this->update_period_ = 1.0 / this->update_rate_;
@@ -165,19 +160,19 @@ namespace gazebo
     last_update_time_ = parent->GetWorld()->GetSimTime();
 
     // Initialize velocity stuff
-    joint_speeds_[RIGHT_FRONT_WHEEL] = 0;
-    joint_speeds_[RIGHT_REAR_WHEEL] = 0;
-    joint_speeds_[LEFT_FRONT_WHEEL] = 0;
-    joint_speeds_[LEFT_REAR_WHEEL] = 0;
-    joint_speeds_[LEFT_ARM] = 5;
-    joint_speeds_[RIGHT_ARM] = 10;
+    joint_speeds_[FRONT_RIGHT_WHEEL] = 0;
+    joint_speeds_[REAR_RIGHT_WHEEL] = 0;
+    joint_speeds_[FRONT_LEFT_WHEEL] = 0;
+    joint_speeds_[REAR_LEFT_WHEEL] = 0;
+    joint_speeds_[LEFT_ARM] = 0;
+    joint_speeds_[RIGHT_ARM] = 0;
     joint_speeds_[FORK_LIFT] = 0;
 
     // Initialize velocity support stuff
-    joint_speeds_instr_[RIGHT_FRONT_WHEEL] = 0;
-    joint_speeds_instr_[RIGHT_FRONT_WHEEL] = 0;
-    joint_speeds_instr_[LEFT_FRONT_WHEEL] = 0;
-    joint_speeds_instr_[LEFT_REAR_WHEEL] = 0;
+    joint_speeds_instr_[FRONT_RIGHT_WHEEL] = 0;
+    joint_speeds_instr_[FRONT_RIGHT_WHEEL] = 0;
+    joint_speeds_instr_[FRONT_LEFT_WHEEL] = 0;
+    joint_speeds_instr_[REAR_LEFT_WHEEL] = 0;
     joint_speeds_instr_[LEFT_ARM] = 0;
     joint_speeds_instr_[RIGHT_ARM] = 0;
     joint_speeds_instr_[FORK_LIFT] = 0;
@@ -188,7 +183,7 @@ namespace gazebo
     alive_ = true;
 
 
-    if (this->publishWheelJointState_)
+    if (this->publishJointStates_)
       {
         joint_state_publisher_ = gazebo_ros_->node()->advertise<sensor_msgs::JointState>("joint_states", 1000);
         ROS_INFO_NAMED("MaskorEV3Bobb3ePlugin", "%s: Advertise joint_states!", gazebo_ros_->info());
@@ -222,6 +217,8 @@ namespace gazebo
       event::Events::ConnectWorldUpdateBegin ( boost::bind ( &MaskorEV3Bobb3ePlugin::UpdateChild, this ) );
 
   }
+
+
   void MaskorEV3Bobb3ePlugin::Reset()
   {
     last_update_time_ = parent->GetWorld()->GetSimTime();
@@ -232,26 +229,26 @@ namespace gazebo
     z_ = 0;
     rot_ = 0;
 #if GAZEBO_MAJOR_VERSION > 2
-    joints_[RIGHT_FRONT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[RIGHT_REAR_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[LEFT_FRONT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[LEFT_REAR_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[FRONT_RIGHT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[REAR_RIGHT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[FRONT_LEFT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[REAR_LEFT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
     joints_[LEFT_ARM]->SetParam ( "fmax", 0, wheel_torque );
     joints_[RIGHT_ARM]->SetParam ( "fmax", 0, wheel_torque );
     joints_[FORK_LIFT]->SetParam ( "fmax", 0, wheel_torque );
 
 #else
-    joints_[RIGHT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );
-    joints_[RIGHT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );
-    joints_[LEFT_FRONT_WHEEL]->SetMaxForce ( 0, wheel_torque );
-    joints_[LEFT_REAR_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[FRONT_RIGHT_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[REAR_RIGHT_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[FRONT_LEFT_WHEEL]->SetMaxForce ( 0, wheel_torque );
+    joints_[REAR_LEFT_WHEEL]->SetMaxForce ( 0, wheel_torque );
     joints_[LEFT_ARM]->SetMaxForce ( 0, wheel_torque );
     joints_[RIGHT_ARM]->SetMaxForce ( 0, wheel_torque );
     joints_[FORK_LIFT]->SetMaxForce ( 0, wheel_torque );
 #endif
   }
 
-  void MaskorEV3Bobb3ePlugin::publishWheelJointState()
+  void MaskorEV3Bobb3ePlugin::publishJointStates()
   {
     ros::Time current_time = ros::Time::now();
 
@@ -314,51 +311,51 @@ namespace gazebo
       if ( seconds_since_last_update > update_period_ ) {
         if (this->publish_odom_tf_) publishOdometry ( seconds_since_last_update );
         if ( publishWheelTF_ ) publishWheelTF();
-        if ( publishWheelJointState_ ) publishWheelJointState();
+        if ( publishJointStates_ ) publishJointStates();
 
         // Update robot in case new velocities have been requested
         getWheelVelocities();
 
         double current_speed[NUM_JOINTS]; //!
 
-        current_speed[RIGHT_FRONT_WHEEL] = joints_[RIGHT_FRONT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
-	current_speed[RIGHT_REAR_WHEEL] = joints_[RIGHT_REAR_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
-	current_speed[LEFT_FRONT_WHEEL] = joints_[LEFT_FRONT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
-        current_speed[LEFT_REAR_WHEEL] = joints_[RIGHT_FRONT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
+        current_speed[FRONT_RIGHT_WHEEL] = joints_[FRONT_RIGHT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
+	current_speed[REAR_RIGHT_WHEEL] = joints_[REAR_RIGHT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
+	current_speed[FRONT_LEFT_WHEEL] = joints_[FRONT_LEFT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
+        current_speed[REAR_LEFT_WHEEL] = joints_[FRONT_RIGHT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
 
 
         if ( wheel_accel == 0 ||
-	     ( fabs ( joint_speeds_[LEFT_FRONT_WHEEL] - current_speed[LEFT_FRONT_WHEEL] ) < 0.01 ) ||
-	     ( fabs ( joint_speeds_[RIGHT_FRONT_WHEEL] - current_speed[RIGHT_FRONT_WHEEL] ) < 0.01 ) ) {
+	     ( fabs ( joint_speeds_[FRONT_LEFT_WHEEL] - current_speed[FRONT_LEFT_WHEEL] ) < 0.01 ) ||
+	     ( fabs ( joint_speeds_[FRONT_RIGHT_WHEEL] - current_speed[FRONT_RIGHT_WHEEL] ) < 0.01 ) ) {
 	  //if max_accel == 0, or target speed is reached
 #if GAZEBO_MAJOR_VERSION > 2
-	  joints_[RIGHT_FRONT_WHEEL]->SetParam ( "vel", 0, joint_speeds_[RIGHT_FRONT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
-	  joints_[RIGHT_FRONT_WHEEL]->SetParam ( "vel", 0, joint_speeds_[RIGHT_FRONT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+	  joints_[FRONT_RIGHT_WHEEL]->SetParam ( "vel", 0, joint_speeds_[FRONT_RIGHT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+	  joints_[FRONT_RIGHT_WHEEL]->SetParam ( "vel", 0, joint_speeds_[FRONT_RIGHT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
 #else
-	  joints_[RIGHT_FRONT_WHEEL]->SetVelocity ( 0, joint_speeds_[RIGHT_FRONT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
-	  joints_[RIGHT_REAR_WHEEL]->SetVelocity ( 0, joint_speeds_[RIGHT_REAR_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
-	  joints_[LEFT_FRONT_WHEEL]->SetVelocity ( 0, joint_speeds_[LEFT_FRONT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
-	  joints_[LEFT_REAR_WHEEL]->SetVelocity ( 0, joint_speeds_[LEFT_REAR_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+	  joints_[FRONT_RIGHT_WHEEL]->SetVelocity ( 0, joint_speeds_[FRONT_RIGHT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+	  joints_[REAR_RIGHT_WHEEL]->SetVelocity ( 0, joint_speeds_[REAR_RIGHT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+	  joints_[FRONT_LEFT_WHEEL]->SetVelocity ( 0, joint_speeds_[FRONT_LEFT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+	  joints_[REAR_LEFT_WHEEL]->SetVelocity ( 0, joint_speeds_[REAR_LEFT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
 
 	  //joints_[LIFT]->SetVelocity ( 0, joint_speeds_[LIFT] );
 #endif
         } else {
-	  if ( joint_speeds_[LEFT_FRONT_WHEEL]>=current_speed[LEFT_FRONT_WHEEL] ){
-	    joint_speeds_instr_[LEFT_FRONT_WHEEL]+=fmin ( joint_speeds_[LEFT_FRONT_WHEEL]-current_speed[LEFT_FRONT_WHEEL],  wheel_accel * seconds_since_last_update );
-	    joint_speeds_instr_[LEFT_REAR_WHEEL]+=fmin ( joint_speeds_[LEFT_REAR_WHEEL]-current_speed[LEFT_REAR_WHEEL],  wheel_accel * seconds_since_last_update );
+	  if ( joint_speeds_[FRONT_LEFT_WHEEL]>=current_speed[FRONT_LEFT_WHEEL] ){
+	    joint_speeds_instr_[FRONT_LEFT_WHEEL]+=fmin ( joint_speeds_[FRONT_LEFT_WHEEL]-current_speed[FRONT_LEFT_WHEEL],  wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[REAR_LEFT_WHEEL]+=fmin ( joint_speeds_[REAR_LEFT_WHEEL]-current_speed[REAR_LEFT_WHEEL],  wheel_accel * seconds_since_last_update );
 	  }
 	  else {
-	    joint_speeds_instr_[LEFT_FRONT_WHEEL]+=fmax ( joint_speeds_[LEFT_FRONT_WHEEL]-current_speed[LEFT_FRONT_WHEEL], -wheel_accel * seconds_since_last_update );
-	    joint_speeds_instr_[LEFT_REAR_WHEEL]+=fmax ( joint_speeds_[LEFT_REAR_WHEEL]-current_speed[LEFT_REAR_WHEEL], -wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[FRONT_LEFT_WHEEL]+=fmax ( joint_speeds_[FRONT_LEFT_WHEEL]-current_speed[FRONT_LEFT_WHEEL], -wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[REAR_LEFT_WHEEL]+=fmax ( joint_speeds_[REAR_LEFT_WHEEL]-current_speed[REAR_LEFT_WHEEL], -wheel_accel * seconds_since_last_update );
 	  }
 
-	  if ( joint_speeds_[RIGHT_FRONT_WHEEL]>current_speed[RIGHT_FRONT_WHEEL] ) {
-	    joint_speeds_instr_[RIGHT_FRONT_WHEEL]+=fmin ( joint_speeds_[RIGHT_FRONT_WHEEL]-current_speed[RIGHT_FRONT_WHEEL], wheel_accel * seconds_since_last_update );
-	    joint_speeds_instr_[RIGHT_REAR_WHEEL]+=fmin ( joint_speeds_[RIGHT_REAR_WHEEL]-current_speed[RIGHT_REAR_WHEEL], wheel_accel * seconds_since_last_update );
+	  if ( joint_speeds_[FRONT_RIGHT_WHEEL]>current_speed[FRONT_RIGHT_WHEEL] ) {
+	    joint_speeds_instr_[FRONT_RIGHT_WHEEL]+=fmin ( joint_speeds_[FRONT_RIGHT_WHEEL]-current_speed[FRONT_RIGHT_WHEEL], wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[REAR_RIGHT_WHEEL]+=fmin ( joint_speeds_[REAR_RIGHT_WHEEL]-current_speed[REAR_RIGHT_WHEEL], wheel_accel * seconds_since_last_update );
 	  }
 	  else {
-	    joint_speeds_instr_[RIGHT_FRONT_WHEEL]+=fmax ( joint_speeds_[RIGHT_FRONT_WHEEL]-current_speed[RIGHT_FRONT_WHEEL], -wheel_accel * seconds_since_last_update );
-	    joint_speeds_instr_[RIGHT_REAR_WHEEL]+=fmax ( joint_speeds_[RIGHT_REAR_WHEEL]-current_speed[RIGHT_REAR_WHEEL], -wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[FRONT_RIGHT_WHEEL]+=fmax ( joint_speeds_[FRONT_RIGHT_WHEEL]-current_speed[FRONT_RIGHT_WHEEL], -wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[REAR_RIGHT_WHEEL]+=fmax ( joint_speeds_[REAR_RIGHT_WHEEL]-current_speed[REAR_RIGHT_WHEEL], -wheel_accel * seconds_since_last_update );
 	    //geändert
 	    //joint_speeds_instr_[LIFT]+=fmax ( joint_speeds_[LIFT]-current_speed[LIFT], wheel_accel * seconds_since_last_update );
             // ROS_INFO_NAMED("diff_drive", "actual wheel speed = %lf, issued wheel speed= %lf", current_speed[LEFT], joint_speeds_[LEFT]);
@@ -366,18 +363,18 @@ namespace gazebo
 	  }
 
 #if GAZEBO_MAJOR_VERSION > 2
-	  joints_[RIGHT_FRONT_WHEEL]->SetParam ( "vel", 0, joint_speeds_instr_[RIGHT_FRONT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
-	  joints_[RIGHT_REAR_WHEEL]->SetParam ( "vel", 0, joint_speeds_instr_[RIGHT_REAR_WHEEL] / ( wheel_diameter_ / 2.0 ) );
-	  joints_[LEFT_FRONT_WHEEL]->SetParam ( "vel", 0, joint_speeds_instr_[LEFT_FRONT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
-	  joints_[LEFT_REAR_WHEEL]->SetParam ( "vel", 0, joint_speeds_instr_[LEFT_REAR_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	  joints_[FRONT_RIGHT_WHEEL]->SetParam ( "vel", 0, joint_speeds_instr_[FRONT_RIGHT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	  joints_[REAR_RIGHT_WHEEL]->SetParam ( "vel", 0, joint_speeds_instr_[REAR_RIGHT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	  joints_[FRONT_LEFT_WHEEL]->SetParam ( "vel", 0, joint_speeds_instr_[FRONT_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	  joints_[REAR_LEFT_WHEEL]->SetParam ( "vel", 0, joint_speeds_instr_[REAR_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
 	  joints_[LEFT_ARM]->SetParam ( "vel", 0, 0.1 );
 	  joints_[RIGHT_ARM]->SetParam ( "vel", 0, 0.2 );
 	  joints_[FORK_LIFT]->SetParam ( "vel", 0, 0.1 );
 #else
-	  joints_[RIGHT_FRONT_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[RIGHT_FRONT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
-	  joints_[RIGHT_REAR_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[RIGHT_REAR_WHEEL] / ( wheel_diameter_ / 2.0 ) );
-	  joints_[LEFT_FRONT_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[LEFT_FRONT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
-	  joints_[LEFT_REAR_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[LEFT_REAR_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	  joints_[FRONT_RIGHT_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[FRONT_RIGHT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	  joints_[REAR_RIGHT_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[REAR_RIGHT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	  joints_[FRONT_LEFT_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[FRONT_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+	  joints_[REAR_LEFT_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[REAR_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
 	  joints_[LEFT_ARM]->SetVelocity ( 0, -2 );
 	  joints_[RIGHT_ARM]->SetVelocity ( 0, 0.01 );
 	  joints_[FORK_LIFT]->SetVelocity ( 0, 0.01 );
@@ -406,22 +403,10 @@ namespace gazebo
       double lr = z_;
       double va = rot_;
 
-      if(legacy_mode_)
-	{
-	  joint_speeds_[RIGHT_FRONT_WHEEL] = vr + va * wheel_separation_ / 2.0;
-	  joint_speeds_[RIGHT_REAR_WHEEL] = vr + va * wheel_separation_ / 2.0;
-	  joint_speeds_[LEFT_FRONT_WHEEL] = vr - va * wheel_separation_ / 2.0;
-	  joint_speeds_[LEFT_REAR_WHEEL] = vr - va * wheel_separation_ / 2.0;
-	  //joint_speeds_[LIFT] = lr;
-	}
-      else
-	{
-	  joint_speeds_[RIGHT_FRONT_WHEEL] = vr + va * wheel_separation_ / 2.0;
-	  joint_speeds_[RIGHT_REAR_WHEEL] = vr + va * wheel_separation_ / 2.0;
-	  joint_speeds_[LEFT_FRONT_WHEEL] = vr - va * wheel_separation_ / 2.0;
-	  joint_speeds_[LEFT_REAR_WHEEL] = vr - va * wheel_separation_ / 2.0;
-	  //joint_speeds_[LIFT] = lr;
-	}
+     	  joint_speeds_[FRONT_RIGHT_WHEEL] = vr + va * wheel_separation_ / 2.0;
+	  joint_speeds_[REAR_RIGHT_WHEEL] = vr + va * wheel_separation_ / 2.0;
+	  joint_speeds_[FRONT_LEFT_WHEEL] = vr - va * wheel_separation_ / 2.0;
+	  joint_speeds_[REAR_LEFT_WHEEL] = vr - va * wheel_separation_ / 2.0;
     }
 
     void MaskorEV3Bobb3ePlugin::cmdVelCallback ( const geometry_msgs::Twist::ConstPtr& cmd_msg )
@@ -443,8 +428,8 @@ namespace gazebo
 
     void MaskorEV3Bobb3ePlugin::UpdateOdometryEncoder()
     {
-      double vl = (joints_[LEFT_FRONT_WHEEL]->GetVelocity ( 0 ) +  joints_[LEFT_REAR_WHEEL]->GetVelocity ( 0 ) ) / 2.0 ;
-      double vr = (joints_[RIGHT_FRONT_WHEEL]->GetVelocity ( 0 ) +  joints_[RIGHT_REAR_WHEEL]->GetVelocity ( 0 ) ) / 2.0 ;
+      double vl = (joints_[FRONT_LEFT_WHEEL]->GetVelocity ( 0 ) +  joints_[REAR_LEFT_WHEEL]->GetVelocity ( 0 ) ) / 2.0 ;
+      double vr = (joints_[FRONT_RIGHT_WHEEL]->GetVelocity ( 0 ) +  joints_[REAR_RIGHT_WHEEL]->GetVelocity ( 0 ) ) / 2.0 ;
 
       common::Time current_time = parent->GetWorld()->GetSimTime();
       double seconds_since_last_update = ( current_time - last_odom_update_ ).Double();
@@ -457,16 +442,8 @@ namespace gazebo
       double sr = vr * ( wheel_diameter_ / 2.0 ) * seconds_since_last_update;
       double ssum = sl + sr;
 
-      double sdiff;
-      if(legacy_mode_)
-	{
-	  sdiff = sl - sr;
-	}
-      else
-	{
-
-	  sdiff = sr - sl;
-	}
+      double sdiff = sr - sl;
+	
 
       double dx = ( ssum ) /2.0 * cos ( pose_encoder_.theta + ( sdiff ) / ( 2.0*b ) );
       double dy = ( ssum ) /2.0 * sin ( pose_encoder_.theta + ( sdiff ) / ( 2.0*b ) );

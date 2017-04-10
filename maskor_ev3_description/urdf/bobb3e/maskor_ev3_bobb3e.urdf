@@ -500,29 +500,31 @@
   <!-- ************** -->
 
   <gazebo>
-    <plugin name="differential_drive_controller" filename="libmaskor_ev3_bobb3e_plugin.so">
+    <plugin name="maskor_ev3_bobb3e_plugin" filename="libmaskor_ev3_bobb3e_plugin.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>30</updateRate>
       <frontLeftWheelJoint>base_link_to_left_front_wheel</frontLeftWheelJoint>
       <frontRightWheelJoint>base_link_to_right_front_wheel</frontRightWheelJoint>
       <rearLeftWheelJoint>base_link_to_left_rear_wheel</rearLeftWheelJoint>
       <rearRightWheelJoint>base_link_to_right_rear_wheel</rearRightWheelJoint>
-      <sliderJoint>base_link_to_fork_lift_link</sliderJoint>
+      <leftArmJoint>base_link_to_left_fork_arm</leftArmJoint>
+      <rightArmJoint>base_link_to_right_fork_arm</rightArmJoint>
+      <forkLiftJoint>base_link_to_fork_lift_link</forkLiftJoint>
+
       <wheelSeparation>0.03</wheelSeparation>
       <wheelDiameter>0.02</wheelDiameter>
       <wheelAcceleration>2</wheelAcceleration>
       <wheelTorque>2</wheelTorque> -->
-      <!-- interface:position name="position_iface_0"/ -->
       <commandTopic>cmd_vel</commandTopic>
-      <robotBaseFrame>base_link</robotBaseFrame>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
       <odometryTopic>odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
-      <publishWheelJointState>true</publishWheelJointState>
-      <publishWheelTF>true</publishWheelTF>
-      <publishTf>true</publishTf>
+      <publishJointStates>true</publishJointStates>
+      <publishWheelTF>false</publishWheelTF>
+      <publishOdomTF>true</publishOdomTF>
       <rosDebugLevel>false</rosDebugLevel>
-      <odometrySource>base_link</odometrySource>
-      <legacyMode>true </legacyMode>
+      <odometrySource>encoder</odometrySource>
+      <legacyMode>false</legacyMode>
     </plugin>
   </gazebo>
 

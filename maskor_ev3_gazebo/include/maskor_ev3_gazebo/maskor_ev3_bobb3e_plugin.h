@@ -74,16 +74,16 @@ namespace gazebo {
 
   class MaskorEV3Bobb3ePlugin : public ModelPlugin {
 
-    enum JointID{
-      RIGHT_FRONT_WHEEL,
-      RIGHT_REAR_WHEEL,
-      LEFT_FRONT_WHEEL,
-      LEFT_REAR_WHEEL,
-      LEFT_ARM,
-      RIGHT_ARM,
-      FORK_LIFT,
-      NUM_JOINTS
-    };
+   enum JointID{
+    FRONT_LEFT_WHEEL,
+    FRONT_RIGHT_WHEEL,
+    REAR_LEFT_WHEEL,
+    REAR_RIGHT_WHEEL,
+    LEFT_ARM,
+    RIGHT_ARM,
+    FORK_LIFT,
+    NUM_JOINTS
+  };
 
     enum OdomSource
     {
@@ -104,31 +104,29 @@ namespace gazebo {
       void publishOdometry(double step_time);
       void getWheelVelocities();
       void publishWheelTF(); /// publishes the wheel tf's
-      void publishWheelJointState();
+      void publishJointStates();
       void UpdateOdometryEncoder();
-
 
       GazeboRosPtr gazebo_ros_;
       physics::ModelPtr parent;
       event::ConnectionPtr update_connection_;
 
+      //parameters
       double wheel_separation_;
       double wheel_diameter_;
       double wheel_torque;
       double wheel_accel;
-      
       double joint_speeds_[NUM_JOINTS];
       double joint_speeds_instr_[NUM_JOINTS];
-
-      std::string front_left_wheel_;
-      std::string front_right_wheel_;
-      std::string rear_left_wheel_;
-      std::string rear_right_wheel_;
-      std::string left_arm_joint_;
-      std::string right_arm_joint_;
-      std::string fork_lift_joint_;
-
+      std::string joint_names_[NUM_JOINTS];
       std::vector<physics::JointPtr> joints_;
+      boost::mutex lock;
+      std::string robot_namespace_;
+      std::string command_topic_;
+      std::string odometry_topic_;
+      std::string odometry_frame_;
+      std::string robot_base_frame_;
+      bool publish_odom_tf_;
 
       // ROS STUFF
       ros::Publisher odometry_publisher_;
@@ -139,15 +137,6 @@ namespace gazebo {
       nav_msgs::Odometry odom_;
       std::string tf_prefix_;
 
-      boost::mutex lock;
-
-      std::string robot_namespace_;
-      std::string command_topic_;
-      std::string odometry_topic_;
-      std::string odometry_frame_;
-      std::string robot_base_frame_;
-      bool publish_odom_tf_;
-      bool legacy_mode_;
       // Custom Callback Queue
       ros::CallbackQueue queue_;
       boost::thread callback_queue_thread_;
@@ -172,7 +161,7 @@ namespace gazebo {
 
     // Flags
     bool publishWheelTF_;
-    bool publishWheelJointState_;
+    bool publishJointStates_;
 
   };
 
