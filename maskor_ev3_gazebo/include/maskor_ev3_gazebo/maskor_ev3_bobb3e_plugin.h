@@ -1,14 +1,17 @@
 /*
-    MASKOR EV3 BOBB3E PLUGIN
-    Marcel Stüttgen
-    stuettgen@fh-aachen.de
-    Dennis Miltz
-    dennis.miltz@alumni.fh-aachen.de
+  MASKOR EV3 BOBB3E PLUGIN
+  Copyright (c) 2017
+  FH Aachen University of Applied Sciences
 
-    FH Aachen University of Applied Sciences
-    2017
+  Marcel Stüttgen
+  stuettgen@fh-aachen.de
+  Dennis Miltz
+  dennis.miltz@alumni.fh-aachen.de
+  Christoph Gollol
+  christoph.gollok@alumni.fh-aachen.de
 
-    based on:
+
+  based on: Gazebo Diff Drive Plugin
 
  * Copyright (c) 2010, Daniel Hewlett, Antons Rebguns
  *  All rights reserved.
@@ -36,18 +39,6 @@
  *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  **/
-
-/*
- * \file  gazebo_ros_diff_drive.h
- *
- * \brief A differential drive plugin for gazebo. Based on the diffdrive plugin
- * developed for the erratic robot (see copyright notice above). The original
- * plugin can be found in the ROS package gazebo_erratic_plugins.
- *
- * \author  Piyush Khandelwal (piyushk@gmail.com)
- *
- * $ Id: 06/21/2013 11:23:40 AM piyushk $
- */
 
 #ifndef _MASKOR_EV3_BOBB3E_PLUGIN_H_
 #define _MASKOR_EV3_BOBB3E_PLUGIN_H_
@@ -83,6 +74,17 @@ namespace gazebo {
 
   class MaskorEV3Bobb3ePlugin : public ModelPlugin {
 
+    enum JointID{
+      RIGHT_FRONT_WHEEL,
+      RIGHT_REAR_WHEEL,
+      LEFT_FRONT_WHEEL,
+      LEFT_REAR_WHEEL,
+      LEFT_ARM,
+      RIGHT_ARM,
+      FORK_LIFT,
+      NUM_JOINTS
+    };
+
     enum OdomSource
     {
         ENCODER = 0,
@@ -113,14 +115,18 @@ namespace gazebo {
       double wheel_separation_;
       double wheel_diameter_;
       double wheel_torque;
-      double wheel_speed_[4];
       double wheel_accel;
-      double wheel_speed_instr_[4];
+      
+      double joint_speeds_[NUM_JOINTS];
+      double joint_speeds_instr_[NUM_JOINTS];
 
       std::string front_left_wheel_;
       std::string front_right_wheel_;
       std::string rear_left_wheel_;
       std::string rear_right_wheel_;
+      std::string left_arm_joint_;
+      std::string right_arm_joint_;
+      std::string fork_lift_joint_;
 
       std::vector<physics::JointPtr> joints_;
 
@@ -140,7 +146,7 @@ namespace gazebo {
       std::string odometry_topic_;
       std::string odometry_frame_;
       std::string robot_base_frame_;
-      bool publish_tf_;
+      bool publish_odom_tf_;
       bool legacy_mode_;
       // Custom Callback Queue
       ros::CallbackQueue queue_;

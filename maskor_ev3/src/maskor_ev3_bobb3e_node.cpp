@@ -439,7 +439,7 @@ void publish_joint_states() {
 
 double calc_fork_lift_link_position(double arm_position) {
   
-  //linear projection of arm position [-100:100] to fork lift position [-0.025:0.1.025]
+  //linear projection of arm position [-100:100] to fork lift position [-0.025:0.1025]
   // values: try and error
   double arm_min = pos_max;
   double arm_max =  pos_min;
