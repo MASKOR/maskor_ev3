@@ -43,7 +43,7 @@
   </node>
 
   <!-- Read joint positions from a GUI, then publish them to joint_states. -->
-  <!-- 
+  <!--
   <node name="joint_state_publisher" pkg="joint_state_publisher"
          type="joint_state_publisher">
      <param name="rate" value="30"/>
@@ -56,7 +56,7 @@
 <!-- joy node -->
   <node respawn="true" pkg="joy"
         type="joy_node" name="turtle_joy" >
-    <param name="dev" type="string" value="/dev/input/js0" />
+    <param name="dev" type="string" value="/dev/input/js1" />
     <param name="deadzone" value="0.12" />
   </node>
 
