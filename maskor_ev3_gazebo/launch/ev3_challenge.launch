@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <arg name="model" default="$(find maskor_ev3_description)/urdf/bobb3e/maskor_ev3_bobb3e.urdf"/>
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find maskor_ev3_gazebo)/world/ev3_challenge.world"/>
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="headless" value="$(arg headless)"/>
+  </include>
+
+  <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
+
+  <!-- Vehicle pose -->
+   <arg name="x" default="0.0"/>
+  <arg name="y" default="0"/>
+  <arg name="z" default="1"/>
+  <arg name="roll" default="0.0"/>
+  <arg name="pitch" default="0.0"/>
+  <arg name="yaw" default="0"/>
+
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
+        args="-z 1.0 -unpause -urdf -model ev3_bobb3e -param robot_description -x $(arg x) -y $(arg y) -z $(arg z)
+        -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" respawn="false" output="screen" />
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="30.0" />
+  </node>
+
+  <node pkg="rviz" type="rviz"  name="rviz" output="screen">
+
+  </node>
+
+  <!-- Read joint positions from a GUI, then publish them to joint_states. -->
+  <!--
+  <node name="joint_state_publisher" pkg="joint_state_publisher"
+         type="joint_state_publisher">
+     <param name="rate" value="30"/>
+     <param name="use_gui" value="false"/>
+   </node>
+   -->
+
+
+<!-- Turtle-joy-->
+<!-- joy node -->
+  <node respawn="true" pkg="joy"
+        type="joy_node" name="turtle_joy" >
+    <param name="dev" type="string" value="/dev/input/js1" />
+    <param name="deadzone" value="0.12" />
+  </node>
+
+ <!-- Axes -->
+  <param name="axis_linear" value="1" type="int"/><!-- 1 -->
+	<param name="axis_horizontal" value="4" type="int"/>
+  <param name="axis_angular" value="0" type="int"/><!-- 0 -->
+  <param name="scale_linear" value="2" type="double"/>
+  <param name="scale_angular" value="2" type="double"/>
+  <node pkg="learning_joy" type="turtle_teleop_joy" name="teleop"/>
+
+</launch>
