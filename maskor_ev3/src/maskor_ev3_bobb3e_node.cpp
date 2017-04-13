@@ -68,8 +68,8 @@ ros::Publisher ultrasonic_sensor_pub("/bobb3e/ultrasonic_sensor", &ultrasonic_se
 const float deg2rad = M_PI/180.0;
 char base_link[] = "/base_link";
 char odom[] = "/odom";
-//char rosSrvrIp[] = "10.42.0.1";
-char rosSrvrIp[] = "127.0.0.1";
+char rosSrvrIp[] = "10.42.0.1";
+//char rosSrvrIp[] = "127.0.0.1";
 
 double left_motor_speed=0.0;
 double right_motor_speed=0.0;
@@ -95,6 +95,7 @@ float vr = 0.0;
 float wheelbase = 0.12;
 float wheelradius = 0.03;
 
+
 #ifndef _OFFLINETEST
 //Init motors
 maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
@@ -117,22 +118,21 @@ void cmd_velCb(const geometry_msgs::Twist& cmd) {
   printf("cmd_velCb(const geometry_msgs::Twist& cmd)\n");
 #endif
 
-  //set value to left motor speed
-  if (cmd.linear.x != 0) {
+  //set value to left and right motor speed
+  if (cmd.angular.z < 0) {
+    right_motor_speed = cmd.linear.x;
     left_motor_speed = -cmd.linear.x;
   }
-  else {
-    left_motor_speed = 0.0;
-  }
-
-  //set value to right motor speed
-  if (cmd.linear.x != 0) {
+  
+  else if (cmd.angular.z > 0) {
+    left_motor_speed = cmd.linear.x;
     right_motor_speed = -cmd.linear.x;
   }
   else {
-    right_motor_speed = 0.0;
+    left_motor_speed = -cmd.linear.x;
+    right_motor_speed = -cmd.linear.x;
   }
-
+      
  //set value to lift
   printf("Rot_limit: %d\n", lift_rot_limit);
   //lift_rot_limit++;
@@ -335,6 +335,18 @@ void init_sensors() {
 
 }
 
+    //resetting the lift
+void reset_lift()
+{
+  lift_motor.set_time_sp(2000);
+  lift_motor.set_speed_sp(-100);
+  lift_motor.set_command("run-timed");
+  lift_motor.set_speed_sp(0);
+  // usleep(2000);
+  lift_motor.set_command("reset");
+
+}
+
 void motor_test() {
       //print values
       // printf("sensor value: %d\n", s.value());
@@ -356,8 +368,8 @@ void motor_test() {
       right_motor.set_command("run-forever");
 
       //move lift
-      lift_motor.set_speed_sp(lift_motor_speed);
-      lift_motor.set_command("run-forever");
+      //  lift_motor.set_speed_sp(lift_motor_speed);
+      //lift_motor.set_command("run-forever");
 } 
 
 #endif
@@ -385,8 +397,12 @@ int main(int argc, char* argv[])
   init_sensors();
 #endif
 
+  reset_lift();
+  
   while(1)
     {
+      motor_test();
+      
       //ros stuff
       calc_odometry();
       publish_test_messages();
