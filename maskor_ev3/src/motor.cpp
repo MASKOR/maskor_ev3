@@ -15,27 +15,18 @@ namespace maskor_ev3 {
   }
 
   //-----------------------------------------------------------------------------
-
-  void motor::move_forward()
+  // 9cm from color-sensor to middle of the bot
+  /*
+  void motor::turn_left()
   {
-    
+    this->set_position_sp(
   }
 
-  void motor::move_left()
-  {
-
-  }
-
-  void motor::move_right()
+  void motor::turn_right()
   {
 
   }
-
-  void motor::move_backward()
-  {
-
-  }
-  
+  */
   bool motor::connect(const std::map<std::string, std::set<std::string>> &match) noexcept
   {
     static const std::string _strClassDir { SYS_ROOT "/tacho-motor/" };
