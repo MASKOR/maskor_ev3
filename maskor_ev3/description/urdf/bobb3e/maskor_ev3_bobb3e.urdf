@@ -1,0 +1,422 @@
+<?xml version="1.0"?>
+<!-- ******************************************* -->
+<!-- MASKOR EV3 BOBB3E URDF MODEL                -->
+<!-- Marcel Stuettgen                            -->
+<!-- stuettgen@fh-aachen.de                      -->
+<!-- Dennis Miltz                                -->
+<!-- dennis.miltz@alumni.fh-aachen.de            -->
+<!-- Christoph Gollok                            -->
+<!-- christoph.gollok@alumni.fh-aachen.de        -->
+<!-- ******************************************* -->
+
+
+<robot name="maskor_ev3_bobb3e" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+
+
+<!-- ************** -->
+<!-- BASE FOOTPRINT -->
+<!-- ************** -->
+  <link name="base_footprint">
+  </link>
+
+
+<!-- ************** -->
+<!-- BASE LINK      -->
+<!-- ************** -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_baseLink.dae" scale="1 1 1"/>
+        <!--box size="0.005 0.005 0.005"/-->
+      </geometry>
+      <origin rpy="0 0 0" xyz="-0.016 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.0198 0.017 0.0198"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+    </collision>
+
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+    </inertial>
+
+  </link>
+
+
+<!-- ******************** -->
+<!-- LEFT FRONT WHEEL     -->
+<!-- ******************** -->
+<link name="left_front_wheel_link">
+  <visual>
+    <geometry>
+      <mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+    </geometry>
+    <material name="black"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+ </visual>
+
+ <collision>
+   <geometry>
+     <cylinder length="0.02" radius="0.015"/>
+   </geometry>
+   <origin rpy="1.570 1.570 0" xyz="0 0 0" />
+ </collision>
+
+ <inertial>
+   <mass value="0.1"/>
+   <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+ </inertial>
+
+</link>
+
+<!-- ****************** -->
+<!-- RIGHT FRONT WHEEL  -->
+<!-- *****************  -->
+  <link name="right_front_wheel_link">
+    <visual>
+      <geometry>
+     	  <mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+      </geometry>
+      <material name="black"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+   </visual>
+
+   <collision>
+     <geometry>
+       <cylinder length="0.02" radius="0.015"/>
+     </geometry>
+     <origin rpy="1.570 1.570 0" xyz="0 0 0" />
+   </collision>
+
+   <inertial>
+     <mass value="0.1"/>
+     <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+   </inertial>
+
+  </link>
+
+<!-- ******************** -->
+<!-- LEFT REAR  WHEEL     -->
+<!-- ******************** -->
+  <link name="left_rear_wheel_link">
+    <visual>
+      <geometry>
+     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="0.02" radius="0.015"/>
+      </geometry>
+      <origin rpy="1.570 1.570 0" xyz="0 0 0" />
+    </collision>
+
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+    </inertial>
+
+  </link>
+
+<!-- ******************** -->
+<!-- RIGHT REAR WHEEL     -->
+<!-- ******************** -->
+  <link name="right_rear_wheel_link">
+    <visual>
+      <geometry>
+     	<mesh filename="package://maskor_ev3/description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="0.02" radius="0.015"/>
+      </geometry>
+      <origin rpy="1.570 1.570 0" xyz="0 0 0" />
+    </collision>
+
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+    </inertial>
+
+  </link>
+
+
+
+<!-- ************** -->
+<!-- COLOR SENSOR     -->
+<!-- ************** -->
+  <link name="color_sensor_link">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.035"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.002 0.002 0.004"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+
+<!-- ************** -->
+<!-- FORK LIFT     -->
+<!-- ************** -->
+  <link name="fork_lift_link">
+    <visual>
+      <geometry>
+	       <mesh filename="package://maskor_ev3/description/meshes/bobb3e_fork_lift.dae" scale="1 1 1"/>
+	<!-- <box size="0.01 0.01 0.035"/> -->
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.011 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.01 0.089 0.064"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.01"/>
+    </collision>
+
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+    </inertial>
+
+  </link>
+
+
+<!-- ************** -->
+<!-- GYRO SENSOR     -->
+<!-- ************** -->
+  <link name="gyro_sensor_link">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.002 0.002 0.004"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+<!-- ***************  -->
+<!-- INFRARED SENSOR -->
+<!-- ***************  -->
+  <link name="infrared_sensor_link">
+    <visual>
+      <geometry>
+        <box size="0.0045 0.0055 0.0023"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="black"/>
+    </visual>
+
+    <collision>
+      <geometry>
+        <box size="0.0045 0.0055 0.0023"/>
+      </geometry>
+    </collision>
+
+  </link>
+
+  <!-- ***************  -->
+  <!-- Fork              -->
+  <!-- ***************  -->
+
+  <link name="left_fork_link">
+<!--     <visual>
+      <geometry>
+	       <box size="0.073 0.016 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.035 0.02 -0.02"/>
+      <material name="black"/>
+    </visual>-->
+
+    <collision>
+      <geometry>
+	       <box size="0.073 0.016 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.035 0.02 -0.02"/>
+    </collision>
+
+  </link>
+
+  <link name="right_fork_link">
+  <!--  <visual>
+      <geometry>
+	       <box size="0.073 0.016 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.035 -0.02 -0.02"/>
+      <material name="black"/>
+    </visual>-->
+
+    <collision>
+      <geometry>
+	       <box size="0.073 0.016 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.035 -0.02 -0.02"/>
+    </collision>
+
+  </link>
+
+
+  <!-- ************** -->
+  <!-- ARMS            -->
+  <!-- ************** -->
+
+  <link name="left_fork_arm_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://maskor_ev3/description/meshes/bobb3e_arm_left.dae" scale="1 1 1"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+  </link>
+
+
+<!-- ************** -->
+<!-- JOINTS         -->
+<!-- ************** -->
+  <joint name="base_link_to_base_footprint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+   <origin xyz="0 0 0"/>
+  </joint>
+
+  <joint name="base_link_to_left_front_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_front_wheel_link"/>
+    <origin xyz="0.0475 0.065 0.022"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <joint name="base_link_to_right_front_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_front_wheel_link"/>
+    <origin xyz="0.0475 -0.065 0.022"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <joint name="base_link_to_left_rear_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_rear_wheel_link"/>
+    <origin xyz="-0.0475 0.065 0.022"/>
+    <axis xyz="0 1 0"/>
+</joint>
+
+  <joint name="base_link_to_right_rear_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_rear_wheel_link"/>
+    <origin xyz="-0.0475 -0.065 0.022"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+ <joint name="base_link_to_color_sensor" type="fixed">
+    <parent link="base_link"/>
+    <child link="color_sensor_link"/>
+    <origin xyz="0.1 -0.00 0.02" rpy="0 1.5708 0"/>
+  </joint>
+
+  <joint name="base_link_to_left_fork_arm" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_fork_arm_link"/>
+    <axis xyz="0 1 0"/>
+    <origin rpy="0 0 3.14159" xyz="-0.024 0.05 0.1125"/>
+  </joint>
+
+ <joint name="base_link_to_fork_lift_link" type="prismatic">
+    <parent link="base_link"/>
+    <child link="fork_lift_link"/>
+    <origin rpy="0 0 0" xyz="0.11 0 0.02"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="50.0" lower="0.01" upper="0.15" velocity="0.5"/>
+ </joint>
+
+ <joint name="base_link_to_gyro_sensor" type="fixed">
+    <parent link="base_link"/>
+    <child link="gyro_sensor_link"/>
+    <origin xyz="-0.03 -0.06 0.075"/>
+  </joint>
+
+ <joint name="base_link_to_infrared_sensor" type="fixed">
+    <parent link="base_link"/>
+    <child link="infrared_sensor_link"/>
+    <origin xyz="0 0 0.18"/>
+  </joint>
+
+ <joint name="fork_link_to_left_fork" type="fixed">
+    <parent link="fork_lift_link"/>
+    <child link="left_fork_link"/>
+    <origin xyz="0 0.015 0"/>
+  </joint>
+
+ <joint name="fork_link_to_right_fork" type="fixed">
+    <parent link="fork_lift_link"/>
+    <child link="right_fork_link"/>
+    <origin xyz="0 -0.015 0"/>
+  </joint>
+
+  <!-- ************** -->
+  <!-- Plugins         -->
+  <!-- ************** -->
+
+
+
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libmaskor_ev3_plugin.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100</updateRate>
+      <leftJoint>base_link_to_left_front_wheel</leftJoint>
+      <rightJoint>base_link_to_right_front_wheel</rightJoint>
+      <sliderJoint>base_link_to_fork_lift_link</sliderJoint>
+      <wheelSeparation>0.03</wheelSeparation>
+      <wheelDiameter>0.02</wheelDiameter>
+      <torque>50</torque>
+      <wheelAcceleration>1</wheelAcceleration>
+      <wheelTorque>1</wheelTorque> -->
+      <!-- interface:position name="position_iface_0"/ -->
+      <commandTopic>cmd_vel</commandTopic>
+      <robotBaseFrame>base_link</robotBaseFrame>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <publishWheelJointState>true</publishWheelJointState>
+      <publishWheelTF>true</publishWheelTF>
+      <publishTf>true</publishTf>
+      <rosDebugLevel>false</rosDebugLevel>
+      <odometrySource>base_link</odometrySource>
+			<legacyMode>true </legacyMode>
+    </plugin>
+  </gazebo>
+
+</robot>
