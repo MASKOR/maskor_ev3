@@ -35,7 +35,7 @@
 
   <property name="wheel_radius" value="0.12" />
   <property name="wheel_thickness" value="0.05" />
-  <property name="wheel_mass" value="1" />
+  <property name="wheel_mass" value="1.5" />
   <property name="wheel_model_scale" value="1 1 1" />
 
 
@@ -109,13 +109,13 @@
 
     <collision>
       <geometry>
-	<box size="0.165 0.105 0.12"/>
+	<box size="0.125 0.105 0.07"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.035"/>
+      <origin rpy="0 0 0" xyz="0.02 0 0.01"/>
     </collision>
 
     <inertial>
-      <mass value="5.0"/>
+      <mass value="1.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
