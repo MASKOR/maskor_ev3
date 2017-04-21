@@ -35,7 +35,7 @@
 
   <property name="wheel_radius" value="0.12" />
   <property name="wheel_thickness" value="0.05" />
-  <property name="wheel_mass" value="1.5" />
+  <property name="wheel_mass" value="3" />
   <property name="wheel_model_scale" value="1 1 1" />
 
 
@@ -115,7 +115,7 @@
     </collision>
 
     <inertial>
-      <mass value="1.0"/>
+      <mass value="5.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -130,7 +130,7 @@
   <link name="left_front_wheel_link">
     <visual>
       <geometry>
-	<mesh filename="package://maskor_ev3_description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+	       <mesh filename="package://maskor_ev3_description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
       </geometry>
       <material name="black"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -138,7 +138,7 @@
 
     <collision>
       <geometry>
-	<cylinder length="0.02" radius="0.015"/>
+	       <cylinder length="0.02" radius="0.015"/>
       </geometry>
       <origin rpy="1.570 1.570 0" xyz="0 0 0" />
     </collision>
@@ -156,7 +156,7 @@
   <link name="right_front_wheel_link">
     <visual>
       <geometry>
-	<mesh filename="package://maskor_ev3_description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
+	       <mesh filename="package://maskor_ev3_description/meshes/bobb3e_tire.dae" scale="1 1 1"/>
       </geometry>
       <material name="black"/>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -164,7 +164,7 @@
 
     <collision>
       <geometry>
-	<cylinder length="0.02" radius="0.015"/>
+	       <cylinder length="0.02" radius="0.015"/>
       </geometry>
       <origin rpy="1.570 1.570 0" xyz="0 0 0" />
     </collision>
@@ -408,7 +408,7 @@
   </joint>
 
   <joint name="base_link_to_left_front_wheel" type="continuous">
-    <dynamics damping="1" friction="0" />
+    <dynamics damping="0" friction="10" />
     <parent link="base_link"/>
     <child link="left_front_wheel_link"/>
     <origin xyz="0.078 0.065 -0.018"/>
@@ -416,7 +416,7 @@
   </joint>
 
   <joint name="base_link_to_left_rear_wheel" type="continuous">
-    <dynamics damping="1" friction="0" />
+    <dynamics damping="0" friction="10" />
     <parent link="base_link"/>
     <child link="left_rear_wheel_link"/>
     <origin xyz="-0.0175 0.065 -0.018"/>
@@ -424,7 +424,7 @@
   </joint>
 
   <joint name="base_link_to_right_front_wheel" type="continuous">
-    <dynamics damping="1" friction="0" />
+    <dynamics damping="0" friction="10" />
     <parent link="base_link"/>
     <child link="right_front_wheel_link"/>
     <origin xyz="0.078 -0.065 -0.018"/>
@@ -432,7 +432,7 @@
   </joint>
 
   <joint name="base_link_to_right_rear_wheel" type="continuous">
-    <dynamics damping="1" friction="0" />
+    <dynamics damping="0" friction="10" />
     <parent link="base_link"/>
     <child link="right_rear_wheel_link"/>
     <origin xyz="-0.0175 -0.065 -0.018"/>
@@ -511,10 +511,11 @@
       <rightArmJoint>base_link_to_right_fork_arm</rightArmJoint>
       <forkLiftJoint>base_link_to_fork_lift_link</forkLiftJoint>
 
-      <wheelSeparation>0.03</wheelSeparation>
+      <wheelSeparation>0.13</wheelSeparation>
       <wheelDiameter>0.02</wheelDiameter>
       <wheelAcceleration>2</wheelAcceleration>
-      <wheelTorque>2</wheelTorque> -->
+      <wheelTorque>1</wheelTorque>
+      <forkTorque>2</forkTorque>
       <commandTopic>cmd_vel</commandTopic>
       <robotBaseFrame>base_footprint</robotBaseFrame>
       <odometryTopic>odom</odometryTopic>

@@ -95,6 +95,7 @@ namespace gazebo
     gazebo_ros_->getParameter<double> ( wheel_diameter_, "wheelDiameter", 0.03 );
     gazebo_ros_->getParameter<double> ( wheel_accel, "wheelAcceleration", 1.0 );
     gazebo_ros_->getParameter<double> ( wheel_torque, "wheelTorque", 1.0 );
+    gazebo_ros_->getParameter<double> ( fork_tourque, "forkTorque", 1.0 );
     gazebo_ros_->getParameter<double> ( update_rate_, "updateRate", 30.0 );
     gazebo_ros_->getParameter<std::string> (joint_names_[FRONT_LEFT_WHEEL],"frontLeftWheelJoint", "base_link_to_left_front_wheel");
     gazebo_ros_->getParameter<std::string> (joint_names_[FRONT_RIGHT_WHEEL],"frontRightWheelJoint", "base_link_to_right_front_wheel");
@@ -110,6 +111,7 @@ namespace gazebo
     ROS_INFO_NAMED("Param wheelDiameter","wheelDiameter: \t\t%f", wheel_diameter_);
     ROS_INFO_NAMED("Param wheelAcceleration","wheelAcceleration: \t%f", wheel_accel);
     ROS_INFO_NAMED("Param wheelTorque","wheelTorque: \t\t%f", wheel_torque);
+    ROS_INFO_NAMED("Param forkTorque","forkTorque: \t\t%f", fork_tourque);
     ROS_INFO_NAMED("Param updateRate","updateRate: \t\t%f", update_rate_);
     ROS_INFO_NAMED("Param frontLeftWheelJoint","frontLeftWheelJoint: \t%s", joint_names_[FRONT_LEFT_WHEEL].c_str());
     ROS_INFO_NAMED("Param frontRightWheelJoint","frontRightWheelJoint: \t%s", joint_names_[FRONT_RIGHT_WHEEL].c_str());
@@ -139,18 +141,18 @@ namespace gazebo
     joints_[REAR_RIGHT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
     joints_[FRONT_LEFT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
     joints_[REAR_LEFT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[LEFT_ARM]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[RIGHT_ARM]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[FORK_LIFT]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[LEFT_ARM]->SetParam ( "fmax", 0, fork_tourque );
+    joints_[RIGHT_ARM]->SetParam ( "fmax", 0, fork_tourque );
+    joints_[FORK_LIFT]->SetParam ( "fmax", 0, fork_tourque );
 
 #else
     joints_[FRONT_RIGHT_WHEEL]->SetMaxForce ( 0, wheel_torque );
     joints_[REAR_RIGHT_WHEEL]->SetMaxForce ( 0, wheel_torque );
     joints_[FRONT_LEFT_WHEEL]->SetMaxForce ( 0, wheel_torque );
     joints_[REAR_LEFT_WHEEL]->SetMaxForce ( 0, wheel_torque );
-    joints_[LEFT_ARM]->SetMaxForce ( 0, wheel_torque );
-    joints_[RIGHT_ARM]->SetMaxForce ( 0, wheel_torque );
-    joints_[FORK_LIFT]->SetMaxForce ( 0, wheel_torque );
+    joints_[LEFT_ARM]->SetMaxForce ( 0, fork_tourque );
+    joints_[RIGHT_ARM]->SetMaxForce ( 0, fork_tourque );
+    joints_[FORK_LIFT]->SetMaxForce ( 0, fork_tourque );
 #endif
 
 
@@ -233,18 +235,18 @@ namespace gazebo
     joints_[REAR_RIGHT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
     joints_[FRONT_LEFT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
     joints_[REAR_LEFT_WHEEL]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[LEFT_ARM]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[RIGHT_ARM]->SetParam ( "fmax", 0, wheel_torque );
-    joints_[FORK_LIFT]->SetParam ( "fmax", 0, wheel_torque );
+    joints_[LEFT_ARM]->SetParam ( "fmax", 0, fork_tourque );
+    joints_[RIGHT_ARM]->SetParam ( "fmax", 0, fork_tourque );
+    joints_[FORK_LIFT]->SetParam ( "fmax", 0, fork_tourque );
 
 #else
     joints_[FRONT_RIGHT_WHEEL]->SetMaxForce ( 0, wheel_torque );
     joints_[REAR_RIGHT_WHEEL]->SetMaxForce ( 0, wheel_torque );
     joints_[FRONT_LEFT_WHEEL]->SetMaxForce ( 0, wheel_torque );
     joints_[REAR_LEFT_WHEEL]->SetMaxForce ( 0, wheel_torque );
-    joints_[LEFT_ARM]->SetMaxForce ( 0, wheel_torque );
-    joints_[RIGHT_ARM]->SetMaxForce ( 0, wheel_torque );
-    joints_[FORK_LIFT]->SetMaxForce ( 0, wheel_torque );
+    joints_[LEFT_ARM]->SetMaxForce ( 0, fork_tourque );
+    joints_[RIGHT_ARM]->SetMaxForce ( 0, fork_tourque );
+    joints_[FORK_LIFT]->SetMaxForce ( 0, fork_tourque );
 #endif
   }
 
@@ -268,7 +270,8 @@ namespace gazebo
   void MaskorEV3Bobb3ePlugin::publishWheelTF()
   {
     ros::Time current_time = ros::Time::now();
-    // Todo: auf 3 ändern
+    // Todo: auf NUM_JOINTS ändern
+    // Richtig????
     for ( int i = 0; i < NUM_JOINTS; i++ ) {
 
       std::string wheel_frame = gazebo_ros_->resolveTF(joints_[i]->GetChild()->GetName ());
@@ -294,15 +297,30 @@ namespace gazebo
        (this seems to be solved in https://bitbucket.org/osrf/gazebo/commits/ec8801d8683160eccae22c74bf865d59fac81f1e)
     */
     for ( int i = 0; i < NUM_JOINTS; i++ ) {
-#if GAZEBO_MAJOR_VERSION > 2
-      if ( fabs(wheel_torque -joints_[i]->GetParam ( "fmax", 0 )) > 1e-6 ) {
-        joints_[i]->SetParam ( "fmax", 0, wheel_torque );
-#else
-	if ( fabs(wheel_torque -joints_[i]->GetMaxForce ( 0 )) > 1e-6 ) {
-	  joints_[i]->SetMaxForce ( 0, wheel_torque);
-#endif
-	}
+      if(i < 3){
+        #if GAZEBO_MAJOR_VERSION > 2
+              if ( fabs(wheel_torque -joints_[i]->GetParam ( "fmax", 0 )) > 1e-6 ) {
+                joints_[i]->SetParam ( "fmax", 0, wheel_torque );
+        #else
+        	if ( fabs(wheel_torque -joints_[i]->GetMaxForce ( 0 )) > 1e-6 ) {
+        	  joints_[i]->SetMaxForce ( 0, wheel_torque);
+        #endif
+        	}
+
       }
+      else{
+        #if GAZEBO_MAJOR_VERSION > 2
+              if ( fabs(fork_tourque -joints_[i]->GetParam ( "fmax", 0 )) > 1e-6 ) {
+                joints_[i]->SetParam ( "fmax", 0, fork_tourque );
+        #else
+        	if ( fabs(fork_tourque -joints_[i]->GetMaxForce ( 0 )) > 1e-6 ) {
+        	  joints_[i]->SetMaxForce ( 0, fork_tourque);
+        #endif
+        	}
+      }
+      }
+
+
 
       if ( odom_source_ == ENCODER ) UpdateOdometryEncoder();
       common::Time current_time = parent->GetWorld()->GetSimTime();
@@ -324,8 +342,8 @@ namespace gazebo
           current_speed[REAR_LEFT_WHEEL] = joints_[FRONT_RIGHT_WHEEL]->GetVelocity ( 0 )   * ( wheel_diameter_ / 2.0 );
 
           current_speed[FORK_LIFT] = joints_[FORK_LIFT]->GetVelocity ( 0 );
-          current_speed[RIGHT_ARM] = joints_[RIGHT_ARM]->GetVelocity ( 0 );
-          current_speed[LEFT_ARM] = joints_[LEFT_ARM]->GetVelocity ( 0 );
+          current_speed[RIGHT_ARM] = joints_[RIGHT_ARM]->GetVelocity ( 0 ) ;
+          current_speed[LEFT_ARM] = joints_[LEFT_ARM]->GetVelocity  ( 0 ) ;
 
 
         if ( wheel_accel == 0 ||
@@ -423,8 +441,8 @@ namespace gazebo
 	  joint_speeds_[REAR_LEFT_WHEEL] = vr - va * wheel_separation_ / 2.0;
 
     joint_speeds_[FORK_LIFT] = lr;
-    joint_speeds_[LEFT_ARM] = lr * -1;
-    joint_speeds_[RIGHT_ARM] = lr * -1;
+    joint_speeds_[LEFT_ARM] = (lr * -1) * 3;
+    joint_speeds_[RIGHT_ARM] = (lr * -1) * 3;
     }
 
     void MaskorEV3Bobb3ePlugin::cmdVelCallback ( const geometry_msgs::Twist::ConstPtr& cmd_msg )

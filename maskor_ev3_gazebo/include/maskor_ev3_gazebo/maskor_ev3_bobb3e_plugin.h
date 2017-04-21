@@ -115,6 +115,7 @@ namespace gazebo {
       double wheel_separation_;
       double wheel_diameter_;
       double wheel_torque;
+      double fork_tourque;
       double wheel_accel;
       double joint_speeds_[NUM_JOINTS];
       double joint_speeds_instr_[NUM_JOINTS];
