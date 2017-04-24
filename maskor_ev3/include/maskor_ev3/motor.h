@@ -381,12 +381,6 @@ public:
 protected:
   motor() {}
 
-
-  void move_forward();
-  void move_left();
-  void move_right();
-  void move_backward(); 
-  
   bool connect(const std::map<std::string, std::set<std::string>>&) noexcept;
 };
 
