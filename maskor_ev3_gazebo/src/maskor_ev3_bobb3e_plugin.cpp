@@ -196,12 +196,15 @@ namespace gazebo
     // ROS: Subscribe to the velocity command topic (usually "cmd_vel")
     ROS_INFO_NAMED("MaskorEV3Bobb3ePlugin", "%s: Try to subscribe to %s!", gazebo_ros_->info(), command_topic_.c_str());
 
-    ros::SubscribeOptions so =
-      ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 1,
+  /*  ros::SubscribeOptions so =
+      ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 100,
 							  boost::bind(&MaskorEV3Bobb3ePlugin::cmdVelCallback, this, _1),
-							  ros::VoidPtr(), &queue_);
+                ros::VoidPtr(), &queue_);
+                */
+    //cmd_vel_subscriber_ = gazebo_ros_->node()->subscribe(so);
 
-    cmd_vel_subscriber_ = gazebo_ros_->node()->subscribe(so);
+    //publishers and subscribers
+    cmd_vel_subscriber_ = gazebo_ros_->node()->subscribe(command_topic_, 10, &MaskorEV3Bobb3ePlugin::cmdVelCallback, this );
     ROS_INFO_NAMED("MaskorEV3Bobb3ePlugin", "%s: Subscribe to %s!", gazebo_ros_->info(), command_topic_.c_str());
 
     if (this->publish_odom_tf_)
@@ -269,6 +272,7 @@ namespace gazebo
 
   void MaskorEV3Bobb3ePlugin::publishWheelTF()
   {
+    ROS_INFO("received publishWheelTF");
     ros::Time current_time = ros::Time::now();
     // Todo: auf NUM_JOINTS ändern
     // Richtig????
@@ -290,6 +294,7 @@ namespace gazebo
   // Update the controller
   void MaskorEV3Bobb3ePlugin::UpdateChild()
   {
+
     /* force reset SetParam("fmax") since Joint::Reset reset MaxForce to zero at
        https://bitbucket.org/osrf/gazebo/src/8091da8b3c529a362f39b042095e12c94656a5d1/gazebo/physics/Joint.cc?at=gazebo2_2.2.5#cl-331
        (this has been solved in https://bitbucket.org/osrf/gazebo/diff/gazebo/physics/Joint.cc?diff2=b64ff1b7b6ff&at=issue_964 )
@@ -317,7 +322,7 @@ namespace gazebo
         	  joints_[i]->SetMaxForce ( 0, fork_tourque);
         #endif
         	}
-      }
+        }
       }
 
 
@@ -327,12 +332,15 @@ namespace gazebo
       double seconds_since_last_update = ( current_time - last_update_time_ ).Double();
 
       if ( seconds_since_last_update > update_period_ ) {
+          ROS_INFO("received update preiod_if");
         if (this->publish_odom_tf_) publishOdometry ( seconds_since_last_update );
         if ( publishWheelTF_ ) publishWheelTF();
         if ( publishJointStates_ ) publishJointStates();
 
         // Update robot in case new velocities have been requested
         getWheelVelocities();
+
+
 
         double current_speed[NUM_JOINTS]; //!
 
@@ -344,6 +352,7 @@ namespace gazebo
           current_speed[FORK_LIFT] = joints_[FORK_LIFT]->GetVelocity ( 0 );
           current_speed[RIGHT_ARM] = joints_[RIGHT_ARM]->GetVelocity ( 0 ) ;
           current_speed[LEFT_ARM] = joints_[LEFT_ARM]->GetVelocity  ( 0 ) ;
+
 
 
         if ( wheel_accel == 0 ||
@@ -371,21 +380,21 @@ namespace gazebo
 #endif
         } else {
 	  if ( joint_speeds_[FRONT_LEFT_WHEEL]>=current_speed[FRONT_LEFT_WHEEL] ){
-	    joint_speeds_instr_[FRONT_LEFT_WHEEL]+=fmin ( joint_speeds_[FRONT_LEFT_WHEEL]-current_speed[FRONT_LEFT_WHEEL],  wheel_accel * seconds_since_last_update );
-	    joint_speeds_instr_[REAR_LEFT_WHEEL]+=fmin ( joint_speeds_[REAR_LEFT_WHEEL]-current_speed[REAR_LEFT_WHEEL],  wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[FRONT_LEFT_WHEEL] +=fmin ( joint_speeds_[FRONT_LEFT_WHEEL]-current_speed[FRONT_LEFT_WHEEL],  wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[REAR_LEFT_WHEEL] +=fmin ( joint_speeds_[REAR_LEFT_WHEEL]-current_speed[REAR_LEFT_WHEEL],  wheel_accel * seconds_since_last_update );
 	  }
 	  else {
-	    joint_speeds_instr_[FRONT_LEFT_WHEEL]+=fmax ( joint_speeds_[FRONT_LEFT_WHEEL]-current_speed[FRONT_LEFT_WHEEL], -wheel_accel * seconds_since_last_update );
-	    joint_speeds_instr_[REAR_LEFT_WHEEL]+=fmax ( joint_speeds_[REAR_LEFT_WHEEL]-current_speed[REAR_LEFT_WHEEL], -wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[FRONT_LEFT_WHEEL] +=fmax ( joint_speeds_[FRONT_LEFT_WHEEL]-current_speed[FRONT_LEFT_WHEEL], -wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[REAR_LEFT_WHEEL] +=fmax ( joint_speeds_[REAR_LEFT_WHEEL]-current_speed[REAR_LEFT_WHEEL], -wheel_accel * seconds_since_last_update );
 	  }
 
 	  if ( joint_speeds_[FRONT_RIGHT_WHEEL]>current_speed[FRONT_RIGHT_WHEEL] ) {
-	    joint_speeds_instr_[FRONT_RIGHT_WHEEL]+=fmin ( joint_speeds_[FRONT_RIGHT_WHEEL]-current_speed[FRONT_RIGHT_WHEEL], wheel_accel * seconds_since_last_update );
-	    joint_speeds_instr_[REAR_RIGHT_WHEEL]+=fmin ( joint_speeds_[REAR_RIGHT_WHEEL]-current_speed[REAR_RIGHT_WHEEL], wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[FRONT_RIGHT_WHEEL] +=fmin ( joint_speeds_[FRONT_RIGHT_WHEEL]-current_speed[FRONT_RIGHT_WHEEL], wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[REAR_RIGHT_WHEEL] +=fmin ( joint_speeds_[REAR_RIGHT_WHEEL]-current_speed[REAR_RIGHT_WHEEL], wheel_accel * seconds_since_last_update );
 	  }
 	  else {
-	    joint_speeds_instr_[FRONT_RIGHT_WHEEL]+=fmax ( joint_speeds_[FRONT_RIGHT_WHEEL]-current_speed[FRONT_RIGHT_WHEEL], -wheel_accel * seconds_since_last_update );
-	    joint_speeds_instr_[REAR_RIGHT_WHEEL]+=fmax ( joint_speeds_[REAR_RIGHT_WHEEL]-current_speed[REAR_RIGHT_WHEEL], -wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[FRONT_RIGHT_WHEEL] +=fmax ( joint_speeds_[FRONT_RIGHT_WHEEL]-current_speed[FRONT_RIGHT_WHEEL], -wheel_accel * seconds_since_last_update );
+	    joint_speeds_instr_[REAR_RIGHT_WHEEL] +=fmax ( joint_speeds_[REAR_RIGHT_WHEEL]-current_speed[REAR_RIGHT_WHEEL], -wheel_accel * seconds_since_last_update );
 	    //geändert
 	    //joint_speeds_instr_[LIFT]+=fmax ( joint_speeds_[LIFT]-current_speed[LIFT], wheel_accel * seconds_since_last_update );
             // ROS_INFO_NAMED("diff_drive", "actual wheel speed = %lf, issued wheel speed= %lf", current_speed[LEFT], joint_speeds_[LEFT]);
@@ -435,6 +444,8 @@ namespace gazebo
       double lr = z_;
       double va = rot_;
 
+
+
     joint_speeds_[FRONT_RIGHT_WHEEL] = vr + va * wheel_separation_ / 2.0;
 	  joint_speeds_[REAR_RIGHT_WHEEL] = vr + va * wheel_separation_ / 2.0;
 	  joint_speeds_[FRONT_LEFT_WHEEL] = vr - va * wheel_separation_ / 2.0;
@@ -443,6 +454,8 @@ namespace gazebo
     joint_speeds_[FORK_LIFT] = lr;
     joint_speeds_[LEFT_ARM] = (lr * -1) * 3;
     joint_speeds_[RIGHT_ARM] = (lr * -1) * 3;
+
+
     }
 
     void MaskorEV3Bobb3ePlugin::cmdVelCallback ( const geometry_msgs::Twist::ConstPtr& cmd_msg )
@@ -451,6 +464,8 @@ namespace gazebo
       x_ = cmd_msg->linear.x;
       z_ = cmd_msg->linear.z;
       rot_ = cmd_msg->angular.z;
+
+
     }
 
     void MaskorEV3Bobb3ePlugin::QueueThread()
@@ -513,6 +528,7 @@ namespace gazebo
 
     void MaskorEV3Bobb3ePlugin::publishOdometry ( double step_time )
     {
+
 
       ros::Time current_time = ros::Time::now();
       std::string odom_frame = gazebo_ros_->resolveTF ( odometry_frame_ );

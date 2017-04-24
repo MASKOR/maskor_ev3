@@ -129,6 +129,8 @@ namespace gazebo {
       std::string robot_base_frame_;
       bool publish_odom_tf_;
 
+      std::string node_namespace;
+
       // ROS STUFF
       ros::Publisher odometry_publisher_;
       ros::Subscriber cmd_vel_subscriber_;
@@ -137,6 +139,8 @@ namespace gazebo {
       ros::Publisher joint_state_publisher_;
       nav_msgs::Odometry odom_;
       std::string tf_prefix_;
+
+      ros::NodeHandle* rosnode;
 
       // Custom Callback Queue
       ros::CallbackQueue queue_;

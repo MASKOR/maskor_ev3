@@ -513,7 +513,7 @@
 
       <wheelSeparation>0.13</wheelSeparation>
       <wheelDiameter>0.02</wheelDiameter>
-      <wheelAcceleration>2</wheelAcceleration>
+      <wheelAcceleration>0</wheelAcceleration>
       <wheelTorque>1</wheelTorque>
       <forkTorque>2</forkTorque>
       <commandTopic>cmd_vel</commandTopic>
