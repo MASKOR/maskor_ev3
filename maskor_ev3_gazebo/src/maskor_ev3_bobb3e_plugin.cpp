@@ -367,10 +367,20 @@ namespace gazebo
     joints_[RIGHT_ARM]->SetParam ( "vel", 0, joint_speeds_[RIGHT_ARM]);
     joints_[LEFT_ARM]->SetParam ( "vel", 0, joint_speeds_[LEFT_ARM]);
 #else
-	  joints_[FRONT_RIGHT_WHEEL]->SetVelocity ( 0, joint_speeds_[FRONT_RIGHT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
-	  joints_[REAR_RIGHT_WHEEL]->SetVelocity ( 0, joint_speeds_[REAR_RIGHT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
-	  joints_[FRONT_LEFT_WHEEL]->SetVelocity ( 0, joint_speeds_[FRONT_LEFT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
-	  joints_[REAR_LEFT_WHEEL]->SetVelocity ( 0, joint_speeds_[REAR_LEFT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+    double fr = joint_speeds_[FRONT_RIGHT_WHEEL] / ( wheel_diameter_ / 2.0 );
+    double fl = joint_speeds_[REAR_RIGHT_WHEEL] / ( wheel_diameter_ / 2.0 );
+    double rr = joint_speeds_[FRONT_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 );
+    double rl = joint_speeds_[REAR_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 );
+
+    //ROS_INFO_NAMED("joints_[FRONT_RIGHT_WHEEL]","joints_[FRONT_RIGHT_WHEEL]: \t\t%f",fr);
+
+	  joints_[FRONT_RIGHT_WHEEL]->SetVelocity(0,fr);
+	  joints_[REAR_RIGHT_WHEEL]->SetVelocity(0,rr);
+	  joints_[FRONT_LEFT_WHEEL]->SetVelocity(0,fl);
+	  joints_[REAR_LEFT_WHEEL]->SetVelocity(0,rl);
+
+
+
 
     joints_[FORK_LIFT]->SetVelocity ( 0, joint_speeds_[FORK_LIFT] );
     joints_[RIGHT_ARM]->SetVelocity ( 0, joint_speeds_[RIGHT_ARM] );
@@ -415,6 +425,8 @@ namespace gazebo
 	  joints_[REAR_RIGHT_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[REAR_RIGHT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
 	  joints_[FRONT_LEFT_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[FRONT_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
 	  joints_[REAR_LEFT_WHEEL]->SetVelocity ( 0,joint_speeds_instr_[REAR_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 ) );
+
+
 /*	  joints_[LEFT_ARM]->SetVelocity ( 0, -2 );
 	  joints_[RIGHT_ARM]->SetVelocity ( 0, 0.01 );
 	  joints_[FORK_LIFT]->SetVelocity ( 0, 0.01 );
@@ -451,6 +463,8 @@ namespace gazebo
 	  joint_speeds_[FRONT_LEFT_WHEEL] = vr - va * wheel_separation_ / 2.0;
 	  joint_speeds_[REAR_LEFT_WHEEL] = vr - va * wheel_separation_ / 2.0;
 
+
+
     joint_speeds_[FORK_LIFT] = lr;
     joint_speeds_[LEFT_ARM] = (lr * -1) * 3;
     joint_speeds_[RIGHT_ARM] = (lr * -1) * 3;
@@ -461,10 +475,12 @@ namespace gazebo
     void MaskorEV3Bobb3ePlugin::cmdVelCallback ( const geometry_msgs::Twist::ConstPtr& cmd_msg )
     {
       //boost::mutex::scoped_lock scoped_lock ( lock );
+
       x_ = cmd_msg->linear.x;
       z_ = cmd_msg->linear.z;
       rot_ = cmd_msg->angular.z;
 
+      ROS_INFO_NAMED("x_","x_: \t\t%f", x_);
 
     }
 
