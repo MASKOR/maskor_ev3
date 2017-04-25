@@ -366,25 +366,17 @@ namespace gazebo
     joints_[FORK_LIFT]->SetParam ( "vel", 0, joint_speeds_[FORK_LIFT]);
     joints_[RIGHT_ARM]->SetParam ( "vel", 0, joint_speeds_[RIGHT_ARM]);
     joints_[LEFT_ARM]->SetParam ( "vel", 0, joint_speeds_[LEFT_ARM]);
-#else
-    double fr = joint_speeds_[FRONT_RIGHT_WHEEL] / ( wheel_diameter_ / 2.0 );
-    double fl = joint_speeds_[REAR_RIGHT_WHEEL] / ( wheel_diameter_ / 2.0 );
-    double rr = joint_speeds_[FRONT_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 );
-    double rl = joint_speeds_[REAR_LEFT_WHEEL] / ( wheel_diameter_ / 2.0 );
-
-    //ROS_INFO_NAMED("joints_[FRONT_RIGHT_WHEEL]","joints_[FRONT_RIGHT_WHEEL]: \t\t%f",fr);
-
-	  joints_[FRONT_RIGHT_WHEEL]->SetVelocity(0,fr);
-	  joints_[REAR_RIGHT_WHEEL]->SetVelocity(0,rr);
-	  joints_[FRONT_LEFT_WHEEL]->SetVelocity(0,fl);
-	  joints_[REAR_LEFT_WHEEL]->SetVelocity(0,rl);
-
-
-
+    #else
+    joints_[FRONT_RIGHT_WHEEL]->SetVelocity ( 0, joint_speeds_[FRONT_RIGHT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+    joints_[REAR_RIGHT_WHEEL]->SetVelocity ( 0, joint_speeds_[REAR_RIGHT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+    joints_[FRONT_LEFT_WHEEL]->SetVelocity ( 0, joint_speeds_[FRONT_LEFT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
+    joints_[REAR_LEFT_WHEEL]->SetVelocity ( 0, joint_speeds_[REAR_LEFT_WHEEL]/ ( wheel_diameter_ / 2.0 ) );
 
     joints_[FORK_LIFT]->SetVelocity ( 0, joint_speeds_[FORK_LIFT] );
     joints_[RIGHT_ARM]->SetVelocity ( 0, joint_speeds_[RIGHT_ARM] );
     joints_[LEFT_ARM]->SetVelocity ( 0, joint_speeds_[LEFT_ARM] );
+
+    //ROS_INFO_NAMED("joints_[FRONT_RIGHT_WHEEL]","joints_[FRONT_RIGHT_WHEEL]: \t\t%f",fr);
 
 	  //joints_[LIFT]->SetVelocity ( 0, joint_speeds_[LIFT] );
 #endif

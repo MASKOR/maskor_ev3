@@ -512,7 +512,7 @@
       <forkLiftJoint>base_link_to_fork_lift_link</forkLiftJoint>
 
       <wheelSeparation>0.13</wheelSeparation>
-      <wheelDiameter>0,02</wheelDiameter>
+      <wheelDiameter>0.02</wheelDiameter>
       <wheelAcceleration>0</wheelAcceleration>
       <wheelTorque>1</wheelTorque>
       <forkTorque>2</forkTorque>
