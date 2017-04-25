@@ -332,7 +332,7 @@ namespace gazebo
       double seconds_since_last_update = ( current_time - last_update_time_ ).Double();
 
       if ( seconds_since_last_update > update_period_ ) {
-          ROS_INFO("received update preiod_if");
+          //ROS_INFO("received update preiod_if");
         if (this->publish_odom_tf_) publishOdometry ( seconds_since_last_update );
         if ( publishWheelTF_ ) publishWheelTF();
         if ( publishJointStates_ ) publishJointStates();
@@ -438,7 +438,7 @@ namespace gazebo
 
     void MaskorEV3Bobb3ePlugin::getWheelVelocities()
     {
-      boost::mutex::scoped_lock scoped_lock ( lock );
+      //boost::mutex::scoped_lock scoped_lock ( lock );
 
       double vr = x_;
       double lr = z_;
@@ -460,7 +460,7 @@ namespace gazebo
 
     void MaskorEV3Bobb3ePlugin::cmdVelCallback ( const geometry_msgs::Twist::ConstPtr& cmd_msg )
     {
-      boost::mutex::scoped_lock scoped_lock ( lock );
+      //boost::mutex::scoped_lock scoped_lock ( lock );
       x_ = cmd_msg->linear.x;
       z_ = cmd_msg->linear.z;
       rot_ = cmd_msg->angular.z;
