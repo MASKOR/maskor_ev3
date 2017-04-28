@@ -89,13 +89,18 @@ namespace gazebo {
       std::string right_front_joint_name_;
       std::string left_rear_joint_name_;
       std::string right_rear_joint_name_;
+      std::string left_fork_arm_name_;
+      std::string right_fork_arm_name_;
+      std::string fork_name_;
 
       double wheel_separation_;
       double wheel_diameter_;
       double torque;
+      double fork_torque;
       double wheel_speed_[4];
+      double fork_speed_[3];
 
-      physics::JointPtr joints[4];
+      physics::JointPtr joints[7];
 
       // ROS STUFF
       ros::NodeHandle* rosnode_;
@@ -123,6 +128,7 @@ namespace gazebo {
       void cmdVelCallback(const geometry_msgs::Twist::ConstPtr& cmd_msg);
 
       double x_;
+      double z_;
       double rot_;
       bool alive_;
 

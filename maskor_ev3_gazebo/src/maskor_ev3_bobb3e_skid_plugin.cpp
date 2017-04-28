@@ -63,6 +63,7 @@ namespace gazebo {
     LEFT_REAR=3,
     FORK_LEFT=4,
     FORK_RIGHT=5,
+    FORK=6,
   };
 
   MaskorEv3SkidSteerDrive::MaskorEv3SkidSteerDrive() {}
@@ -131,7 +132,29 @@ namespace gazebo {
       this->right_rear_joint_name_ = _sdf->GetElement("rightRearJoint")->Get<std::string>();
     }
 
+    this->left_fork_arm_name_= "left_fork_arm";
+    if (!_sdf->HasElement("leftForkArmJoint")) {
+      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <leftForkArmJoint>, defaults to \"%s\"",
+          this->robot_namespace_.c_str(), this->left_fork_arm_name_.c_str());
+    } else {
+      this->left_fork_arm_name_ = _sdf->GetElement("leftForkArmJoint")->Get<std::string>();
+    }
 
+    this->right_fork_arm_name_= "right_fork_arm";
+    if (!_sdf->HasElement("rightForkArmJoint")) {
+      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <rightForkArmJoint>, defaults to \"%s\"",
+          this->robot_namespace_.c_str(), this->right_fork_arm_name_.c_str());
+    } else {
+      this->right_fork_arm_name_ = _sdf->GetElement("rightForkArmJoint")->Get<std::string>();
+    }
+
+    this->fork_name_= "fork";
+    if (!_sdf->HasElement("forkJoint")) {
+      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <forkJoint>, defaults to \"%s\"",
+          this->robot_namespace_.c_str(), this->fork_name_.c_str());
+    } else {
+      this->fork_name_ = _sdf->GetElement("forkJoint")->Get<std::string>();
+    }
     // This assumes that front and rear wheel spacing is identical
     /*this->wheel_separation_ = this->parent->GetJoint(left_front_joint_name_)->GetAnchor(0).Distance(
     		this->parent->GetJoint(right_front_joint_name_)->GetAnchor(0));*/
@@ -161,6 +184,14 @@ namespace gazebo {
           this->robot_namespace_.c_str(), this->torque);
     } else {
       this->torque = _sdf->GetElement("torque")->Get<double>();
+    }
+
+    this->fork_torque = 5.0;
+    if (!_sdf->HasElement("fork_torque")) {
+      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <fork_torque>, defaults to %f",
+          this->robot_namespace_.c_str(), this->fork_torque);
+    } else {
+      this->fork_torque = _sdf->GetElement("fork_torque")->Get<double>();
     }
 
     this->command_topic_ = "cmd_vel";
@@ -239,9 +270,14 @@ namespace gazebo {
     wheel_speed_[RIGHT_FRONT] = 0;
     wheel_speed_[LEFT_FRONT] = 0;
     wheel_speed_[RIGHT_REAR] = 0;
-	wheel_speed_[LEFT_REAR] = 0;
+	  wheel_speed_[LEFT_REAR] = 0;
+
+    fork_speed_[FORK_LEFT] = 0;
+    fork_speed_[FORK_RIGHT] = 0;
+    fork_speed_[FORK] = 0;
 
     x_ = 0;
+    z_ = 0;
     rot_ = 0;
     alive_ = true;
 
@@ -249,6 +285,9 @@ namespace gazebo {
     joints[RIGHT_FRONT] = this->parent->GetJoint(right_front_joint_name_);
     joints[LEFT_REAR] = this->parent->GetJoint(left_rear_joint_name_);
     joints[RIGHT_REAR] = this->parent->GetJoint(right_rear_joint_name_);
+    joints[FORK_RIGHT] = this->parent->GetJoint(right_fork_arm_name_);
+    joints[FORK_LEFT] = this->parent->GetJoint(left_fork_arm_name_);
+    joints[FORK] = this->parent->GetJoint(fork_name_);
 
     if (!joints[LEFT_FRONT]) {
       char error[200];
@@ -282,6 +321,30 @@ namespace gazebo {
 	 gzthrow(error);
    }
 
+   if (!joints[FORK_RIGHT]) {
+	 char error[200];
+	 snprintf(error, 200,
+		 "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get right fork armhinge joint named \"%s\"",
+		 this->robot_namespace_.c_str(), this->right_fork_arm_name_.c_str());
+	 gzthrow(error);
+   }
+
+   if (!joints[FORK_LEFT]) {
+	 char error[200];
+	 snprintf(error, 200,
+		 "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get left fork arm hinge joint named \"%s\"",
+		 this->robot_namespace_.c_str(), this->left_fork_arm_name_.c_str());
+	 gzthrow(error);
+   }
+
+   if (!joints[FORK]) {
+	 char error[200];
+	 snprintf(error, 200,
+		 "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get fork hinge joint named \"%s\"",
+		 this->robot_namespace_.c_str(), this->fork_name_.c_str());
+	 gzthrow(error);
+   }
+
 #if GAZEBO_MAJOR_VERSION > 2
     joints[LEFT_FRONT]->SetParam("fmax", 0, torque);
     joints[RIGHT_FRONT]->SetParam("fmax", 0, torque);
@@ -292,6 +355,10 @@ namespace gazebo {
     joints[RIGHT_FRONT]->SetMaxForce(0, torque);
     joints[LEFT_REAR]->SetMaxForce(0, torque);
     joints[RIGHT_REAR]->SetMaxForce(0, torque);
+    joints[FORK_RIGHT]->SetMaxForce(0, fork_torque);
+    joints[FORK_LEFT]->SetMaxForce(0, fork_torque);
+    joints[FORK]->SetMaxForce(0, fork_torque);
+
 #endif
 
     // Make sure the ROS node for Gazebo has already been initialized
