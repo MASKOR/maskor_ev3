@@ -380,13 +380,14 @@ namespace gazebo {
     transform_broadcaster_ = new tf::TransformBroadcaster();
 
     // ROS: Subscribe to the velocity command topic (usually "cmd_vel")
-    ros::SubscribeOptions so =
-      ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 1,
-          boost::bind(&MaskorEv3SkidSteerDrive::cmdVelCallback, this, _1),
-          ros::VoidPtr(), &queue_);
 
-    cmd_vel_subscriber_ = rosnode_->subscribe(so);
-
+    /*    ros::SubscribeOptions so =
+            ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 100,
+        							boost::bind(&MaskorEv3SkidSteerDrive::cmdVelCallback, this, _1),
+                      ros::VoidPtr(), &queue_);
+*/
+    //cmd_vel_subscriber_ = rosnode_->subscribe(so);
+    cmd_vel_subscriber_= rosnode_->subscribe(command_topic_,100,&MaskorEv3SkidSteerDrive::cmdVelCallback,this);
 
 
     odometry_publisher_ = rosnode_->advertise<nav_msgs::Odometry>(odometry_topic_, 1);
