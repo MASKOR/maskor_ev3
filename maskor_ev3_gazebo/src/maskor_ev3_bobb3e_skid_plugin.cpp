@@ -350,6 +350,9 @@ namespace gazebo {
     joints[RIGHT_FRONT]->SetParam("fmax", 0, torque);
     joints[LEFT_REAR]->SetParam("fmax", 0, torque);
     joints[RIGHT_REAR]->SetParam("fmax", 0, torque);
+    joints[FORK_RIGHT]->SetParam("fmax", 0, fork_torque);
+    joints[FORK_LEFT]->SetParam("fmax", 0, fork_torque);
+    joints[FORK]->SetParam("fmax", 0, fork_torque);
 #else
     joints[LEFT_FRONT]->SetMaxForce(0, torque);
     joints[RIGHT_FRONT]->SetMaxForce(0, torque);
@@ -384,6 +387,8 @@ namespace gazebo {
 
     cmd_vel_subscriber_ = rosnode_->subscribe(so);
 
+
+
     odometry_publisher_ = rosnode_->advertise<nav_msgs::Odometry>(odometry_topic_, 1);
 
     // start custom queue for diff drive
@@ -408,12 +413,15 @@ namespace gazebo {
 
       // Update robot in case new velocities have been requested
       getWheelVelocities();
-      getForkVelocities();
+      //getForkVelocities();
 #if GAZEBO_MAJOR_VERSION > 2
       joints[LEFT_FRONT]->SetParam("vel", 0, wheel_speed_[LEFT_FRONT] / (wheel_diameter_ / 2.0));
       joints[RIGHT_FRONT]->SetParam("vel", 0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
       joints[LEFT_REAR]->SetParam("vel", 0, wheel_speed_[LEFT_REAR] / (wheel_diameter_ / 2.0));
       joints[RIGHT_REAR]->SetParam("vel", 0, wheel_speed_[RIGHT_REAR] / (wheel_diameter_ / 2.0));
+      joints[FORK_RIGHT]->SetParam("vel",0,fork_speed_[FORK_RIGHT]);
+      joints[FORK_LEFT]->SetParam("vel",0,fork_speed_[FORK_LEFT]);
+      joints[FORK]->SetParam("vel",0,fork_speed_[FORK]);
 #else
       joints[LEFT_FRONT]->SetVelocity(0, wheel_speed_[LEFT_FRONT] / (wheel_diameter_ / 2.0));
       joints[RIGHT_FRONT]->SetVelocity(0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
@@ -443,6 +451,11 @@ namespace gazebo {
 
     double vr = x_;
     double va = rot_;
+    double vu = z_;
+
+    fork_speed_[FORK_RIGHT] = vu;
+    fork_speed_[FORK_LEFT] = vu;
+    fork_speed_[FORK] = vu;
 
     wheel_speed_[RIGHT_FRONT] = vr + va * wheel_separation_ / 2.0;
     wheel_speed_[RIGHT_REAR] = vr + va * wheel_separation_ / 2.0;
@@ -452,17 +465,17 @@ namespace gazebo {
 
   }
 
-  void MaskorEv3SkidSteerDrive::getForkVelocities() {
-    boost::mutex::scoped_lock scoped_lock(lock);
+/*  void MaskorEv3SkidSteerDrive::getForkVelocities() {
+    //boost::mutex::scoped_lock scoped_lock(lock);
 
     double vu = z_;
 
     fork_speed_[FORK_RIGHT] = vu;
     fork_speed_[FORK_LEFT] = vu;
     fork_speed_[FORK] = vu;
-    
-  }
 
+  }
+*/
   void MaskorEv3SkidSteerDrive::cmdVelCallback(
       const geometry_msgs::Twist::ConstPtr& cmd_msg) {
 
