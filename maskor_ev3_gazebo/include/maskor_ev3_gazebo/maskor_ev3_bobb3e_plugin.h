@@ -1,4 +1,18 @@
 /*
+  MASKOR EV3 BOBB3E PLUGIN
+  Copyright (c) 2017
+  FH Aachen University of Applied Sciences
+
+  Marcel Stüttgen
+  stuettgen@fh-aachen.de
+  Dennis Miltz
+  dennis.miltz@alumni.fh-aachen.de
+  Christoph Gollol
+  christoph.gollok@alumni.fh-aachen.de
+
+
+  based on: Gazebo Diff Drive Plugin
+
  * Copyright (c) 2010, Daniel Hewlett, Antons Rebguns
  *  All rights reserved.
  *
@@ -26,20 +40,8 @@
  *
  **/
 
-/*
- * \file  gazebo_ros_diff_drive.h
- *
- * \brief A differential drive plugin for gazebo. Based on the diffdrive plugin
- * developed for the erratic robot (see copyright notice above). The original
- * plugin can be found in the ROS package gazebo_erratic_plugins.
- *
- * \author  Piyush Khandelwal (piyushk@gmail.com)
- *
- * $ Id: 06/21/2013 11:23:40 AM piyushk $
- */
-
-#ifndef DIFFDRIVE_PLUGIN_HH
-#define DIFFDRIVE_PLUGIN_HH
+#ifndef _MASKOR_EV3_BOBB3E_PLUGIN_H_
+#define _MASKOR_EV3_BOBB3E_PLUGIN_H_
 
 #include <map>
 
@@ -70,7 +72,18 @@ namespace gazebo {
   class Joint;
   class Entity;
 
-  class GazeboRosDiffDrive : public ModelPlugin {
+  class MaskorEV3Bobb3ePlugin : public ModelPlugin {
+
+   enum JointID{
+    FRONT_LEFT_WHEEL,
+    FRONT_RIGHT_WHEEL,
+    REAR_LEFT_WHEEL,
+    REAR_RIGHT_WHEEL,
+    LEFT_ARM,
+    RIGHT_ARM,
+    FORK_LIFT,
+    NUM_JOINTS
+  };
 
     enum OdomSource
     {
@@ -78,8 +91,8 @@ namespace gazebo {
         WORLD = 1,
     };
     public:
-      GazeboRosDiffDrive();
-      ~GazeboRosDiffDrive();
+      MaskorEV3Bobb3ePlugin();
+      ~MaskorEV3Bobb3ePlugin();
       void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
       void Reset();
 
@@ -91,22 +104,32 @@ namespace gazebo {
       void publishOdometry(double step_time);
       void getWheelVelocities();
       void publishWheelTF(); /// publishes the wheel tf's
-      void publishWheelJointState();
+      void publishJointStates();
       void UpdateOdometryEncoder();
-
 
       GazeboRosPtr gazebo_ros_;
       physics::ModelPtr parent;
       event::ConnectionPtr update_connection_;
 
+      //parameters
       double wheel_separation_;
       double wheel_diameter_;
       double wheel_torque;
-      double wheel_speed_[3];
-    double wheel_accel;
-      double wheel_speed_instr_[3];
-
+      double fork_tourque;
+      double wheel_accel;
+      double joint_speeds_[NUM_JOINTS];
+      double joint_speeds_instr_[NUM_JOINTS];
+      std::string joint_names_[NUM_JOINTS];
       std::vector<physics::JointPtr> joints_;
+      boost::mutex lock;
+      std::string robot_namespace_;
+      std::string command_topic_;
+      std::string odometry_topic_;
+      std::string odometry_frame_;
+      std::string robot_base_frame_;
+      bool publish_odom_tf_;
+
+      std::string node_namespace;
 
       // ROS STUFF
       ros::Publisher odometry_publisher_;
@@ -117,15 +140,8 @@ namespace gazebo {
       nav_msgs::Odometry odom_;
       std::string tf_prefix_;
 
-      boost::mutex lock;
+      ros::NodeHandle* rosnode;
 
-      std::string robot_namespace_;
-      std::string command_topic_;
-      std::string odometry_topic_;
-      std::string odometry_frame_;
-      std::string robot_base_frame_;
-      bool publish_tf_;
-      bool legacy_mode_;
       // Custom Callback Queue
       ros::CallbackQueue queue_;
       boost::thread callback_queue_thread_;
@@ -150,10 +166,10 @@ namespace gazebo {
 
     // Flags
     bool publishWheelTF_;
-    bool publishWheelJointState_;
+    bool publishJointStates_;
 
   };
 
 }
 
-#endif
+#endif //_MASKOR_EV3_BOBB3E_PLUGIN_H_

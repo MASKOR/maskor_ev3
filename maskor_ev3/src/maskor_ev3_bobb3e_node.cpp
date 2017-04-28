@@ -9,7 +9,7 @@
  * patrick.hannak@alumni.fh-aachen.de
  */
 
-#define _DEBUG
+//#define _DEBUG
 //#define _OFFLINETEST
 
 #include <stdio.h>
@@ -23,19 +23,17 @@
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
-#include <maskor_ev3_msgs/ColorSensor.h>
-#include <maskor_ev3_msgs/GyroSensor.h>
-#include <maskor_ev3_msgs/InfraredSensor.h>
-#include <maskor_ev3_msgs/TouchSensor.h>
-#include <maskor_ev3_msgs/UltrasonicSensor.h>
+//#include <maskor_ev3_msgs/ColorSensor.h>
+//#include <maskor_ev3_msgs/GyroSensor.h>
+//#include <maskor_ev3_msgs/InfraredSensor.h>
 
 
 // FUNCTION DECLARATIONS
-
 void cmd_velCb(const geometry_msgs::Twist& cmd);
 void calc_odometry();
 void publish_test_messages();
 void publish_joint_states();
+double calc_fork_lift_link_position(double arm_position);
 
 #ifndef _OFFLINETEST
 void init_motors();
@@ -48,22 +46,18 @@ geometry_msgs::TransformStamped odom_tf;
 tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
 sensor_msgs::JointState joint_state_msg;
-maskor_ev3_msgs::ColorSensor color_sensor_msg;
-maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
-maskor_ev3_msgs::TouchSensor touch_sensor_msg;
-maskor_ev3_msgs::InfraredSensor infrared_sensor_msg;
-maskor_ev3_msgs::UltrasonicSensor ultrasonic_sensor_msg;
+//maskor_ev3_msgs::ColorSensor color_sensor_msg;
+//maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
+//maskor_ev3_msgs::InfraredSensor infrared_sensor_msg;
 
 
 ros::NodeHandle nh;
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
-ros::Publisher odom_pub("/bobb3e/odom", &odom_msg);
-ros::Publisher color_sensor_pub("/bobb3e/color_sensor", &color_sensor_msg);
-ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
-ros::Publisher touch_sensor_pub("/bobb3e/touch_sensor", &touch_sensor_msg);
-ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
-ros::Publisher ultrasonic_sensor_pub("/bobb3e/ultrasonic_sensor", &ultrasonic_sensor_msg);
-ros::Publisher joint_state_pub("/bobb3e/joint_states", &joint_state_msg);
+ros::Publisher odom_pub("/odom", &odom_msg);
+ros::Publisher joint_state_pub("/joint_states", &joint_state_msg);
+//ros::Publisher color_sensor_pub("/bobb3e/color_sensor", &color_sensor_msg);
+//ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
+//ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
 
 #ifndef _OFFLINETEST
 //motors
@@ -79,16 +73,21 @@ maskor_ev3::sensor gyro_sensor(maskor_ev3::INPUT_4);
 
 //global variables
 const float deg2rad = M_PI/180.0;
-char base_link[] = "/base_link";
+char base_link[] = "/base_footprint";
 char odom[] = "/odom";
-//char rosSrvrIp[] = "10.42.0.1";
-char rosSrvrIp[] = "149.201.178.169";
+char rosSrvrIp[] = "10.42.0.1";
+//char rosSrvrIp[] = "149.201.178.169";
+//char rosSrvrIp[] = "127.0.0.1";
 
 double left_motor_speed=0.0;
 double right_motor_speed=0.0;
 double lift_motor_speed=0.0;
 
 bool lift_rot_flag = true;
+
+float t=0; // simulated time for sinus
+double pos_min = 0;
+double pos_max = M_PI/4;
 
 int lift_rot_limit = 0;
 int wheel_encoder_current_pos[2] = {0,0};
@@ -105,22 +104,41 @@ float vx = 0.0;
 float wt = 0.0;
 float vl = 0.0;
 float vr = 0.0; 
-float wheelbase = 0.12;
-float wheelradius = 0.03;
+float wheelbase = 0.95;
+float wheelradius = 0.015;
 
 enum {
-    LEFT_WHEEL,
-    RIGHT_WHEEL,
-    FORK_LIFT,
-    NUM_JOINTS
+   LEFT_FRONT_WHEEL,
+   LEFT_REAR_WHEEL,
+   RIGHT_FRONT_WHEEL, 
+   RIGHT_REAR_WHEEL,
+   FORK_LIFT,
+   RIGHT_ARM_LINK,
+   LEFT_ARM_LINK,
+   NUM_JOINTS
 };
-char *joint_names[] = {"left_wheel_link", 
-		       "right_wheel_link", 
-		       "fork_lift_link"};
+char *joint_names[] = {"base_link_to_left_front_wheel", 
+		       "base_link_to_left_rear_wheel",
+		       "base_link_to_right_front_wheel",       
+		       "base_link_to_right_rear_wheel",       
+		       "base_link_to_fork_lift_link",
+		       "base_link_to_right_fork_arm",
+		       "base_link_to_left_fork_arm"};
+
+
 double joint_positions[NUM_JOINTS];
 double joint_velocities[NUM_JOINTS];
 double joint_efforts[NUM_JOINTS];
 
+void set_motor_speed()
+{
+  left_motor.set_speed_sp(left_motor_speed);
+  left_motor.set_command("run-forever");
+  right_motor.set_speed_sp(right_motor_speed);
+  right_motor.set_command("run-forever");
+  //    lift_motor.set_speed_sp(lift_motor_speed);
+  //lift_motor.set_command("run-forever");
+}
 
 void cmd_velCb(const geometry_msgs::Twist& cmd) {
 
@@ -286,6 +304,7 @@ void calc_odometry() {
 
 
 void publish_test_messages() {
+  /*
   printf("publish_test_messages()\n");
 
   color_sensor_msg.header.stamp = nh.now();
@@ -299,25 +318,109 @@ void publish_test_messages() {
   gyro_sensor_msg.rotational_speed = 3;
   gyro_sensor_pub.publish(&gyro_sensor_msg);
 
-  touch_sensor_msg.header.stamp = nh.now();
-  touch_sensor_msg.header.frame_id = "touch_sensor_link";
-  touch_sensor_msg.state = 0;
-  touch_sensor_pub.publish(&touch_sensor_msg);
+  // touch_sensor_msg.header.stamp = nh.now();
+  // touch_sensor_msg.header.frame_id = "touch_sensor_link";
+  // touch_sensor_msg.state = 0;
+  // touch_sensor_pub.publish(&touch_sensor_msg);
 
   infrared_sensor_msg.header.stamp = nh.now();
   infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
   infrared_sensor_msg.proximity = 0;
   infrared_sensor_pub.publish(&infrared_sensor_msg);
 
-  ultrasonic_sensor_msg.header.stamp = nh.now();
-  ultrasonic_sensor_msg.header.frame_id = "ultrasonic_sensor_link";
-  ultrasonic_sensor_msg.distance = 0;
-  ultrasonic_sensor_pub.publish(&ultrasonic_sensor_msg);
-
+  // ultrasonic_sensor_msg.header.stamp = nh.now();
+  // ultrasonic_sensor_msg.header.frame_id = "ultrasonic_sensor_link";
+  // ultrasonic_sensor_msg.distance = 0;
+  // ultrasonic_sensor_pub.publish(&ultrasonic_sensor_msg);
+  */
 }
 
 void publish_joint_states() {
-  printf("publish_joint_states()");
+  // printf("publish_joint_states()\n");
+ 
+  //TODO: read joint states from motors
+// # The state of each joint (revolute or prismatic) is defined by:
+// #  * the position of the joint (rad or m),
+// #  * the velocity of the joint (rad/s or m/s) and 
+// #  * the effort that is applied in the joint (Nm or N).  
+#ifndef _OFFLINETEST
+  /*
+  joint_positions[RIGHT_FRONT_WHEEL] = right_motor.position()*deg2rad; //deg or rad??
+  joint_positions[RIGHT_REAR_WHEEL] = right_motor.position()*deg2rad; 
+  joint_positions[LEFT_FRONT_WHEEL] = left_motor.position()*deg2rad; //deg or rad??
+  joint_positions[LEFT_REAR_WHEEL] = left_motor.position()*deg2rad; 
+  joint_positions[LEFT_ARM_LINK] = lift_motor.position()*deg2rad;
+  joint_positions[RIGHT_ARM_LINK] = lift_motor.position()*deg2rad;
+  joint_positions[FORK_LIFT] = calc_fork_lift_link_position(joint_positions[LEFT_ARM_LINK])*deg2rad;;
+*/
+  
+  joint_positions[RIGHT_FRONT_WHEEL] = right_motor.position(); //deg or rad??
+  joint_positions[RIGHT_REAR_WHEEL] = right_motor.position(); 
+  joint_positions[LEFT_FRONT_WHEEL] = left_motor.position(); //deg or rad??
+  joint_positions[LEFT_REAR_WHEEL] = left_motor.position(); 
+  joint_positions[LEFT_ARM_LINK] = lift_motor.position()*deg2rad;
+  joint_positions[RIGHT_ARM_LINK] = lift_motor.position()*deg2rad;
+  joint_positions[FORK_LIFT] = calc_fork_lift_link_position(joint_positions[LEFT_ARM_LINK])*deg2rad;;
+  
+  printf("pos Lift: %f\n", lift_motor.position()*deg2rad);
+  printf("vel Lift: %f\n", lift_motor.speed()*deg2rad);
+
+  
+  joint_velocities[RIGHT_FRONT_WHEEL] = right_motor.speed();
+  joint_velocities[RIGHT_REAR_WHEEL] = right_motor.speed(); 
+  joint_velocities[LEFT_FRONT_WHEEL] = left_motor.speed();
+  joint_velocities[LEFT_REAR_WHEEL] = left_motor.speed(); 
+  joint_velocities[FORK_LIFT] = 0;
+  joint_velocities[LEFT_ARM_LINK] = lift_motor.speed();
+  joint_velocities[RIGHT_ARM_LINK] = lift_motor.speed();
+
+  joint_efforts[RIGHT_FRONT_WHEEL] = 0;
+  joint_efforts[RIGHT_REAR_WHEEL] = 0; 
+  joint_efforts[LEFT_FRONT_WHEEL] = 0;
+  joint_efforts[LEFT_REAR_WHEEL] = 0;
+  joint_efforts[FORK_LIFT] = 0;
+  joint_efforts[LEFT_ARM_LINK] = 0;
+  joint_efforts[RIGHT_ARM_LINK] = 0;
+#else
+  joint_positions[RIGHT_FRONT_WHEEL] = 0; 
+  joint_positions[RIGHT_REAR_WHEEL] = 0; 
+  joint_positions[LEFT_FRONT_WHEEL] = 0;
+  joint_positions[LEFT_REAR_WHEEL] = 0; 
+  joint_positions[LEFT_ARM_LINK] = (sin(t) * 1.1) - (3.14159/5);
+  joint_positions[RIGHT_ARM_LINK] = joint_positions[LEFT_ARM_LINK];
+  joint_positions[FORK_LIFT] = calc_fork_lift_link_position(joint_positions[LEFT_ARM_LINK]);
+
+  printf("pos: %f\n",joint_positions[LEFT_ARM_LINK]);
+  t+=0.05;
+  if (t>3.14)
+    t=0;
+
+  if (joint_positions[LEFT_ARM_LINK] < pos_min)
+    pos_min = joint_positions[LEFT_ARM_LINK];
+
+  if(joint_positions[LEFT_ARM_LINK] > pos_max)
+    pos_max = joint_positions[LEFT_ARM_LINK];
+
+  printf("pos_min: %f\n",pos_min);
+  printf("pos_max: %f\n",pos_max);
+
+
+  joint_velocities[RIGHT_FRONT_WHEEL] = 0;
+  joint_velocities[RIGHT_REAR_WHEEL] = 0; 
+  joint_velocities[LEFT_FRONT_WHEEL] = 0;
+  joint_velocities[LEFT_REAR_WHEEL] = 0; 
+  joint_velocities[FORK_LIFT] = 0;
+  joint_velocities[LEFT_ARM_LINK] = 1;
+  joint_velocities[RIGHT_ARM_LINK] = 1;
+
+  joint_efforts[RIGHT_FRONT_WHEEL] = 0;
+  joint_efforts[RIGHT_REAR_WHEEL] = 0; 
+  joint_efforts[LEFT_FRONT_WHEEL] = 0;
+  joint_efforts[LEFT_REAR_WHEEL] = 0;
+  joint_efforts[FORK_LIFT] = 0;
+  joint_efforts[LEFT_ARM_LINK] = 0;
+  joint_efforts[RIGHT_ARM_LINK] = 0;
+#endif
 
   joint_state_msg.header.stamp = nh.now();
   joint_state_msg.header.frame_id = "/bobb3e";
@@ -325,33 +428,6 @@ void publish_joint_states() {
   joint_state_msg.velocity_length = NUM_JOINTS;
   joint_state_msg.position_length = NUM_JOINTS; 
   joint_state_msg.effort_length = NUM_JOINTS;
-  
-  //TODO: read joint states from motors
-// # The state of each joint (revolute or prismatic) is defined by:
-// #  * the position of the joint (rad or m),
-// #  * the velocity of the joint (rad/s or m/s) and 
-// #  * the effort that is applied in the joint (Nm or N).  
-#ifndef _OFFLINETEST
-  joint_positions[LEFT_WHEEL] = left_motor.position(); //deg or rad??
-  joint_positions[RIGHT_WHEEL] = right_motor.position(); 
-  joint_positions[FORK_LIFT] = lift_motor.position();
-  joint_velocities[LEFT_WHEEL] = left_motor.speed();
-  joint_velocities[RIGHT_WHEEL] = right_motor.speed(); 
-  joint_velocities[FORK_LIFT] = lift_motor.speed();
-  joint_efforts[LEFT_WHEEL] = 0;
-  joint_efforts[RIGHT_WHEEL] = 0; 
-  joint_efforts[FORK_LIFT] = 0;
-#else
-  joint_positions[LEFT_WHEEL] = 0;
-  joint_positions[RIGHT_WHEEL] = 0; 
-  joint_positions[FORK_LIFT] = 0;
-  joint_velocities[LEFT_WHEEL] = 0;
-  joint_velocities[RIGHT_WHEEL] = 0; 
-  joint_velocities[FORK_LIFT] = 0;
-  joint_efforts[LEFT_WHEEL] = 0;
-  joint_efforts[RIGHT_WHEEL] = 0; 
-  joint_efforts[FORK_LIFT] = 0;
-#endif
 
   joint_state_msg.name = joint_names;
   joint_state_msg.position = joint_positions;
@@ -359,6 +435,25 @@ void publish_joint_states() {
   joint_state_msg.effort = joint_efforts;
 
   joint_state_pub.publish(&joint_state_msg);
+}
+
+double calc_fork_lift_link_position(double arm_position) {
+  
+  //linear projection of arm position [-100:100] to fork lift position [-0.025:0.1025]
+  // values: try and error
+  double arm_min = pos_max;
+  double arm_max =  pos_min;
+  double lift_min = -0.025;
+  double lift_max =  0.11;
+
+  //y=m*x+b
+  double delta_x = arm_max - arm_min;
+  double delta_y = lift_max - lift_min;
+  double x = (lift_motor.position())%360;
+  double m = delta_y / delta_x;
+  double b = lift_max - (m * arm_max);
+
+  return  m * x + b;
 }
 
 
@@ -390,15 +485,16 @@ void init_node() {
   nh.initNode(rosSrvrIp);
   nh.subscribe(cmd_vel_sub);
   nh.advertise(odom_pub);
-  nh.advertise(color_sensor_pub); 
-  nh.advertise(gyro_sensor_pub); 
-  nh.advertise(touch_sensor_pub); 
-  nh.advertise(infrared_sensor_pub);
-  nh.advertise(ultrasonic_sensor_pub); 
   nh.advertise(joint_state_pub); 
+  //nh.advertise(color_sensor_pub); 
+  //nh.advertise(gyro_sensor_pub); 
+  //nh.advertise(infrared_sensor_pub);
  
   broadcaster.init(nh);
 }
+
+
+
 
 int main(int argc, char* argv[])
 {
@@ -407,9 +503,17 @@ int main(int argc, char* argv[])
   init_motors();
   init_sensors();
 #endif
-
+  /*
+  if(argc < 2)
+    char rosSrvrIp[] = "127.0.0.1";
+  else
+    char* rosSrvrIp = *argv[1];
+  */
+  
   while(1)
     {
+
+      set_motor_speed();
       //ros stuff
       calc_odometry();
       publish_test_messages();

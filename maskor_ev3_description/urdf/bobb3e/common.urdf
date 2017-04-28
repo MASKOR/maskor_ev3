@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+
+
+<robot name="maskor_ev3_bobb3e" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+
+
+  <property name="M_PI" value="3.14159" />
+  
+  <property name="dummy_mass" value="0.1" /> 
+  <property name="dummy_inertia" value="0.0001" /> 
+  
+  <property name="base_to_wheel_x" value="0.17" /> 
+  <property name="base_to_wheel_y" value="0.125" /> 
+  <property name="base_to_wheel_z" value="0.03" />
+
+  <property name="wheel_radius" value="0.12" /> 
+  <property name="wheel_thickness" value="0.05" /> 
+  <property name="wheel_mass" value="0.02" />
+  <property name="wheel_model_scale" value="1 1 1" />
+
+
+</robot>
