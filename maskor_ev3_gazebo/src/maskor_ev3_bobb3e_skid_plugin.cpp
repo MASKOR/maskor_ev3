@@ -408,6 +408,7 @@ namespace gazebo {
 
       // Update robot in case new velocities have been requested
       getWheelVelocities();
+      getForkVelocities();
 #if GAZEBO_MAJOR_VERSION > 2
       joints[LEFT_FRONT]->SetParam("vel", 0, wheel_speed_[LEFT_FRONT] / (wheel_diameter_ / 2.0));
       joints[RIGHT_FRONT]->SetParam("vel", 0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
@@ -418,6 +419,9 @@ namespace gazebo {
       joints[RIGHT_FRONT]->SetVelocity(0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
       joints[LEFT_REAR]->SetVelocity(0, wheel_speed_[LEFT_REAR] / (wheel_diameter_ / 2.0));
       joints[RIGHT_REAR]->SetVelocity(0, wheel_speed_[RIGHT_REAR] / (wheel_diameter_ / 2.0));
+      joints[FORK_RIGHT]->SetVelocity(0, fork_speed_[FORK_RIGHT]);
+      joints[FORK_LEFT]->SetVelocity(0, fork_speed_[FORK_RIGHT]);
+      joints[FORK]->SetVelocity(0, fork_speed_[FORK]);
 #endif
 
       last_update_time_+= common::Time(update_period_);
@@ -448,11 +452,23 @@ namespace gazebo {
 
   }
 
+  void MaskorEv3SkidSteerDrive::getForkVelocities() {
+    boost::mutex::scoped_lock scoped_lock(lock);
+
+    double vu = z_;
+
+    fork_speed_[FORK_RIGHT] = vu;
+    fork_speed_[FORK_LEFT] = vu;
+    fork_speed_[FORK] = vu;
+    
+  }
+
   void MaskorEv3SkidSteerDrive::cmdVelCallback(
       const geometry_msgs::Twist::ConstPtr& cmd_msg) {
 
     boost::mutex::scoped_lock scoped_lock(lock);
     x_ = cmd_msg->linear.x;
+    z_ = cmd_msg->linear.z;
     rot_ = cmd_msg->angular.z;
   }
 

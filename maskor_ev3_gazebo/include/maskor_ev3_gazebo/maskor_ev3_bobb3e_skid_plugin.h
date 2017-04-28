@@ -80,6 +80,7 @@ namespace gazebo {
     private:
       void publishOdometry(double step_time);
       void getWheelVelocities();
+      void getForkVelocities();
 
       physics::WorldPtr world;
       physics::ModelPtr parent;
