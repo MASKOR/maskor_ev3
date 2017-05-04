@@ -195,20 +195,21 @@ void turn_right_abs() {
 //Turning functions with gyro
 void turn_left() {
   int cur_deg = gyro_sensor.value();
-
+  
   left_motor.set_position_sp(-540);
   right_motor.set_position_sp(-540);
- 
-  left_motor.set_command("run-to-rel-pos");
-  right_motor.set_command("run-to-rel-pos");
 
-  usleep(5000000);
-  
   left_motor.set_speed_sp(100);
   right_motor.set_speed_sp(-100);
   
+  left_motor.set_command("run-to-rel-pos");
+  right_motor.set_command("run-to-rel-pos");
+
+  usleep(5000000);  
+
   while (gyro_sensor.value() > cur_deg-90)
     {
+      printf("gyro value: %d \n", gyro_sensor.value());
       left_motor.set_command("run-forever");
       right_motor.set_command("run-forever");
       calc_odometry();
@@ -224,17 +225,18 @@ void turn_right() {
 
   left_motor.set_position_sp(-540);
   right_motor.set_position_sp(-540);
- 
+
+  left_motor.set_speed_sp(-100);
+  right_motor.set_speed_sp(100);
+    
   left_motor.set_command("run-to-rel-pos");
   right_motor.set_command("run-to-rel-pos");
 
   usleep(5000000);
   
-  left_motor.set_speed_sp(-100);
-  right_motor.set_speed_sp(100);
-  
   while (gyro_sensor.value() < cur_deg+90)
     {
+      printf("gyro value: %d \n", gyro_sensor.value());
       left_motor.set_command("run-forever");
       right_motor.set_command("run-forever");
       calc_odometry();
@@ -243,6 +245,33 @@ void turn_right() {
   
   left_motor.set_command("stop");
   right_motor.set_command("stop");
+}
+
+//-------------------------------------------------------------lift-functions---------------------------------------------------
+
+void reset_lift(){
+
+  lift_motor.set_time_sp(1500);
+  lift_motor.set_speed_sp(-100);
+  lift_motor.set_command("run-timed");
+  printf("Lift resetted! \n");
+  usleep(2000000);
+}
+
+void lift_up(){
+  
+  lift_motor.set_position_sp(90);
+  lift_motor.set_speed_sp(100);
+  lift_motor.set_command("run-to-rel-pos");
+  usleep(1000000);
+}
+
+void lift_down(){
+  
+  lift_motor.set_position_sp(-90);
+  lift_motor.set_speed_sp(100);
+  lift_motor.set_command("run-to-rel-pos");
+  usleep(1000000);
 }
 
 //-------------------------------------------------------------cmd_vel callback------------------------------------------------
@@ -493,10 +522,11 @@ void publish_joint_states() {
   joint_positions[LEFT_ARM_LINK] = lift_motor.position()*deg2rad;
   joint_positions[RIGHT_ARM_LINK] = lift_motor.position()*deg2rad;
   joint_positions[FORK_LIFT] = calc_fork_lift_link_position(joint_positions[LEFT_ARM_LINK])*deg2rad;;
-  
+
+  /*
   printf("pos Lift: %f\n", lift_motor.position()*deg2rad);
   printf("vel Lift: %f\n", lift_motor.speed()*deg2rad);
-
+  */
   
   joint_velocities[RIGHT_FRONT_WHEEL] = right_motor.speed();
   joint_velocities[RIGHT_REAR_WHEEL] = right_motor.speed(); 
@@ -618,11 +648,16 @@ int main(int argc, char* argv[])
 #endif   
 
   usleep(1000000);
-  
-  //test();
-  turn_left();
-  turn_right();
 
+  reset_lift();
+
+  usleep(1000000);
+  
+  lift_up();
+  lift_down();
+  
+  printf("Entering loop....\n");
+  
   while(1)
     {      
       //ros stuff
