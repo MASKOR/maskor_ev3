@@ -13,15 +13,18 @@ namespace moveit_msgs
   class KinematicSolverInfo : public ros::Msg
   {
     public:
-      uint8_t joint_names_length;
-      char* st_joint_names;
-      char* * joint_names;
-      uint8_t limits_length;
-      moveit_msgs::JointLimits st_limits;
-      moveit_msgs::JointLimits * limits;
-      uint8_t link_names_length;
-      char* st_link_names;
-      char* * link_names;
+      uint32_t joint_names_length;
+      typedef char* _joint_names_type;
+      _joint_names_type st_joint_names;
+      _joint_names_type * joint_names;
+      uint32_t limits_length;
+      typedef moveit_msgs::JointLimits _limits_type;
+      _limits_type st_limits;
+      _limits_type * limits;
+      uint32_t link_names_length;
+      typedef char* _link_names_type;
+      _link_names_type st_link_names;
+      _link_names_type * link_names;
 
     KinematicSolverInfo():
       joint_names_length(0), joint_names(NULL),
@@ -33,31 +36,34 @@ namespace moveit_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset++) = joint_names_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < joint_names_length; i++){
+      *(outbuffer + offset + 0) = (this->joint_names_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->joint_names_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->joint_names_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->joint_names_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->joint_names_length);
+      for( uint32_t i = 0; i < joint_names_length; i++){
       uint32_t length_joint_namesi = strlen(this->joint_names[i]);
-      memcpy(outbuffer + offset, &length_joint_namesi, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_joint_namesi);
       offset += 4;
       memcpy(outbuffer + offset, this->joint_names[i], length_joint_namesi);
       offset += length_joint_namesi;
       }
-      *(outbuffer + offset++) = limits_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < limits_length; i++){
+      *(outbuffer + offset + 0) = (this->limits_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->limits_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->limits_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->limits_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->limits_length);
+      for( uint32_t i = 0; i < limits_length; i++){
       offset += this->limits[i].serialize(outbuffer + offset);
       }
-      *(outbuffer + offset++) = link_names_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < link_names_length; i++){
+      *(outbuffer + offset + 0) = (this->link_names_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->link_names_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->link_names_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->link_names_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->link_names_length);
+      for( uint32_t i = 0; i < link_names_length; i++){
       uint32_t length_link_namesi = strlen(this->link_names[i]);
-      memcpy(outbuffer + offset, &length_link_namesi, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_link_namesi);
       offset += 4;
       memcpy(outbuffer + offset, this->link_names[i], length_link_namesi);
       offset += length_link_namesi;
@@ -68,14 +74,17 @@ namespace moveit_msgs
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint8_t joint_names_lengthT = *(inbuffer + offset++);
+      uint32_t joint_names_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      joint_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      joint_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      joint_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->joint_names_length);
       if(joint_names_lengthT > joint_names_length)
         this->joint_names = (char**)realloc(this->joint_names, joint_names_lengthT * sizeof(char*));
-      offset += 3;
       joint_names_length = joint_names_lengthT;
-      for( uint8_t i = 0; i < joint_names_length; i++){
+      for( uint32_t i = 0; i < joint_names_length; i++){
       uint32_t length_st_joint_names;
-      memcpy(&length_st_joint_names, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_st_joint_names, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_joint_names; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -85,23 +94,29 @@ namespace moveit_msgs
       offset += length_st_joint_names;
         memcpy( &(this->joint_names[i]), &(this->st_joint_names), sizeof(char*));
       }
-      uint8_t limits_lengthT = *(inbuffer + offset++);
+      uint32_t limits_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      limits_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      limits_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      limits_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->limits_length);
       if(limits_lengthT > limits_length)
         this->limits = (moveit_msgs::JointLimits*)realloc(this->limits, limits_lengthT * sizeof(moveit_msgs::JointLimits));
-      offset += 3;
       limits_length = limits_lengthT;
-      for( uint8_t i = 0; i < limits_length; i++){
+      for( uint32_t i = 0; i < limits_length; i++){
       offset += this->st_limits.deserialize(inbuffer + offset);
         memcpy( &(this->limits[i]), &(this->st_limits), sizeof(moveit_msgs::JointLimits));
       }
-      uint8_t link_names_lengthT = *(inbuffer + offset++);
+      uint32_t link_names_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      link_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      link_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      link_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->link_names_length);
       if(link_names_lengthT > link_names_length)
         this->link_names = (char**)realloc(this->link_names, link_names_lengthT * sizeof(char*));
-      offset += 3;
       link_names_length = link_names_lengthT;
-      for( uint8_t i = 0; i < link_names_length; i++){
+      for( uint32_t i = 0; i < link_names_length; i++){
       uint32_t length_st_link_names;
-      memcpy(&length_st_link_names, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_st_link_names, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_link_names; ++k){
           inbuffer[k-1]=inbuffer[k];

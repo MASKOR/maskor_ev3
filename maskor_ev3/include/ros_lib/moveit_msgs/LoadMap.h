@@ -13,7 +13,8 @@ static const char LOADMAP[] = "moveit_msgs/LoadMap";
   class LoadMapRequest : public ros::Msg
   {
     public:
-      const char* filename;
+      typedef const char* _filename_type;
+      _filename_type filename;
 
     LoadMapRequest():
       filename("")
@@ -24,7 +25,7 @@ static const char LOADMAP[] = "moveit_msgs/LoadMap";
     {
       int offset = 0;
       uint32_t length_filename = strlen(this->filename);
-      memcpy(outbuffer + offset, &length_filename, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_filename);
       offset += 4;
       memcpy(outbuffer + offset, this->filename, length_filename);
       offset += length_filename;
@@ -35,7 +36,7 @@ static const char LOADMAP[] = "moveit_msgs/LoadMap";
     {
       int offset = 0;
       uint32_t length_filename;
-      memcpy(&length_filename, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_filename, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_filename; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -54,7 +55,8 @@ static const char LOADMAP[] = "moveit_msgs/LoadMap";
   class LoadMapResponse : public ros::Msg
   {
     public:
-      bool success;
+      typedef bool _success_type;
+      _success_type success;
 
     LoadMapResponse():
       success(0)

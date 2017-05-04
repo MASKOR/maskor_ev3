@@ -15,9 +15,12 @@ namespace object_recognition_msgs
   class ObjectRecognitionAction : public ros::Msg
   {
     public:
-      object_recognition_msgs::ObjectRecognitionActionGoal action_goal;
-      object_recognition_msgs::ObjectRecognitionActionResult action_result;
-      object_recognition_msgs::ObjectRecognitionActionFeedback action_feedback;
+      typedef object_recognition_msgs::ObjectRecognitionActionGoal _action_goal_type;
+      _action_goal_type action_goal;
+      typedef object_recognition_msgs::ObjectRecognitionActionResult _action_result_type;
+      _action_result_type action_result;
+      typedef object_recognition_msgs::ObjectRecognitionActionFeedback _action_feedback_type;
+      _action_feedback_type action_feedback;
 
     ObjectRecognitionAction():
       action_goal(),

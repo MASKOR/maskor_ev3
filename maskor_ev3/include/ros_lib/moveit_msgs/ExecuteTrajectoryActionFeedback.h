@@ -15,9 +15,12 @@ namespace moveit_msgs
   class ExecuteTrajectoryActionFeedback : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      actionlib_msgs::GoalStatus status;
-      moveit_msgs::ExecuteTrajectoryFeedback feedback;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef actionlib_msgs::GoalStatus _status_type;
+      _status_type status;
+      typedef moveit_msgs::ExecuteTrajectoryFeedback _feedback_type;
+      _feedback_type feedback;
 
     ExecuteTrajectoryActionFeedback():
       header(),

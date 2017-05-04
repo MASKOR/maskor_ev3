@@ -15,7 +15,8 @@ static const char GETMOTIONPLAN[] = "moveit_msgs/GetMotionPlan";
   class GetMotionPlanRequest : public ros::Msg
   {
     public:
-      moveit_msgs::MotionPlanRequest motion_plan_request;
+      typedef moveit_msgs::MotionPlanRequest _motion_plan_request_type;
+      _motion_plan_request_type motion_plan_request;
 
     GetMotionPlanRequest():
       motion_plan_request()
@@ -44,7 +45,8 @@ static const char GETMOTIONPLAN[] = "moveit_msgs/GetMotionPlan";
   class GetMotionPlanResponse : public ros::Msg
   {
     public:
-      moveit_msgs::MotionPlanResponse motion_plan_response;
+      typedef moveit_msgs::MotionPlanResponse _motion_plan_response_type;
+      _motion_plan_response_type motion_plan_response;
 
     GetMotionPlanResponse():
       motion_plan_response()

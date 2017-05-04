@@ -19,24 +19,34 @@ namespace moveit_msgs
   class PlanningScene : public ros::Msg
   {
     public:
-      const char* name;
-      moveit_msgs::RobotState robot_state;
-      const char* robot_model_name;
-      uint8_t fixed_frame_transforms_length;
-      geometry_msgs::TransformStamped st_fixed_frame_transforms;
-      geometry_msgs::TransformStamped * fixed_frame_transforms;
-      moveit_msgs::AllowedCollisionMatrix allowed_collision_matrix;
-      uint8_t link_padding_length;
-      moveit_msgs::LinkPadding st_link_padding;
-      moveit_msgs::LinkPadding * link_padding;
-      uint8_t link_scale_length;
-      moveit_msgs::LinkScale st_link_scale;
-      moveit_msgs::LinkScale * link_scale;
-      uint8_t object_colors_length;
-      moveit_msgs::ObjectColor st_object_colors;
-      moveit_msgs::ObjectColor * object_colors;
-      moveit_msgs::PlanningSceneWorld world;
-      bool is_diff;
+      typedef const char* _name_type;
+      _name_type name;
+      typedef moveit_msgs::RobotState _robot_state_type;
+      _robot_state_type robot_state;
+      typedef const char* _robot_model_name_type;
+      _robot_model_name_type robot_model_name;
+      uint32_t fixed_frame_transforms_length;
+      typedef geometry_msgs::TransformStamped _fixed_frame_transforms_type;
+      _fixed_frame_transforms_type st_fixed_frame_transforms;
+      _fixed_frame_transforms_type * fixed_frame_transforms;
+      typedef moveit_msgs::AllowedCollisionMatrix _allowed_collision_matrix_type;
+      _allowed_collision_matrix_type allowed_collision_matrix;
+      uint32_t link_padding_length;
+      typedef moveit_msgs::LinkPadding _link_padding_type;
+      _link_padding_type st_link_padding;
+      _link_padding_type * link_padding;
+      uint32_t link_scale_length;
+      typedef moveit_msgs::LinkScale _link_scale_type;
+      _link_scale_type st_link_scale;
+      _link_scale_type * link_scale;
+      uint32_t object_colors_length;
+      typedef moveit_msgs::ObjectColor _object_colors_type;
+      _object_colors_type st_object_colors;
+      _object_colors_type * object_colors;
+      typedef moveit_msgs::PlanningSceneWorld _world_type;
+      _world_type world;
+      typedef bool _is_diff_type;
+      _is_diff_type is_diff;
 
     PlanningScene():
       name(""),
@@ -56,43 +66,47 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_name = strlen(this->name);
-      memcpy(outbuffer + offset, &length_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_name);
       offset += 4;
       memcpy(outbuffer + offset, this->name, length_name);
       offset += length_name;
       offset += this->robot_state.serialize(outbuffer + offset);
       uint32_t length_robot_model_name = strlen(this->robot_model_name);
-      memcpy(outbuffer + offset, &length_robot_model_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_robot_model_name);
       offset += 4;
       memcpy(outbuffer + offset, this->robot_model_name, length_robot_model_name);
       offset += length_robot_model_name;
-      *(outbuffer + offset++) = fixed_frame_transforms_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < fixed_frame_transforms_length; i++){
+      *(outbuffer + offset + 0) = (this->fixed_frame_transforms_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->fixed_frame_transforms_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->fixed_frame_transforms_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->fixed_frame_transforms_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->fixed_frame_transforms_length);
+      for( uint32_t i = 0; i < fixed_frame_transforms_length; i++){
       offset += this->fixed_frame_transforms[i].serialize(outbuffer + offset);
       }
       offset += this->allowed_collision_matrix.serialize(outbuffer + offset);
-      *(outbuffer + offset++) = link_padding_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < link_padding_length; i++){
+      *(outbuffer + offset + 0) = (this->link_padding_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->link_padding_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->link_padding_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->link_padding_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->link_padding_length);
+      for( uint32_t i = 0; i < link_padding_length; i++){
       offset += this->link_padding[i].serialize(outbuffer + offset);
       }
-      *(outbuffer + offset++) = link_scale_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < link_scale_length; i++){
+      *(outbuffer + offset + 0) = (this->link_scale_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->link_scale_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->link_scale_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->link_scale_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->link_scale_length);
+      for( uint32_t i = 0; i < link_scale_length; i++){
       offset += this->link_scale[i].serialize(outbuffer + offset);
       }
-      *(outbuffer + offset++) = object_colors_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < object_colors_length; i++){
+      *(outbuffer + offset + 0) = (this->object_colors_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->object_colors_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->object_colors_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->object_colors_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->object_colors_length);
+      for( uint32_t i = 0; i < object_colors_length; i++){
       offset += this->object_colors[i].serialize(outbuffer + offset);
       }
       offset += this->world.serialize(outbuffer + offset);
@@ -110,7 +124,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_name;
-      memcpy(&length_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -120,7 +134,7 @@ namespace moveit_msgs
       offset += length_name;
       offset += this->robot_state.deserialize(inbuffer + offset);
       uint32_t length_robot_model_name;
-      memcpy(&length_robot_model_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_robot_model_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_robot_model_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -128,40 +142,52 @@ namespace moveit_msgs
       inbuffer[offset+length_robot_model_name-1]=0;
       this->robot_model_name = (char *)(inbuffer + offset-1);
       offset += length_robot_model_name;
-      uint8_t fixed_frame_transforms_lengthT = *(inbuffer + offset++);
+      uint32_t fixed_frame_transforms_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      fixed_frame_transforms_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      fixed_frame_transforms_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      fixed_frame_transforms_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->fixed_frame_transforms_length);
       if(fixed_frame_transforms_lengthT > fixed_frame_transforms_length)
         this->fixed_frame_transforms = (geometry_msgs::TransformStamped*)realloc(this->fixed_frame_transforms, fixed_frame_transforms_lengthT * sizeof(geometry_msgs::TransformStamped));
-      offset += 3;
       fixed_frame_transforms_length = fixed_frame_transforms_lengthT;
-      for( uint8_t i = 0; i < fixed_frame_transforms_length; i++){
+      for( uint32_t i = 0; i < fixed_frame_transforms_length; i++){
       offset += this->st_fixed_frame_transforms.deserialize(inbuffer + offset);
         memcpy( &(this->fixed_frame_transforms[i]), &(this->st_fixed_frame_transforms), sizeof(geometry_msgs::TransformStamped));
       }
       offset += this->allowed_collision_matrix.deserialize(inbuffer + offset);
-      uint8_t link_padding_lengthT = *(inbuffer + offset++);
+      uint32_t link_padding_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      link_padding_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      link_padding_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      link_padding_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->link_padding_length);
       if(link_padding_lengthT > link_padding_length)
         this->link_padding = (moveit_msgs::LinkPadding*)realloc(this->link_padding, link_padding_lengthT * sizeof(moveit_msgs::LinkPadding));
-      offset += 3;
       link_padding_length = link_padding_lengthT;
-      for( uint8_t i = 0; i < link_padding_length; i++){
+      for( uint32_t i = 0; i < link_padding_length; i++){
       offset += this->st_link_padding.deserialize(inbuffer + offset);
         memcpy( &(this->link_padding[i]), &(this->st_link_padding), sizeof(moveit_msgs::LinkPadding));
       }
-      uint8_t link_scale_lengthT = *(inbuffer + offset++);
+      uint32_t link_scale_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      link_scale_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      link_scale_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      link_scale_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->link_scale_length);
       if(link_scale_lengthT > link_scale_length)
         this->link_scale = (moveit_msgs::LinkScale*)realloc(this->link_scale, link_scale_lengthT * sizeof(moveit_msgs::LinkScale));
-      offset += 3;
       link_scale_length = link_scale_lengthT;
-      for( uint8_t i = 0; i < link_scale_length; i++){
+      for( uint32_t i = 0; i < link_scale_length; i++){
       offset += this->st_link_scale.deserialize(inbuffer + offset);
         memcpy( &(this->link_scale[i]), &(this->st_link_scale), sizeof(moveit_msgs::LinkScale));
       }
-      uint8_t object_colors_lengthT = *(inbuffer + offset++);
+      uint32_t object_colors_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      object_colors_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      object_colors_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      object_colors_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->object_colors_length);
       if(object_colors_lengthT > object_colors_length)
         this->object_colors = (moveit_msgs::ObjectColor*)realloc(this->object_colors, object_colors_lengthT * sizeof(moveit_msgs::ObjectColor));
-      offset += 3;
       object_colors_length = object_colors_lengthT;
-      for( uint8_t i = 0; i < object_colors_length; i++){
+      for( uint32_t i = 0; i < object_colors_length; i++){
       offset += this->st_object_colors.deserialize(inbuffer + offset);
         memcpy( &(this->object_colors[i]), &(this->st_object_colors), sizeof(moveit_msgs::ObjectColor));
       }

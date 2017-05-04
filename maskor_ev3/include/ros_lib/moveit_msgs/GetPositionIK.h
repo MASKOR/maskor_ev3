@@ -16,7 +16,8 @@ static const char GETPOSITIONIK[] = "moveit_msgs/GetPositionIK";
   class GetPositionIKRequest : public ros::Msg
   {
     public:
-      moveit_msgs::PositionIKRequest ik_request;
+      typedef moveit_msgs::PositionIKRequest _ik_request_type;
+      _ik_request_type ik_request;
 
     GetPositionIKRequest():
       ik_request()
@@ -45,8 +46,10 @@ static const char GETPOSITIONIK[] = "moveit_msgs/GetPositionIK";
   class GetPositionIKResponse : public ros::Msg
   {
     public:
-      moveit_msgs::RobotState solution;
-      moveit_msgs::MoveItErrorCodes error_code;
+      typedef moveit_msgs::RobotState _solution_type;
+      _solution_type solution;
+      typedef moveit_msgs::MoveItErrorCodes _error_code_type;
+      _error_code_type error_code;
 
     GetPositionIKResponse():
       solution(),

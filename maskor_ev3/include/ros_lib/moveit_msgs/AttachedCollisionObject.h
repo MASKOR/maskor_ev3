@@ -14,13 +14,18 @@ namespace moveit_msgs
   class AttachedCollisionObject : public ros::Msg
   {
     public:
-      const char* link_name;
-      moveit_msgs::CollisionObject object;
-      uint8_t touch_links_length;
-      char* st_touch_links;
-      char* * touch_links;
-      trajectory_msgs::JointTrajectory detach_posture;
-      double weight;
+      typedef const char* _link_name_type;
+      _link_name_type link_name;
+      typedef moveit_msgs::CollisionObject _object_type;
+      _object_type object;
+      uint32_t touch_links_length;
+      typedef char* _touch_links_type;
+      _touch_links_type st_touch_links;
+      _touch_links_type * touch_links;
+      typedef trajectory_msgs::JointTrajectory _detach_posture_type;
+      _detach_posture_type detach_posture;
+      typedef double _weight_type;
+      _weight_type weight;
 
     AttachedCollisionObject():
       link_name(""),
@@ -35,18 +40,19 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_link_name = strlen(this->link_name);
-      memcpy(outbuffer + offset, &length_link_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_link_name);
       offset += 4;
       memcpy(outbuffer + offset, this->link_name, length_link_name);
       offset += length_link_name;
       offset += this->object.serialize(outbuffer + offset);
-      *(outbuffer + offset++) = touch_links_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < touch_links_length; i++){
+      *(outbuffer + offset + 0) = (this->touch_links_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->touch_links_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->touch_links_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->touch_links_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->touch_links_length);
+      for( uint32_t i = 0; i < touch_links_length; i++){
       uint32_t length_touch_linksi = strlen(this->touch_links[i]);
-      memcpy(outbuffer + offset, &length_touch_linksi, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_touch_linksi);
       offset += 4;
       memcpy(outbuffer + offset, this->touch_links[i], length_touch_linksi);
       offset += length_touch_linksi;
@@ -73,7 +79,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_link_name;
-      memcpy(&length_link_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_link_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_link_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -82,14 +88,17 @@ namespace moveit_msgs
       this->link_name = (char *)(inbuffer + offset-1);
       offset += length_link_name;
       offset += this->object.deserialize(inbuffer + offset);
-      uint8_t touch_links_lengthT = *(inbuffer + offset++);
+      uint32_t touch_links_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      touch_links_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      touch_links_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      touch_links_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->touch_links_length);
       if(touch_links_lengthT > touch_links_length)
         this->touch_links = (char**)realloc(this->touch_links, touch_links_lengthT * sizeof(char*));
-      offset += 3;
       touch_links_length = touch_links_lengthT;
-      for( uint8_t i = 0; i < touch_links_length; i++){
+      for( uint32_t i = 0; i < touch_links_length; i++){
       uint32_t length_st_touch_links;
-      memcpy(&length_st_touch_links, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_st_touch_links, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_touch_links; ++k){
           inbuffer[k-1]=inbuffer[k];

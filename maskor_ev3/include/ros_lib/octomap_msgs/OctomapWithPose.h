@@ -15,9 +15,12 @@ namespace octomap_msgs
   class OctomapWithPose : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      geometry_msgs::Pose origin;
-      octomap_msgs::Octomap octomap;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef geometry_msgs::Pose _origin_type;
+      _origin_type origin;
+      typedef octomap_msgs::Octomap _octomap_type;
+      _octomap_type octomap;
 
     OctomapWithPose():
       header(),

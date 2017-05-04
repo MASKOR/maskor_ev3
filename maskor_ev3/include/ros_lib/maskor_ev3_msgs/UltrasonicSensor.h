@@ -13,8 +13,10 @@ namespace maskor_ev3_msgs
   class UltrasonicSensor : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      uint16_t distance;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef uint16_t _distance_type;
+      _distance_type distance;
 
     UltrasonicSensor():
       header(),

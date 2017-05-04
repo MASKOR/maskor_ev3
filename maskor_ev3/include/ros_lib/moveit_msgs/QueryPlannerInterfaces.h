@@ -39,9 +39,10 @@ static const char QUERYPLANNERINTERFACES[] = "moveit_msgs/QueryPlannerInterfaces
   class QueryPlannerInterfacesResponse : public ros::Msg
   {
     public:
-      uint8_t planner_interfaces_length;
-      moveit_msgs::PlannerInterfaceDescription st_planner_interfaces;
-      moveit_msgs::PlannerInterfaceDescription * planner_interfaces;
+      uint32_t planner_interfaces_length;
+      typedef moveit_msgs::PlannerInterfaceDescription _planner_interfaces_type;
+      _planner_interfaces_type st_planner_interfaces;
+      _planner_interfaces_type * planner_interfaces;
 
     QueryPlannerInterfacesResponse():
       planner_interfaces_length(0), planner_interfaces(NULL)
@@ -51,11 +52,12 @@ static const char QUERYPLANNERINTERFACES[] = "moveit_msgs/QueryPlannerInterfaces
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset++) = planner_interfaces_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < planner_interfaces_length; i++){
+      *(outbuffer + offset + 0) = (this->planner_interfaces_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->planner_interfaces_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->planner_interfaces_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->planner_interfaces_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->planner_interfaces_length);
+      for( uint32_t i = 0; i < planner_interfaces_length; i++){
       offset += this->planner_interfaces[i].serialize(outbuffer + offset);
       }
       return offset;
@@ -64,12 +66,15 @@ static const char QUERYPLANNERINTERFACES[] = "moveit_msgs/QueryPlannerInterfaces
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint8_t planner_interfaces_lengthT = *(inbuffer + offset++);
+      uint32_t planner_interfaces_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      planner_interfaces_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      planner_interfaces_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      planner_interfaces_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->planner_interfaces_length);
       if(planner_interfaces_lengthT > planner_interfaces_length)
         this->planner_interfaces = (moveit_msgs::PlannerInterfaceDescription*)realloc(this->planner_interfaces, planner_interfaces_lengthT * sizeof(moveit_msgs::PlannerInterfaceDescription));
-      offset += 3;
       planner_interfaces_length = planner_interfaces_lengthT;
-      for( uint8_t i = 0; i < planner_interfaces_length; i++){
+      for( uint32_t i = 0; i < planner_interfaces_length; i++){
       offset += this->st_planner_interfaces.deserialize(inbuffer + offset);
         memcpy( &(this->planner_interfaces[i]), &(this->st_planner_interfaces), sizeof(moveit_msgs::PlannerInterfaceDescription));
       }

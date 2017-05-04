@@ -13,8 +13,10 @@ namespace maskor_ev3_msgs
   class ColorSensor : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      uint8_t color;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef uint8_t _color_type;
+      _color_type color;
 
     ColorSensor():
       header(),

@@ -18,17 +18,24 @@ namespace object_recognition_msgs
   class RecognizedObject : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      object_recognition_msgs::ObjectType type;
-      float confidence;
-      uint8_t point_clouds_length;
-      sensor_msgs::PointCloud2 st_point_clouds;
-      sensor_msgs::PointCloud2 * point_clouds;
-      shape_msgs::Mesh bounding_mesh;
-      uint8_t bounding_contours_length;
-      geometry_msgs::Point st_bounding_contours;
-      geometry_msgs::Point * bounding_contours;
-      geometry_msgs::PoseWithCovarianceStamped pose;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef object_recognition_msgs::ObjectType _type_type;
+      _type_type type;
+      typedef float _confidence_type;
+      _confidence_type confidence;
+      uint32_t point_clouds_length;
+      typedef sensor_msgs::PointCloud2 _point_clouds_type;
+      _point_clouds_type st_point_clouds;
+      _point_clouds_type * point_clouds;
+      typedef shape_msgs::Mesh _bounding_mesh_type;
+      _bounding_mesh_type bounding_mesh;
+      uint32_t bounding_contours_length;
+      typedef geometry_msgs::Point _bounding_contours_type;
+      _bounding_contours_type st_bounding_contours;
+      _bounding_contours_type * bounding_contours;
+      typedef geometry_msgs::PoseWithCovarianceStamped _pose_type;
+      _pose_type pose;
 
     RecognizedObject():
       header(),
@@ -56,19 +63,21 @@ namespace object_recognition_msgs
       *(outbuffer + offset + 2) = (u_confidence.base >> (8 * 2)) & 0xFF;
       *(outbuffer + offset + 3) = (u_confidence.base >> (8 * 3)) & 0xFF;
       offset += sizeof(this->confidence);
-      *(outbuffer + offset++) = point_clouds_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < point_clouds_length; i++){
+      *(outbuffer + offset + 0) = (this->point_clouds_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->point_clouds_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->point_clouds_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->point_clouds_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->point_clouds_length);
+      for( uint32_t i = 0; i < point_clouds_length; i++){
       offset += this->point_clouds[i].serialize(outbuffer + offset);
       }
       offset += this->bounding_mesh.serialize(outbuffer + offset);
-      *(outbuffer + offset++) = bounding_contours_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < bounding_contours_length; i++){
+      *(outbuffer + offset + 0) = (this->bounding_contours_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->bounding_contours_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->bounding_contours_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->bounding_contours_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->bounding_contours_length);
+      for( uint32_t i = 0; i < bounding_contours_length; i++){
       offset += this->bounding_contours[i].serialize(outbuffer + offset);
       }
       offset += this->pose.serialize(outbuffer + offset);
@@ -91,22 +100,28 @@ namespace object_recognition_msgs
       u_confidence.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       this->confidence = u_confidence.real;
       offset += sizeof(this->confidence);
-      uint8_t point_clouds_lengthT = *(inbuffer + offset++);
+      uint32_t point_clouds_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      point_clouds_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      point_clouds_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      point_clouds_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->point_clouds_length);
       if(point_clouds_lengthT > point_clouds_length)
         this->point_clouds = (sensor_msgs::PointCloud2*)realloc(this->point_clouds, point_clouds_lengthT * sizeof(sensor_msgs::PointCloud2));
-      offset += 3;
       point_clouds_length = point_clouds_lengthT;
-      for( uint8_t i = 0; i < point_clouds_length; i++){
+      for( uint32_t i = 0; i < point_clouds_length; i++){
       offset += this->st_point_clouds.deserialize(inbuffer + offset);
         memcpy( &(this->point_clouds[i]), &(this->st_point_clouds), sizeof(sensor_msgs::PointCloud2));
       }
       offset += this->bounding_mesh.deserialize(inbuffer + offset);
-      uint8_t bounding_contours_lengthT = *(inbuffer + offset++);
+      uint32_t bounding_contours_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      bounding_contours_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      bounding_contours_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      bounding_contours_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->bounding_contours_length);
       if(bounding_contours_lengthT > bounding_contours_length)
         this->bounding_contours = (geometry_msgs::Point*)realloc(this->bounding_contours, bounding_contours_lengthT * sizeof(geometry_msgs::Point));
-      offset += 3;
       bounding_contours_length = bounding_contours_lengthT;
-      for( uint8_t i = 0; i < bounding_contours_length; i++){
+      for( uint32_t i = 0; i < bounding_contours_length; i++){
       offset += this->st_bounding_contours.deserialize(inbuffer + offset);
         memcpy( &(this->bounding_contours[i]), &(this->st_bounding_contours), sizeof(geometry_msgs::Point));
       }

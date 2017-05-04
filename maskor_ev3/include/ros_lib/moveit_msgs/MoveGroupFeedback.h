@@ -12,7 +12,8 @@ namespace moveit_msgs
   class MoveGroupFeedback : public ros::Msg
   {
     public:
-      const char* state;
+      typedef const char* _state_type;
+      _state_type state;
 
     MoveGroupFeedback():
       state("")
@@ -23,7 +24,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_state = strlen(this->state);
-      memcpy(outbuffer + offset, &length_state, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_state);
       offset += 4;
       memcpy(outbuffer + offset, this->state, length_state);
       offset += length_state;
@@ -34,7 +35,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_state;
-      memcpy(&length_state, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_state, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_state; ++k){
           inbuffer[k-1]=inbuffer[k];

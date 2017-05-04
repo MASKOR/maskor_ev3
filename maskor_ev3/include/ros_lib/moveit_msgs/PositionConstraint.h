@@ -15,11 +15,16 @@ namespace moveit_msgs
   class PositionConstraint : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      const char* link_name;
-      geometry_msgs::Vector3 target_point_offset;
-      moveit_msgs::BoundingVolume constraint_region;
-      double weight;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef const char* _link_name_type;
+      _link_name_type link_name;
+      typedef geometry_msgs::Vector3 _target_point_offset_type;
+      _target_point_offset_type target_point_offset;
+      typedef moveit_msgs::BoundingVolume _constraint_region_type;
+      _constraint_region_type constraint_region;
+      typedef double _weight_type;
+      _weight_type weight;
 
     PositionConstraint():
       header(),
@@ -35,7 +40,7 @@ namespace moveit_msgs
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
       uint32_t length_link_name = strlen(this->link_name);
-      memcpy(outbuffer + offset, &length_link_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_link_name);
       offset += 4;
       memcpy(outbuffer + offset, this->link_name, length_link_name);
       offset += length_link_name;
@@ -63,7 +68,7 @@ namespace moveit_msgs
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
       uint32_t length_link_name;
-      memcpy(&length_link_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_link_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_link_name; ++k){
           inbuffer[k-1]=inbuffer[k];

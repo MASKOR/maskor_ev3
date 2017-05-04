@@ -12,14 +12,22 @@ namespace moveit_msgs
   class JointLimits : public ros::Msg
   {
     public:
-      const char* joint_name;
-      bool has_position_limits;
-      double min_position;
-      double max_position;
-      bool has_velocity_limits;
-      double max_velocity;
-      bool has_acceleration_limits;
-      double max_acceleration;
+      typedef const char* _joint_name_type;
+      _joint_name_type joint_name;
+      typedef bool _has_position_limits_type;
+      _has_position_limits_type has_position_limits;
+      typedef double _min_position_type;
+      _min_position_type min_position;
+      typedef double _max_position_type;
+      _max_position_type max_position;
+      typedef bool _has_velocity_limits_type;
+      _has_velocity_limits_type has_velocity_limits;
+      typedef double _max_velocity_type;
+      _max_velocity_type max_velocity;
+      typedef bool _has_acceleration_limits_type;
+      _has_acceleration_limits_type has_acceleration_limits;
+      typedef double _max_acceleration_type;
+      _max_acceleration_type max_acceleration;
 
     JointLimits():
       joint_name(""),
@@ -37,7 +45,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_joint_name = strlen(this->joint_name);
-      memcpy(outbuffer + offset, &length_joint_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_joint_name);
       offset += 4;
       memcpy(outbuffer + offset, this->joint_name, length_joint_name);
       offset += length_joint_name;
@@ -125,7 +133,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_joint_name;
-      memcpy(&length_joint_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_joint_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_joint_name; ++k){
           inbuffer[k-1]=inbuffer[k];

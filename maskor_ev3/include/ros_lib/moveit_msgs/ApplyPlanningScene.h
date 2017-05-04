@@ -14,7 +14,8 @@ static const char APPLYPLANNINGSCENE[] = "moveit_msgs/ApplyPlanningScene";
   class ApplyPlanningSceneRequest : public ros::Msg
   {
     public:
-      moveit_msgs::PlanningScene scene;
+      typedef moveit_msgs::PlanningScene _scene_type;
+      _scene_type scene;
 
     ApplyPlanningSceneRequest():
       scene()
@@ -43,7 +44,8 @@ static const char APPLYPLANNINGSCENE[] = "moveit_msgs/ApplyPlanningScene";
   class ApplyPlanningSceneResponse : public ros::Msg
   {
     public:
-      bool success;
+      typedef bool _success_type;
+      _success_type success;
 
     ApplyPlanningSceneResponse():
       success(0)

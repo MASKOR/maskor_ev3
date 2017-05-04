@@ -13,14 +13,22 @@ namespace moveit_msgs
   class VisibilityConstraint : public ros::Msg
   {
     public:
-      double target_radius;
-      geometry_msgs::PoseStamped target_pose;
-      int32_t cone_sides;
-      geometry_msgs::PoseStamped sensor_pose;
-      double max_view_angle;
-      double max_range_angle;
-      uint8_t sensor_view_direction;
-      double weight;
+      typedef double _target_radius_type;
+      _target_radius_type target_radius;
+      typedef geometry_msgs::PoseStamped _target_pose_type;
+      _target_pose_type target_pose;
+      typedef int32_t _cone_sides_type;
+      _cone_sides_type cone_sides;
+      typedef geometry_msgs::PoseStamped _sensor_pose_type;
+      _sensor_pose_type sensor_pose;
+      typedef double _max_view_angle_type;
+      _max_view_angle_type max_view_angle;
+      typedef double _max_range_angle_type;
+      _max_range_angle_type max_range_angle;
+      typedef uint8_t _sensor_view_direction_type;
+      _sensor_view_direction_type sensor_view_direction;
+      typedef double _weight_type;
+      _weight_type weight;
       enum { SENSOR_Z = 0 };
       enum { SENSOR_Y = 1 };
       enum { SENSOR_X = 2 };

@@ -15,7 +15,8 @@ static const char GETPLANNINGSCENE[] = "moveit_msgs/GetPlanningScene";
   class GetPlanningSceneRequest : public ros::Msg
   {
     public:
-      moveit_msgs::PlanningSceneComponents components;
+      typedef moveit_msgs::PlanningSceneComponents _components_type;
+      _components_type components;
 
     GetPlanningSceneRequest():
       components()
@@ -44,7 +45,8 @@ static const char GETPLANNINGSCENE[] = "moveit_msgs/GetPlanningScene";
   class GetPlanningSceneResponse : public ros::Msg
   {
     public:
-      moveit_msgs::PlanningScene scene;
+      typedef moveit_msgs::PlanningScene _scene_type;
+      _scene_type scene;
 
     GetPlanningSceneResponse():
       scene()

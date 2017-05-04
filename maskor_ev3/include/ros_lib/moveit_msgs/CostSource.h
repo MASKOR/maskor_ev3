@@ -13,9 +13,12 @@ namespace moveit_msgs
   class CostSource : public ros::Msg
   {
     public:
-      double cost_density;
-      geometry_msgs::Vector3 aabb_min;
-      geometry_msgs::Vector3 aabb_max;
+      typedef double _cost_density_type;
+      _cost_density_type cost_density;
+      typedef geometry_msgs::Vector3 _aabb_min_type;
+      _aabb_min_type aabb_min;
+      typedef geometry_msgs::Vector3 _aabb_max_type;
+      _aabb_max_type aabb_max;
 
     CostSource():
       cost_density(0),

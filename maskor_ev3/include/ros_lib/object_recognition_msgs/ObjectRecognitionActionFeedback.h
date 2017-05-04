@@ -15,9 +15,12 @@ namespace object_recognition_msgs
   class ObjectRecognitionActionFeedback : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      actionlib_msgs::GoalStatus status;
-      object_recognition_msgs::ObjectRecognitionFeedback feedback;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef actionlib_msgs::GoalStatus _status_type;
+      _status_type status;
+      typedef object_recognition_msgs::ObjectRecognitionFeedback _feedback_type;
+      _feedback_type feedback;
 
     ObjectRecognitionActionFeedback():
       header(),

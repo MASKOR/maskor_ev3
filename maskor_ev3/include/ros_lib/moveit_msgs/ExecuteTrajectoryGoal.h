@@ -13,7 +13,8 @@ namespace moveit_msgs
   class ExecuteTrajectoryGoal : public ros::Msg
   {
     public:
-      moveit_msgs::RobotTrajectory trajectory;
+      typedef moveit_msgs::RobotTrajectory _trajectory_type;
+      _trajectory_type trajectory;
 
     ExecuteTrajectoryGoal():
       trajectory()

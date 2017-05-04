@@ -13,7 +13,8 @@ namespace moveit_msgs
   class ExecuteTrajectoryResult : public ros::Msg
   {
     public:
-      moveit_msgs::MoveItErrorCodes error_code;
+      typedef moveit_msgs::MoveItErrorCodes _error_code_type;
+      _error_code_type error_code;
 
     ExecuteTrajectoryResult():
       error_code()

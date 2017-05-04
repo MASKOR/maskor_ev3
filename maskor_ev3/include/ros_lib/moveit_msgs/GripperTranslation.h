@@ -13,9 +13,12 @@ namespace moveit_msgs
   class GripperTranslation : public ros::Msg
   {
     public:
-      geometry_msgs::Vector3Stamped direction;
-      float desired_distance;
-      float min_distance;
+      typedef geometry_msgs::Vector3Stamped _direction_type;
+      _direction_type direction;
+      typedef float _desired_distance_type;
+      _desired_distance_type desired_distance;
+      typedef float _min_distance_type;
+      _min_distance_type min_distance;
 
     GripperTranslation():
       direction(),

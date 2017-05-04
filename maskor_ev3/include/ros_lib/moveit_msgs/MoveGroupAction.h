@@ -15,9 +15,12 @@ namespace moveit_msgs
   class MoveGroupAction : public ros::Msg
   {
     public:
-      moveit_msgs::MoveGroupActionGoal action_goal;
-      moveit_msgs::MoveGroupActionResult action_result;
-      moveit_msgs::MoveGroupActionFeedback action_feedback;
+      typedef moveit_msgs::MoveGroupActionGoal _action_goal_type;
+      _action_goal_type action_goal;
+      typedef moveit_msgs::MoveGroupActionResult _action_result_type;
+      _action_result_type action_result;
+      typedef moveit_msgs::MoveGroupActionFeedback _action_feedback_type;
+      _action_feedback_type action_feedback;
 
     MoveGroupAction():
       action_goal(),

@@ -12,11 +12,16 @@ namespace moveit_msgs
   class JointConstraint : public ros::Msg
   {
     public:
-      const char* joint_name;
-      double position;
-      double tolerance_above;
-      double tolerance_below;
-      double weight;
+      typedef const char* _joint_name_type;
+      _joint_name_type joint_name;
+      typedef double _position_type;
+      _position_type position;
+      typedef double _tolerance_above_type;
+      _tolerance_above_type tolerance_above;
+      typedef double _tolerance_below_type;
+      _tolerance_below_type tolerance_below;
+      typedef double _weight_type;
+      _weight_type weight;
 
     JointConstraint():
       joint_name(""),
@@ -31,7 +36,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_joint_name = strlen(this->joint_name);
-      memcpy(outbuffer + offset, &length_joint_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_joint_name);
       offset += 4;
       memcpy(outbuffer + offset, this->joint_name, length_joint_name);
       offset += length_joint_name;
@@ -98,7 +103,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_joint_name;
-      memcpy(&length_joint_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_joint_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_joint_name; ++k){
           inbuffer[k-1]=inbuffer[k];

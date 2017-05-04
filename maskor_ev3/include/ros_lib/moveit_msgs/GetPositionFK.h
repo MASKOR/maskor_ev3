@@ -17,11 +17,14 @@ static const char GETPOSITIONFK[] = "moveit_msgs/GetPositionFK";
   class GetPositionFKRequest : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      uint8_t fk_link_names_length;
-      char* st_fk_link_names;
-      char* * fk_link_names;
-      moveit_msgs::RobotState robot_state;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      uint32_t fk_link_names_length;
+      typedef char* _fk_link_names_type;
+      _fk_link_names_type st_fk_link_names;
+      _fk_link_names_type * fk_link_names;
+      typedef moveit_msgs::RobotState _robot_state_type;
+      _robot_state_type robot_state;
 
     GetPositionFKRequest():
       header(),
@@ -34,13 +37,14 @@ static const char GETPOSITIONFK[] = "moveit_msgs/GetPositionFK";
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      *(outbuffer + offset++) = fk_link_names_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < fk_link_names_length; i++){
+      *(outbuffer + offset + 0) = (this->fk_link_names_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->fk_link_names_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->fk_link_names_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->fk_link_names_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->fk_link_names_length);
+      for( uint32_t i = 0; i < fk_link_names_length; i++){
       uint32_t length_fk_link_namesi = strlen(this->fk_link_names[i]);
-      memcpy(outbuffer + offset, &length_fk_link_namesi, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_fk_link_namesi);
       offset += 4;
       memcpy(outbuffer + offset, this->fk_link_names[i], length_fk_link_namesi);
       offset += length_fk_link_namesi;
@@ -53,14 +57,17 @@ static const char GETPOSITIONFK[] = "moveit_msgs/GetPositionFK";
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint8_t fk_link_names_lengthT = *(inbuffer + offset++);
+      uint32_t fk_link_names_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      fk_link_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      fk_link_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      fk_link_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->fk_link_names_length);
       if(fk_link_names_lengthT > fk_link_names_length)
         this->fk_link_names = (char**)realloc(this->fk_link_names, fk_link_names_lengthT * sizeof(char*));
-      offset += 3;
       fk_link_names_length = fk_link_names_lengthT;
-      for( uint8_t i = 0; i < fk_link_names_length; i++){
+      for( uint32_t i = 0; i < fk_link_names_length; i++){
       uint32_t length_st_fk_link_names;
-      memcpy(&length_st_fk_link_names, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_st_fk_link_names, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_fk_link_names; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -82,13 +89,16 @@ static const char GETPOSITIONFK[] = "moveit_msgs/GetPositionFK";
   class GetPositionFKResponse : public ros::Msg
   {
     public:
-      uint8_t pose_stamped_length;
-      geometry_msgs::PoseStamped st_pose_stamped;
-      geometry_msgs::PoseStamped * pose_stamped;
-      uint8_t fk_link_names_length;
-      char* st_fk_link_names;
-      char* * fk_link_names;
-      moveit_msgs::MoveItErrorCodes error_code;
+      uint32_t pose_stamped_length;
+      typedef geometry_msgs::PoseStamped _pose_stamped_type;
+      _pose_stamped_type st_pose_stamped;
+      _pose_stamped_type * pose_stamped;
+      uint32_t fk_link_names_length;
+      typedef char* _fk_link_names_type;
+      _fk_link_names_type st_fk_link_names;
+      _fk_link_names_type * fk_link_names;
+      typedef moveit_msgs::MoveItErrorCodes _error_code_type;
+      _error_code_type error_code;
 
     GetPositionFKResponse():
       pose_stamped_length(0), pose_stamped(NULL),
@@ -100,20 +110,22 @@ static const char GETPOSITIONFK[] = "moveit_msgs/GetPositionFK";
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset++) = pose_stamped_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < pose_stamped_length; i++){
+      *(outbuffer + offset + 0) = (this->pose_stamped_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->pose_stamped_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->pose_stamped_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->pose_stamped_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->pose_stamped_length);
+      for( uint32_t i = 0; i < pose_stamped_length; i++){
       offset += this->pose_stamped[i].serialize(outbuffer + offset);
       }
-      *(outbuffer + offset++) = fk_link_names_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < fk_link_names_length; i++){
+      *(outbuffer + offset + 0) = (this->fk_link_names_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->fk_link_names_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->fk_link_names_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->fk_link_names_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->fk_link_names_length);
+      for( uint32_t i = 0; i < fk_link_names_length; i++){
       uint32_t length_fk_link_namesi = strlen(this->fk_link_names[i]);
-      memcpy(outbuffer + offset, &length_fk_link_namesi, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_fk_link_namesi);
       offset += 4;
       memcpy(outbuffer + offset, this->fk_link_names[i], length_fk_link_namesi);
       offset += length_fk_link_namesi;
@@ -125,23 +137,29 @@ static const char GETPOSITIONFK[] = "moveit_msgs/GetPositionFK";
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint8_t pose_stamped_lengthT = *(inbuffer + offset++);
+      uint32_t pose_stamped_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      pose_stamped_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      pose_stamped_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      pose_stamped_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->pose_stamped_length);
       if(pose_stamped_lengthT > pose_stamped_length)
         this->pose_stamped = (geometry_msgs::PoseStamped*)realloc(this->pose_stamped, pose_stamped_lengthT * sizeof(geometry_msgs::PoseStamped));
-      offset += 3;
       pose_stamped_length = pose_stamped_lengthT;
-      for( uint8_t i = 0; i < pose_stamped_length; i++){
+      for( uint32_t i = 0; i < pose_stamped_length; i++){
       offset += this->st_pose_stamped.deserialize(inbuffer + offset);
         memcpy( &(this->pose_stamped[i]), &(this->st_pose_stamped), sizeof(geometry_msgs::PoseStamped));
       }
-      uint8_t fk_link_names_lengthT = *(inbuffer + offset++);
+      uint32_t fk_link_names_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      fk_link_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      fk_link_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      fk_link_names_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->fk_link_names_length);
       if(fk_link_names_lengthT > fk_link_names_length)
         this->fk_link_names = (char**)realloc(this->fk_link_names, fk_link_names_lengthT * sizeof(char*));
-      offset += 3;
       fk_link_names_length = fk_link_names_lengthT;
-      for( uint8_t i = 0; i < fk_link_names_length; i++){
+      for( uint32_t i = 0; i < fk_link_names_length; i++){
       uint32_t length_st_fk_link_names;
-      memcpy(&length_st_fk_link_names, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_st_fk_link_names, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_fk_link_names; ++k){
           inbuffer[k-1]=inbuffer[k];

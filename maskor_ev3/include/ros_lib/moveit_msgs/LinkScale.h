@@ -12,8 +12,10 @@ namespace moveit_msgs
   class LinkScale : public ros::Msg
   {
     public:
-      const char* link_name;
-      double scale;
+      typedef const char* _link_name_type;
+      _link_name_type link_name;
+      typedef double _scale_type;
+      _scale_type scale;
 
     LinkScale():
       link_name(""),
@@ -25,7 +27,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_link_name = strlen(this->link_name);
-      memcpy(outbuffer + offset, &length_link_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_link_name);
       offset += 4;
       memcpy(outbuffer + offset, this->link_name, length_link_name);
       offset += length_link_name;
@@ -50,7 +52,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_link_name;
-      memcpy(&length_link_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_link_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_link_name; ++k){
           inbuffer[k-1]=inbuffer[k];

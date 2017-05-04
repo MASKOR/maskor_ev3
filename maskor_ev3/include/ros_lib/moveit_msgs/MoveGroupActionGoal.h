@@ -15,9 +15,12 @@ namespace moveit_msgs
   class MoveGroupActionGoal : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      actionlib_msgs::GoalID goal_id;
-      moveit_msgs::MoveGroupGoal goal;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef actionlib_msgs::GoalID _goal_id_type;
+      _goal_id_type goal_id;
+      typedef moveit_msgs::MoveGroupGoal _goal_type;
+      _goal_type goal;
 
     MoveGroupActionGoal():
       header(),

@@ -13,8 +13,10 @@ static const char CHECKIFROBOTSTATEEXISTSINWAREHOUSE[] = "moveit_msgs/CheckIfRob
   class CheckIfRobotStateExistsInWarehouseRequest : public ros::Msg
   {
     public:
-      const char* name;
-      const char* robot;
+      typedef const char* _name_type;
+      _name_type name;
+      typedef const char* _robot_type;
+      _robot_type robot;
 
     CheckIfRobotStateExistsInWarehouseRequest():
       name(""),
@@ -26,12 +28,12 @@ static const char CHECKIFROBOTSTATEEXISTSINWAREHOUSE[] = "moveit_msgs/CheckIfRob
     {
       int offset = 0;
       uint32_t length_name = strlen(this->name);
-      memcpy(outbuffer + offset, &length_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_name);
       offset += 4;
       memcpy(outbuffer + offset, this->name, length_name);
       offset += length_name;
       uint32_t length_robot = strlen(this->robot);
-      memcpy(outbuffer + offset, &length_robot, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_robot);
       offset += 4;
       memcpy(outbuffer + offset, this->robot, length_robot);
       offset += length_robot;
@@ -42,7 +44,7 @@ static const char CHECKIFROBOTSTATEEXISTSINWAREHOUSE[] = "moveit_msgs/CheckIfRob
     {
       int offset = 0;
       uint32_t length_name;
-      memcpy(&length_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -51,7 +53,7 @@ static const char CHECKIFROBOTSTATEEXISTSINWAREHOUSE[] = "moveit_msgs/CheckIfRob
       this->name = (char *)(inbuffer + offset-1);
       offset += length_name;
       uint32_t length_robot;
-      memcpy(&length_robot, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_robot, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_robot; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -70,7 +72,8 @@ static const char CHECKIFROBOTSTATEEXISTSINWAREHOUSE[] = "moveit_msgs/CheckIfRob
   class CheckIfRobotStateExistsInWarehouseResponse : public ros::Msg
   {
     public:
-      bool exists;
+      typedef bool _exists_type;
+      _exists_type exists;
 
     CheckIfRobotStateExistsInWarehouseResponse():
       exists(0)

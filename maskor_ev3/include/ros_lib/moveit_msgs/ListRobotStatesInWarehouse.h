@@ -13,8 +13,10 @@ static const char LISTROBOTSTATESINWAREHOUSE[] = "moveit_msgs/ListRobotStatesInW
   class ListRobotStatesInWarehouseRequest : public ros::Msg
   {
     public:
-      const char* regex;
-      const char* robot;
+      typedef const char* _regex_type;
+      _regex_type regex;
+      typedef const char* _robot_type;
+      _robot_type robot;
 
     ListRobotStatesInWarehouseRequest():
       regex(""),
@@ -26,12 +28,12 @@ static const char LISTROBOTSTATESINWAREHOUSE[] = "moveit_msgs/ListRobotStatesInW
     {
       int offset = 0;
       uint32_t length_regex = strlen(this->regex);
-      memcpy(outbuffer + offset, &length_regex, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_regex);
       offset += 4;
       memcpy(outbuffer + offset, this->regex, length_regex);
       offset += length_regex;
       uint32_t length_robot = strlen(this->robot);
-      memcpy(outbuffer + offset, &length_robot, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_robot);
       offset += 4;
       memcpy(outbuffer + offset, this->robot, length_robot);
       offset += length_robot;
@@ -42,7 +44,7 @@ static const char LISTROBOTSTATESINWAREHOUSE[] = "moveit_msgs/ListRobotStatesInW
     {
       int offset = 0;
       uint32_t length_regex;
-      memcpy(&length_regex, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_regex, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_regex; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -51,7 +53,7 @@ static const char LISTROBOTSTATESINWAREHOUSE[] = "moveit_msgs/ListRobotStatesInW
       this->regex = (char *)(inbuffer + offset-1);
       offset += length_regex;
       uint32_t length_robot;
-      memcpy(&length_robot, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_robot, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_robot; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -70,9 +72,10 @@ static const char LISTROBOTSTATESINWAREHOUSE[] = "moveit_msgs/ListRobotStatesInW
   class ListRobotStatesInWarehouseResponse : public ros::Msg
   {
     public:
-      uint8_t states_length;
-      char* st_states;
-      char* * states;
+      uint32_t states_length;
+      typedef char* _states_type;
+      _states_type st_states;
+      _states_type * states;
 
     ListRobotStatesInWarehouseResponse():
       states_length(0), states(NULL)
@@ -82,13 +85,14 @@ static const char LISTROBOTSTATESINWAREHOUSE[] = "moveit_msgs/ListRobotStatesInW
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset++) = states_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < states_length; i++){
+      *(outbuffer + offset + 0) = (this->states_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->states_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->states_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->states_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->states_length);
+      for( uint32_t i = 0; i < states_length; i++){
       uint32_t length_statesi = strlen(this->states[i]);
-      memcpy(outbuffer + offset, &length_statesi, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_statesi);
       offset += 4;
       memcpy(outbuffer + offset, this->states[i], length_statesi);
       offset += length_statesi;
@@ -99,14 +103,17 @@ static const char LISTROBOTSTATESINWAREHOUSE[] = "moveit_msgs/ListRobotStatesInW
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint8_t states_lengthT = *(inbuffer + offset++);
+      uint32_t states_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      states_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      states_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      states_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->states_length);
       if(states_lengthT > states_length)
         this->states = (char**)realloc(this->states, states_lengthT * sizeof(char*));
-      offset += 3;
       states_length = states_lengthT;
-      for( uint8_t i = 0; i < states_length; i++){
+      for( uint32_t i = 0; i < states_length; i++){
       uint32_t length_st_states;
-      memcpy(&length_st_states, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_st_states, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_states; ++k){
           inbuffer[k-1]=inbuffer[k];

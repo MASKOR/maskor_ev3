@@ -13,8 +13,10 @@ namespace maskor_ev3_msgs
   class InfraredSensor : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      uint8_t proximity;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef uint8_t _proximity_type;
+      _proximity_type proximity;
 
     InfraredSensor():
       header(),

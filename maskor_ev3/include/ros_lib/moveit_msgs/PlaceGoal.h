@@ -15,21 +15,32 @@ namespace moveit_msgs
   class PlaceGoal : public ros::Msg
   {
     public:
-      const char* group_name;
-      const char* attached_object_name;
-      uint8_t place_locations_length;
-      moveit_msgs::PlaceLocation st_place_locations;
-      moveit_msgs::PlaceLocation * place_locations;
-      bool place_eef;
-      const char* support_surface_name;
-      bool allow_gripper_support_collision;
-      moveit_msgs::Constraints path_constraints;
-      const char* planner_id;
-      uint8_t allowed_touch_objects_length;
-      char* st_allowed_touch_objects;
-      char* * allowed_touch_objects;
-      double allowed_planning_time;
-      moveit_msgs::PlanningOptions planning_options;
+      typedef const char* _group_name_type;
+      _group_name_type group_name;
+      typedef const char* _attached_object_name_type;
+      _attached_object_name_type attached_object_name;
+      uint32_t place_locations_length;
+      typedef moveit_msgs::PlaceLocation _place_locations_type;
+      _place_locations_type st_place_locations;
+      _place_locations_type * place_locations;
+      typedef bool _place_eef_type;
+      _place_eef_type place_eef;
+      typedef const char* _support_surface_name_type;
+      _support_surface_name_type support_surface_name;
+      typedef bool _allow_gripper_support_collision_type;
+      _allow_gripper_support_collision_type allow_gripper_support_collision;
+      typedef moveit_msgs::Constraints _path_constraints_type;
+      _path_constraints_type path_constraints;
+      typedef const char* _planner_id_type;
+      _planner_id_type planner_id;
+      uint32_t allowed_touch_objects_length;
+      typedef char* _allowed_touch_objects_type;
+      _allowed_touch_objects_type st_allowed_touch_objects;
+      _allowed_touch_objects_type * allowed_touch_objects;
+      typedef double _allowed_planning_time_type;
+      _allowed_planning_time_type allowed_planning_time;
+      typedef moveit_msgs::PlanningOptions _planning_options_type;
+      _planning_options_type planning_options;
 
     PlaceGoal():
       group_name(""),
@@ -50,20 +61,21 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_group_name = strlen(this->group_name);
-      memcpy(outbuffer + offset, &length_group_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_group_name);
       offset += 4;
       memcpy(outbuffer + offset, this->group_name, length_group_name);
       offset += length_group_name;
       uint32_t length_attached_object_name = strlen(this->attached_object_name);
-      memcpy(outbuffer + offset, &length_attached_object_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_attached_object_name);
       offset += 4;
       memcpy(outbuffer + offset, this->attached_object_name, length_attached_object_name);
       offset += length_attached_object_name;
-      *(outbuffer + offset++) = place_locations_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < place_locations_length; i++){
+      *(outbuffer + offset + 0) = (this->place_locations_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->place_locations_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->place_locations_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->place_locations_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->place_locations_length);
+      for( uint32_t i = 0; i < place_locations_length; i++){
       offset += this->place_locations[i].serialize(outbuffer + offset);
       }
       union {
@@ -74,7 +86,7 @@ namespace moveit_msgs
       *(outbuffer + offset + 0) = (u_place_eef.base >> (8 * 0)) & 0xFF;
       offset += sizeof(this->place_eef);
       uint32_t length_support_surface_name = strlen(this->support_surface_name);
-      memcpy(outbuffer + offset, &length_support_surface_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_support_surface_name);
       offset += 4;
       memcpy(outbuffer + offset, this->support_surface_name, length_support_surface_name);
       offset += length_support_surface_name;
@@ -87,17 +99,18 @@ namespace moveit_msgs
       offset += sizeof(this->allow_gripper_support_collision);
       offset += this->path_constraints.serialize(outbuffer + offset);
       uint32_t length_planner_id = strlen(this->planner_id);
-      memcpy(outbuffer + offset, &length_planner_id, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_planner_id);
       offset += 4;
       memcpy(outbuffer + offset, this->planner_id, length_planner_id);
       offset += length_planner_id;
-      *(outbuffer + offset++) = allowed_touch_objects_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < allowed_touch_objects_length; i++){
+      *(outbuffer + offset + 0) = (this->allowed_touch_objects_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->allowed_touch_objects_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->allowed_touch_objects_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->allowed_touch_objects_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->allowed_touch_objects_length);
+      for( uint32_t i = 0; i < allowed_touch_objects_length; i++){
       uint32_t length_allowed_touch_objectsi = strlen(this->allowed_touch_objects[i]);
-      memcpy(outbuffer + offset, &length_allowed_touch_objectsi, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_allowed_touch_objectsi);
       offset += 4;
       memcpy(outbuffer + offset, this->allowed_touch_objects[i], length_allowed_touch_objectsi);
       offset += length_allowed_touch_objectsi;
@@ -124,7 +137,7 @@ namespace moveit_msgs
     {
       int offset = 0;
       uint32_t length_group_name;
-      memcpy(&length_group_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_group_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_group_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -133,7 +146,7 @@ namespace moveit_msgs
       this->group_name = (char *)(inbuffer + offset-1);
       offset += length_group_name;
       uint32_t length_attached_object_name;
-      memcpy(&length_attached_object_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_attached_object_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_attached_object_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -141,12 +154,15 @@ namespace moveit_msgs
       inbuffer[offset+length_attached_object_name-1]=0;
       this->attached_object_name = (char *)(inbuffer + offset-1);
       offset += length_attached_object_name;
-      uint8_t place_locations_lengthT = *(inbuffer + offset++);
+      uint32_t place_locations_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      place_locations_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      place_locations_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      place_locations_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->place_locations_length);
       if(place_locations_lengthT > place_locations_length)
         this->place_locations = (moveit_msgs::PlaceLocation*)realloc(this->place_locations, place_locations_lengthT * sizeof(moveit_msgs::PlaceLocation));
-      offset += 3;
       place_locations_length = place_locations_lengthT;
-      for( uint8_t i = 0; i < place_locations_length; i++){
+      for( uint32_t i = 0; i < place_locations_length; i++){
       offset += this->st_place_locations.deserialize(inbuffer + offset);
         memcpy( &(this->place_locations[i]), &(this->st_place_locations), sizeof(moveit_msgs::PlaceLocation));
       }
@@ -159,7 +175,7 @@ namespace moveit_msgs
       this->place_eef = u_place_eef.real;
       offset += sizeof(this->place_eef);
       uint32_t length_support_surface_name;
-      memcpy(&length_support_surface_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_support_surface_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_support_surface_name; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -177,7 +193,7 @@ namespace moveit_msgs
       offset += sizeof(this->allow_gripper_support_collision);
       offset += this->path_constraints.deserialize(inbuffer + offset);
       uint32_t length_planner_id;
-      memcpy(&length_planner_id, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_planner_id, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_planner_id; ++k){
           inbuffer[k-1]=inbuffer[k];
@@ -185,14 +201,17 @@ namespace moveit_msgs
       inbuffer[offset+length_planner_id-1]=0;
       this->planner_id = (char *)(inbuffer + offset-1);
       offset += length_planner_id;
-      uint8_t allowed_touch_objects_lengthT = *(inbuffer + offset++);
+      uint32_t allowed_touch_objects_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      allowed_touch_objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      allowed_touch_objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      allowed_touch_objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->allowed_touch_objects_length);
       if(allowed_touch_objects_lengthT > allowed_touch_objects_length)
         this->allowed_touch_objects = (char**)realloc(this->allowed_touch_objects, allowed_touch_objects_lengthT * sizeof(char*));
-      offset += 3;
       allowed_touch_objects_length = allowed_touch_objects_lengthT;
-      for( uint8_t i = 0; i < allowed_touch_objects_length; i++){
+      for( uint32_t i = 0; i < allowed_touch_objects_length; i++){
       uint32_t length_st_allowed_touch_objects;
-      memcpy(&length_st_allowed_touch_objects, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_st_allowed_touch_objects, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_st_allowed_touch_objects; ++k){
           inbuffer[k-1]=inbuffer[k];

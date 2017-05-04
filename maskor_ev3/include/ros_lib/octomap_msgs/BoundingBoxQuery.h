@@ -14,8 +14,10 @@ static const char BOUNDINGBOXQUERY[] = "octomap_msgs/BoundingBoxQuery";
   class BoundingBoxQueryRequest : public ros::Msg
   {
     public:
-      geometry_msgs::Point min;
-      geometry_msgs::Point max;
+      typedef geometry_msgs::Point _min_type;
+      _min_type min;
+      typedef geometry_msgs::Point _max_type;
+      _max_type max;
 
     BoundingBoxQueryRequest():
       min(),

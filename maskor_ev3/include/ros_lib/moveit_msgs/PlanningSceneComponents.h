@@ -12,7 +12,8 @@ namespace moveit_msgs
   class PlanningSceneComponents : public ros::Msg
   {
     public:
-      uint32_t components;
+      typedef uint32_t _components_type;
+      _components_type components;
       enum { SCENE_SETTINGS = 1 };
       enum { ROBOT_STATE = 2 };
       enum { ROBOT_STATE_ATTACHED_OBJECTS = 4 };

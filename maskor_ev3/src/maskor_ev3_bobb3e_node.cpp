@@ -10,7 +10,7 @@
  */
 
 //#define _DEBUG
-//#define _OFFLINETEST
+#define _OFFLINETEST
 
 #include <stdio.h>
 #include <maskor_ev3/maskor_ev3.h>
@@ -23,9 +23,9 @@
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
-//#include <maskor_ev3_msgs/ColorSensor.h>
-//#include <maskor_ev3_msgs/GyroSensor.h>
-//#include <maskor_ev3_msgs/InfraredSensor.h>
+#include <maskor_ev3_msgs/ColorSensor.h>
+#include <maskor_ev3_msgs/GyroSensor.h>
+#include <maskor_ev3_msgs/InfraredSensor.h>
 
 
 // FUNCTION DECLARATIONS
@@ -46,18 +46,18 @@ geometry_msgs::TransformStamped odom_tf;
 tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
 sensor_msgs::JointState joint_state_msg;
-//maskor_ev3_msgs::ColorSensor color_sensor_msg;
-//maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
-//maskor_ev3_msgs::InfraredSensor infrared_sensor_msg;
+maskor_ev3_msgs::ColorSensor color_sensor_msg;
+maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
+maskor_ev3_msgs::InfraredSensor infrared_sensor_msg;
 
 
 ros::NodeHandle nh;
 ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
 ros::Publisher odom_pub("/odom", &odom_msg);
 ros::Publisher joint_state_pub("/joint_states", &joint_state_msg);
-//ros::Publisher color_sensor_pub("/bobb3e/color_sensor", &color_sensor_msg);
-//ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
-//ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
+ros::Publisher color_sensor_pub("/bobb3e/color_sensor", &color_sensor_msg);
+ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
+ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
 
 #ifndef _OFFLINETEST
 //motors
@@ -75,9 +75,12 @@ maskor_ev3::sensor gyro_sensor(maskor_ev3::INPUT_4);
 const float deg2rad = M_PI/180.0;
 char base_link[] = "/base_footprint";
 char odom[] = "/odom";
+#ifndef _OFFLINETEST
 char rosSrvrIp[] = "10.42.0.1";
+#else
 //char rosSrvrIp[] = "149.201.178.169";
-//char rosSrvrIp[] = "127.0.0.1";
+char rosSrvrIp[] = "127.0.0.1";
+#endif
 
 double left_motor_speed=0.0;
 double right_motor_speed=0.0;
@@ -117,6 +120,7 @@ enum {
    LEFT_ARM_LINK,
    NUM_JOINTS
 };
+
 char *joint_names[] = {"base_link_to_left_front_wheel", 
 		       "base_link_to_left_rear_wheel",
 		       "base_link_to_right_front_wheel",       
@@ -126,18 +130,32 @@ char *joint_names[] = {"base_link_to_left_front_wheel",
 		       "base_link_to_left_fork_arm"};
 
 
+/*
+char* joint_names[] = new char[NUM_JOINTS];
+joint_names[LEFT_FRONT_WHEEL] ="base_link_to_left_front_wheel";
+joint_names[LEFT_REAR_WHEEL]  ="base_link_to_left_rear_wheel";
+joint_names[RIGHT_FRONT_WHEEL]="base_link_to_right_front_wheel";
+joint_names[RIGHT_REAR_WHEEL] ="base_link_to_right_rear_wheel";
+joint_names[FORK_LIFT]        ="base_link_to_fork_lift_link";
+joint_names[RIGHT_ARM_LINK]   ="base_link_to_left_fork_arm";
+joint_names[LEFT_ARM_LINK]    ="base_link_to_left_fork_arm";
+*/
+
+
 double joint_positions[NUM_JOINTS];
 double joint_velocities[NUM_JOINTS];
 double joint_efforts[NUM_JOINTS];
 
 void set_motor_speed()
 {
+#ifndef _OFFLINETEST
   left_motor.set_speed_sp(left_motor_speed);
   left_motor.set_command("run-forever");
   right_motor.set_speed_sp(right_motor_speed);
   right_motor.set_command("run-forever");
   //    lift_motor.set_speed_sp(lift_motor_speed);
   //lift_motor.set_command("run-forever");
+#endif
 }
 
 void cmd_velCb(const geometry_msgs::Twist& cmd) {
@@ -304,30 +322,30 @@ void calc_odometry() {
 
 
 void publish_test_messages() {
-  /*
+  
   printf("publish_test_messages()\n");
 
   color_sensor_msg.header.stamp = nh.now();
   color_sensor_msg.header.frame_id = "color_sensor_link";
   color_sensor_msg.color = 3;
   color_sensor_pub.publish(&color_sensor_msg);
-
+  
   gyro_sensor_msg.header.stamp = nh.now();
   gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
   gyro_sensor_msg.angle = 180;
   gyro_sensor_msg.rotational_speed = 3;
   gyro_sensor_pub.publish(&gyro_sensor_msg);
-
+  /*
   // touch_sensor_msg.header.stamp = nh.now();
   // touch_sensor_msg.header.frame_id = "touch_sensor_link";
   // touch_sensor_msg.state = 0;
   // touch_sensor_pub.publish(&touch_sensor_msg);
-
+  */
   infrared_sensor_msg.header.stamp = nh.now();
   infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
   infrared_sensor_msg.proximity = 0;
   infrared_sensor_pub.publish(&infrared_sensor_msg);
-
+  /*
   // ultrasonic_sensor_msg.header.stamp = nh.now();
   // ultrasonic_sensor_msg.header.frame_id = "ultrasonic_sensor_link";
   // ultrasonic_sensor_msg.distance = 0;
@@ -449,7 +467,11 @@ double calc_fork_lift_link_position(double arm_position) {
   //y=m*x+b
   double delta_x = arm_max - arm_min;
   double delta_y = lift_max - lift_min;
+#ifndef _OFFLINETEST
   double x = (lift_motor.position())%360;
+#else
+  double x = 15; //dummy value
+#endif
   double m = delta_y / delta_x;
   double b = lift_max - (m * arm_max);
 
@@ -486,9 +508,9 @@ void init_node() {
   nh.subscribe(cmd_vel_sub);
   nh.advertise(odom_pub);
   nh.advertise(joint_state_pub); 
-  //nh.advertise(color_sensor_pub); 
-  //nh.advertise(gyro_sensor_pub); 
-  //nh.advertise(infrared_sensor_pub);
+  nh.advertise(color_sensor_pub); 
+  nh.advertise(gyro_sensor_pub); 
+  nh.advertise(infrared_sensor_pub);
  
   broadcaster.init(nh);
 }

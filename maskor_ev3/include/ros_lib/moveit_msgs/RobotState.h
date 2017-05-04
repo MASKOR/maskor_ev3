@@ -15,12 +15,16 @@ namespace moveit_msgs
   class RobotState : public ros::Msg
   {
     public:
-      sensor_msgs::JointState joint_state;
-      sensor_msgs::MultiDOFJointState multi_dof_joint_state;
-      uint8_t attached_collision_objects_length;
-      moveit_msgs::AttachedCollisionObject st_attached_collision_objects;
-      moveit_msgs::AttachedCollisionObject * attached_collision_objects;
-      bool is_diff;
+      typedef sensor_msgs::JointState _joint_state_type;
+      _joint_state_type joint_state;
+      typedef sensor_msgs::MultiDOFJointState _multi_dof_joint_state_type;
+      _multi_dof_joint_state_type multi_dof_joint_state;
+      uint32_t attached_collision_objects_length;
+      typedef moveit_msgs::AttachedCollisionObject _attached_collision_objects_type;
+      _attached_collision_objects_type st_attached_collision_objects;
+      _attached_collision_objects_type * attached_collision_objects;
+      typedef bool _is_diff_type;
+      _is_diff_type is_diff;
 
     RobotState():
       joint_state(),
@@ -35,11 +39,12 @@ namespace moveit_msgs
       int offset = 0;
       offset += this->joint_state.serialize(outbuffer + offset);
       offset += this->multi_dof_joint_state.serialize(outbuffer + offset);
-      *(outbuffer + offset++) = attached_collision_objects_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < attached_collision_objects_length; i++){
+      *(outbuffer + offset + 0) = (this->attached_collision_objects_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->attached_collision_objects_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->attached_collision_objects_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->attached_collision_objects_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->attached_collision_objects_length);
+      for( uint32_t i = 0; i < attached_collision_objects_length; i++){
       offset += this->attached_collision_objects[i].serialize(outbuffer + offset);
       }
       union {
@@ -57,12 +62,15 @@ namespace moveit_msgs
       int offset = 0;
       offset += this->joint_state.deserialize(inbuffer + offset);
       offset += this->multi_dof_joint_state.deserialize(inbuffer + offset);
-      uint8_t attached_collision_objects_lengthT = *(inbuffer + offset++);
+      uint32_t attached_collision_objects_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      attached_collision_objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      attached_collision_objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      attached_collision_objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->attached_collision_objects_length);
       if(attached_collision_objects_lengthT > attached_collision_objects_length)
         this->attached_collision_objects = (moveit_msgs::AttachedCollisionObject*)realloc(this->attached_collision_objects, attached_collision_objects_lengthT * sizeof(moveit_msgs::AttachedCollisionObject));
-      offset += 3;
       attached_collision_objects_length = attached_collision_objects_lengthT;
-      for( uint8_t i = 0; i < attached_collision_objects_length; i++){
+      for( uint32_t i = 0; i < attached_collision_objects_length; i++){
       offset += this->st_attached_collision_objects.deserialize(inbuffer + offset);
         memcpy( &(this->attached_collision_objects[i]), &(this->st_attached_collision_objects), sizeof(moveit_msgs::AttachedCollisionObject));
       }

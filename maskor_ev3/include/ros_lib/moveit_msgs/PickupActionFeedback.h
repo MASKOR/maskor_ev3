@@ -15,9 +15,12 @@ namespace moveit_msgs
   class PickupActionFeedback : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      actionlib_msgs::GoalStatus status;
-      moveit_msgs::PickupFeedback feedback;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef actionlib_msgs::GoalStatus _status_type;
+      _status_type status;
+      typedef moveit_msgs::PickupFeedback _feedback_type;
+      _feedback_type feedback;
 
     PickupActionFeedback():
       header(),

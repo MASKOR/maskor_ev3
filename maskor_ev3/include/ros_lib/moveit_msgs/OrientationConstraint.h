@@ -14,13 +14,20 @@ namespace moveit_msgs
   class OrientationConstraint : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      geometry_msgs::Quaternion orientation;
-      const char* link_name;
-      double absolute_x_axis_tolerance;
-      double absolute_y_axis_tolerance;
-      double absolute_z_axis_tolerance;
-      double weight;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef geometry_msgs::Quaternion _orientation_type;
+      _orientation_type orientation;
+      typedef const char* _link_name_type;
+      _link_name_type link_name;
+      typedef double _absolute_x_axis_tolerance_type;
+      _absolute_x_axis_tolerance_type absolute_x_axis_tolerance;
+      typedef double _absolute_y_axis_tolerance_type;
+      _absolute_y_axis_tolerance_type absolute_y_axis_tolerance;
+      typedef double _absolute_z_axis_tolerance_type;
+      _absolute_z_axis_tolerance_type absolute_z_axis_tolerance;
+      typedef double _weight_type;
+      _weight_type weight;
 
     OrientationConstraint():
       header(),
@@ -39,7 +46,7 @@ namespace moveit_msgs
       offset += this->header.serialize(outbuffer + offset);
       offset += this->orientation.serialize(outbuffer + offset);
       uint32_t length_link_name = strlen(this->link_name);
-      memcpy(outbuffer + offset, &length_link_name, sizeof(uint32_t));
+      varToArr(outbuffer + offset, length_link_name);
       offset += 4;
       memcpy(outbuffer + offset, this->link_name, length_link_name);
       offset += length_link_name;
@@ -108,7 +115,7 @@ namespace moveit_msgs
       offset += this->header.deserialize(inbuffer + offset);
       offset += this->orientation.deserialize(inbuffer + offset);
       uint32_t length_link_name;
-      memcpy(&length_link_name, (inbuffer + offset), sizeof(uint32_t));
+      arrToVar(length_link_name, (inbuffer + offset));
       offset += 4;
       for(unsigned int k= offset; k< offset+length_link_name; ++k){
           inbuffer[k-1]=inbuffer[k];

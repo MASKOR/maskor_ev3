@@ -12,8 +12,10 @@ namespace moveit_msgs
   class ConstraintEvalResult : public ros::Msg
   {
     public:
-      bool result;
-      double distance;
+      typedef bool _result_type;
+      _result_type result;
+      typedef double _distance_type;
+      _distance_type distance;
 
     ConstraintEvalResult():
       result(0),

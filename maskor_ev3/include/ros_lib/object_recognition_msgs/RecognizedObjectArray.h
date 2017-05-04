@@ -14,13 +14,16 @@ namespace object_recognition_msgs
   class RecognizedObjectArray : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      uint8_t objects_length;
-      object_recognition_msgs::RecognizedObject st_objects;
-      object_recognition_msgs::RecognizedObject * objects;
-      uint8_t cooccurrence_length;
-      float st_cooccurrence;
-      float * cooccurrence;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      uint32_t objects_length;
+      typedef object_recognition_msgs::RecognizedObject _objects_type;
+      _objects_type st_objects;
+      _objects_type * objects;
+      uint32_t cooccurrence_length;
+      typedef float _cooccurrence_type;
+      _cooccurrence_type st_cooccurrence;
+      _cooccurrence_type * cooccurrence;
 
     RecognizedObjectArray():
       header(),
@@ -33,18 +36,20 @@ namespace object_recognition_msgs
     {
       int offset = 0;
       offset += this->header.serialize(outbuffer + offset);
-      *(outbuffer + offset++) = objects_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < objects_length; i++){
+      *(outbuffer + offset + 0) = (this->objects_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->objects_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->objects_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->objects_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->objects_length);
+      for( uint32_t i = 0; i < objects_length; i++){
       offset += this->objects[i].serialize(outbuffer + offset);
       }
-      *(outbuffer + offset++) = cooccurrence_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < cooccurrence_length; i++){
+      *(outbuffer + offset + 0) = (this->cooccurrence_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->cooccurrence_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->cooccurrence_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->cooccurrence_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->cooccurrence_length);
+      for( uint32_t i = 0; i < cooccurrence_length; i++){
       union {
         float real;
         uint32_t base;
@@ -63,21 +68,27 @@ namespace object_recognition_msgs
     {
       int offset = 0;
       offset += this->header.deserialize(inbuffer + offset);
-      uint8_t objects_lengthT = *(inbuffer + offset++);
+      uint32_t objects_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      objects_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->objects_length);
       if(objects_lengthT > objects_length)
         this->objects = (object_recognition_msgs::RecognizedObject*)realloc(this->objects, objects_lengthT * sizeof(object_recognition_msgs::RecognizedObject));
-      offset += 3;
       objects_length = objects_lengthT;
-      for( uint8_t i = 0; i < objects_length; i++){
+      for( uint32_t i = 0; i < objects_length; i++){
       offset += this->st_objects.deserialize(inbuffer + offset);
         memcpy( &(this->objects[i]), &(this->st_objects), sizeof(object_recognition_msgs::RecognizedObject));
       }
-      uint8_t cooccurrence_lengthT = *(inbuffer + offset++);
+      uint32_t cooccurrence_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      cooccurrence_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      cooccurrence_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      cooccurrence_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->cooccurrence_length);
       if(cooccurrence_lengthT > cooccurrence_length)
         this->cooccurrence = (float*)realloc(this->cooccurrence, cooccurrence_lengthT * sizeof(float));
-      offset += 3;
       cooccurrence_length = cooccurrence_lengthT;
-      for( uint8_t i = 0; i < cooccurrence_length; i++){
+      for( uint32_t i = 0; i < cooccurrence_length; i++){
       union {
         float real;
         uint32_t base;

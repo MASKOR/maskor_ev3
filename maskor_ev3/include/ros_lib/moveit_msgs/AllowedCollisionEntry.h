@@ -12,9 +12,10 @@ namespace moveit_msgs
   class AllowedCollisionEntry : public ros::Msg
   {
     public:
-      uint8_t enabled_length;
-      bool st_enabled;
-      bool * enabled;
+      uint32_t enabled_length;
+      typedef bool _enabled_type;
+      _enabled_type st_enabled;
+      _enabled_type * enabled;
 
     AllowedCollisionEntry():
       enabled_length(0), enabled(NULL)
@@ -24,11 +25,12 @@ namespace moveit_msgs
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
-      *(outbuffer + offset++) = enabled_length;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      *(outbuffer + offset++) = 0;
-      for( uint8_t i = 0; i < enabled_length; i++){
+      *(outbuffer + offset + 0) = (this->enabled_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->enabled_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->enabled_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->enabled_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->enabled_length);
+      for( uint32_t i = 0; i < enabled_length; i++){
       union {
         bool real;
         uint8_t base;
@@ -43,12 +45,15 @@ namespace moveit_msgs
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
-      uint8_t enabled_lengthT = *(inbuffer + offset++);
+      uint32_t enabled_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      enabled_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      enabled_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      enabled_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->enabled_length);
       if(enabled_lengthT > enabled_length)
         this->enabled = (bool*)realloc(this->enabled, enabled_lengthT * sizeof(bool));
-      offset += 3;
       enabled_length = enabled_lengthT;
-      for( uint8_t i = 0; i < enabled_length; i++){
+      for( uint32_t i = 0; i < enabled_length; i++){
       union {
         bool real;
         uint8_t base;

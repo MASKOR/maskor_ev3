@@ -14,9 +14,12 @@ namespace moveit_msgs
   class WorkspaceParameters : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      geometry_msgs::Vector3 min_corner;
-      geometry_msgs::Vector3 max_corner;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef geometry_msgs::Vector3 _min_corner_type;
+      _min_corner_type min_corner;
+      typedef geometry_msgs::Vector3 _max_corner_type;
+      _max_corner_type max_corner;
 
     WorkspaceParameters():
       header(),

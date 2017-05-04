@@ -13,9 +13,12 @@ namespace maskor_ev3_msgs
   class GyroSensor : public ros::Msg
   {
     public:
-      std_msgs::Header header;
-      int16_t angle;
-      int16_t rotational_speed;
+      typedef std_msgs::Header _header_type;
+      _header_type header;
+      typedef int16_t _angle_type;
+      _angle_type angle;
+      typedef int16_t _rotational_speed_type;
+      _rotational_speed_type rotational_speed;
 
     GyroSensor():
       header(),
