@@ -24,7 +24,7 @@
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
 //#include <maskor_ev3_msgs/ColorSensor.h>
-//#include <maskor_ev3_msgs/GyroSensor.h>
+#include <maskor_ev3_msgs/GyroSensor.h>
 //#include <maskor_ev3_msgs/InfraredSensor.h>
 
 
@@ -47,7 +47,7 @@ tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
 sensor_msgs::JointState joint_state_msg;
 //maskor_ev3_msgs::ColorSensor color_sensor_msg;
-//sensor_msgs::gyro_sensor gyro_sensor_msg;
+maskor_ev3_msgs::gyro_sensor gyro_sensor_msg;
 //maskor_ev3_msgs::InfraredSensor infrared_sensor_msg;
 
 
@@ -56,7 +56,7 @@ ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
 ros::Publisher odom_pub("/odom", &odom_msg);
 ros::Publisher joint_state_pub("/joint_states", &joint_state_msg);
 //ros::Publisher color_sensor_pub("/bobb3e/color_sensor", &color_sensor_msg);
-//ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
+ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
 //ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
 
 #ifndef _OFFLINETEST
@@ -65,6 +65,7 @@ maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
 maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_B);
 maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
 //sensors
+maskor_ev3::infrared_sensor ir_sensor(maskor_ev3::INPUT_3);
 maskor_ev3::gyro_sensor gyro_sensor(maskor_ev3::INPUT_4);
 #endif
 
@@ -89,13 +90,10 @@ double left_motor_speed=0.0;
 double right_motor_speed=0.0;
 double lift_motor_speed=0.0;
 
-bool lift_rot_flag = true;
-
 float t=0; // simulated time for sinus
 double pos_min = 0;
 double pos_max = M_PI/4;
 
-int lift_rot_limit = 0;
 int wheel_encoder_current_pos[2] = {0,0};
 int wheel_encoder_prev_pos[2] = {0,0};
 int dl = 0;
@@ -249,18 +247,31 @@ void turn_right() {
 
 //-------------------------------------------------------------lift-functions---------------------------------------------------
 
+//Lift moves upwards until the IR "sees" the fork, it then will move approx. to the ground
+
 void reset_lift(){
 
+  printf("Resetting lift....\n");
+
+  lift_motor.set_speed_sp(100);
+  
+  while(ir_sensor.value() > 30)
+    {
+      lift_motor.set_command("run-forever");
+    }
+  
+  lift_motor.set_command("stop");
   lift_motor.set_time_sp(1500);
   lift_motor.set_speed_sp(-100);
   lift_motor.set_command("run-timed");
+
   printf("Lift resetted! \n");
   usleep(2000000);
 }
 
 void lift_up(){
   
-  lift_motor.set_position_sp(90);
+  lift_motor.set_position_sp(120);
   lift_motor.set_speed_sp(100);
   lift_motor.set_command("run-to-rel-pos");
   usleep(1000000);
@@ -268,7 +279,7 @@ void lift_up(){
 
 void lift_down(){
   
-  lift_motor.set_position_sp(-90);
+  lift_motor.set_position_sp(-120);
   lift_motor.set_speed_sp(100);
   lift_motor.set_command("run-to-rel-pos");
   usleep(1000000);
@@ -299,35 +310,6 @@ void cmd_velCb(const geometry_msgs::Twist& cmd) {
   else {
     right_motor_speed = 0.0;
   }
-
- //set value to lift
-  printf("Rot_limit: %d\n", lift_rot_limit);
-
-  if (lift_rot_limit == 0 && lift_rot_limit < 15 )
-    lift_rot_flag = true;
-  else if ( lift_rot_limit >= 15 )
-    lift_rot_flag = false;
-  
-  if (lift_rot_flag == true)
-    {
-      if (cmd.linear.z !=0) {
-	lift_motor_speed = cmd.linear.z;
-	lift_rot_limit++;
-      }
-      else{
-	lift_motor_speed = 0.0;
-      }
-    }
-  else if (lift_rot_flag == false)
-    {
-      if (cmd.linear.z !=0){
-	lift_motor_speed = -cmd.linear.z;
-	lift_rot_limit--;
-      }
-      else{
-	lift_motor_speed = 0.0;
-      }
-   }
 }
 
 //------------------------------------------------------------------------------calculating fork lift position----------------------------------------------------
@@ -463,35 +445,35 @@ void calc_odometry() {
 //------------------------------------------------------------------------------publishing test messages for offline debug----------------------------------------------------
 
 void publish_test_messages() {
-  /*
+  
   printf("publish_test_messages()\n");
 
-  color_sensor_msg.header.stamp = nh.now();
-  color_sensor_msg.header.frame_id = "color_sensor_link";
-  color_sensor_msg.color = 3;
-  color_sensor_pub.publish(&color_sensor_msg);
+  //color_sensor_msg.header.stamp = nh.now();
+  //color_sensor_msg.header.frame_id = "color_sensor_link";
+  //color_sensor_msg.color = 3;
+  // color_sensor_pub.publish(&color_sensor_msg);
 
-  gyro_sensor_msg.header.stamp = nh.now();
-  gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
-  gyro_sensor_msg.angle = 180;
-  gyro_sensor_msg.rotational_speed = 3;
-  gyro_sensor_pub.publish(&gyro_sensor_msg);
+  //gyro_sensor_msg.header.stamp = nh.now();
+  //gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
+  //gyro_sensor_msg.angle = gyro_sensor.value();
+  //gyro_sensor_msg.rotational_speed = 3;
+  //gyro_sensor_pub.publish(&gyro_sensor_msg);
 
   // touch_sensor_msg.header.stamp = nh.now();
   // touch_sensor_msg.header.frame_id = "touch_sensor_link";
   // touch_sensor_msg.state = 0;
   // touch_sensor_pub.publish(&touch_sensor_msg);
 
-  infrared_sensor_msg.header.stamp = nh.now();
-  infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
-  infrared_sensor_msg.proximity = 0;
-  infrared_sensor_pub.publish(&infrared_sensor_msg);
+  //infrared_sensor_msg.header.stamp = nh.now();
+  //infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
+  //infrared_sensor_msg.proximity = ir_sensor.value();
+  //infrared_sensor_pub.publish(&infrared_sensor_msg);
 
   // ultrasonic_sensor_msg.header.stamp = nh.now();
   // ultrasonic_sensor_msg.header.frame_id = "ultrasonic_sensor_link";
   // ultrasonic_sensor_msg.distance = 0;
   // ultrasonic_sensor_pub.publish(&ultrasonic_sensor_msg);
-  */
+  
 }
 
 //------------------------------------------------------------------------------publishing joint states----------------------------------------------------
@@ -649,17 +631,10 @@ int main(int argc, char* argv[])
 
   usleep(1000000);
 
-  reset_lift();
-
-  usleep(1000000);
-  
-  lift_up();
-  lift_down();
-  
   printf("Entering loop....\n");
   
   while(1)
-    {      
+    {
       //ros stuff
       set_motor_speed();
       calc_odometry();
