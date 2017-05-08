@@ -47,6 +47,10 @@ public:
     return value(0);
   }
 
+  int g_a() {
+    set_mode(mode_gyro_g_a);
+    return value(0), value(1);
+  }
 };
 
 }//end namespace

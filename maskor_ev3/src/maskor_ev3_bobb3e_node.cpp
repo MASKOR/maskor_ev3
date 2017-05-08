@@ -10,7 +10,7 @@
  */
 
 //#define _DEBUG
-#define _OFFLINETEST
+//#define _OFFLINETEST
 
 #include <stdio.h>
 #include <maskor_ev3/maskor_ev3.h>
@@ -66,8 +66,9 @@ maskor_ev3::motor lift_motor(maskor_ev3::OUTPUT_A);
 maskor_ev3::motor left_motor(maskor_ev3::OUTPUT_B);
 maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
 //sensors
+maskor_ev3::color_sensor color_sensor(maskor_ev3::INPUT_1);
 maskor_ev3::infrared_sensor ir_sensor(maskor_ev3::INPUT_3);
-maskor_ev3::sensor gyro_sensor(maskor_ev3::INPUT_4);
+maskor_ev3::gyro_sensor gyro_sensor(maskor_ev3::INPUT_4);
 #endif
 
 
@@ -476,26 +477,26 @@ void calc_odometry() {
   odom_pub.publish(&odom_msg);
 } 
 
-//------------------------------------------------------------------------------publishing test messages for offline debug----------------------------------------------------
+//------------------------------------------------------------------------------publishing sensor messages for offline debug----------------------------------------------------
 
-void publish_test_messages() {
+void publish_sensor_messages() {
   
   printf("publish_test_messages()\n");
 
   color_sensor_msg.header.stamp = nh.now();
   color_sensor_msg.header.frame_id = "color_sensor_link";
-  color_sensor_msg.color = 3;
+  color_sensor_msg.color = color_sensor.value();
   color_sensor_pub.publish(&color_sensor_msg);
   
   gyro_sensor_msg.header.stamp = nh.now();
   gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
-  gyro_sensor_msg.angle = 180;
-  gyro_sensor_msg.rotational_speed = 3;
+  gyro_sensor_msg.angle = gyro_sensor.value(0);
+  gyro_sensor_msg.rotational_speed = gyro_sensor.value(1);
   gyro_sensor_pub.publish(&gyro_sensor_msg);
 
   infrared_sensor_msg.header.stamp = nh.now();
   infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
-  infrared_sensor_msg.proximity = 0;
+  infrared_sensor_msg.proximity = ir_sensor.value();
   infrared_sensor_pub.publish(&infrared_sensor_msg);  
 }
 
@@ -627,7 +628,9 @@ void init_motors() {
 void init_sensors() {
   printf("Init Sensors...\n");
   gyro_sensor.rate();
-  gyro_sensor.angle();
+  gyro_sensor.g_a();
+  ir_sensor.proximity();
+  color_sensor.color();
 }
 #endif
 
@@ -662,14 +665,12 @@ int main(int argc, char* argv[])
       //ros stuff
       set_motor_speed();
       calc_odometry();
-      publish_test_messages();
+      publish_sensor_messages();
       publish_joint_states();
       usleep(100000); //microseconds
       nh.spinOnce(); // check for incoming messages
     }
  
   return 0;
-
-
 }
 
