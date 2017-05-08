@@ -1,9 +1,5 @@
-#include <maskor_ev3/maskor_ev3.h>
-
 #include <ros.h>
-#include <ros/time.h>
 #include <geometry_msgs/Twist.h>
-#include <stdlib.h>
 
 int main(int argc, char **argv)
 {
