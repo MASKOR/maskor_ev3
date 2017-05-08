@@ -16,6 +16,7 @@ namespace maskor_ev3 {
 
   //-----------------------------------------------------------------------------
 
+
   bool motor::connect(const std::map<std::string, std::set<std::string>> &match) noexcept
   {
     static const std::string _strClassDir { SYS_ROOT "/tacho-motor/" };
