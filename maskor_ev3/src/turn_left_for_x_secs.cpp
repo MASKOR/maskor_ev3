@@ -1,15 +1,16 @@
-#include "ros.h"
-#include "ros/time.h"
-#include "maskor_ev3/turn_left_for_x_secs.h"
-#include "geometry_msgs/Twist.h"
+#include <maskor_ev3/maskor_ev3.h>
 
+#include <ros.h>
+#include <ros/time.h>
+#include <geometry_msgs/Twist.h>
+#include <stdlib.h>
 
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "turn_left_pub");
   ros::NodeHandle n;
 
-  ros::Publisher pub = n.advertise<geometry_msgs::Twist>("turn_left", 1000);
+  ros::Publisher pub = n.advertise<geometry_msgs::Twist>("bobb3e/cmd_vel", 1000);
   ros::Rate loop_rate(10);
   
   ROS_INFO("Ready to turn!");
