@@ -130,7 +130,6 @@ enum {
    NUM_JOINTS
 };
 
-
 char *joint_names[] = {"base_link_to_left_front_wheel", 
 		       "base_link_to_left_rear_wheel",
 		       "base_link_to_right_front_wheel",       

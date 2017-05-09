@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>maskor_ev3_services</name>
+  <name>maskor_ev3_actions</name>
   <version>0.0.0</version>
-  <description>The maskor_ev3_services package</description>
+  <description>The maskor_ev3_actions package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/maskor_ev3_services</url> -->
+  <!-- <url type="website">http://wiki.ros.org/maskor_ev3_actions</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
@@ -40,9 +40,14 @@
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>std_msgs</build_depend>
   <build_depend>message_generation</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <run_depend>actionlib</run_depend>
   <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
   <run_depend>message_runtime</run_depend>
 
 
