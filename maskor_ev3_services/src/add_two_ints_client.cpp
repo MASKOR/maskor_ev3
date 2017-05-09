@@ -1,8 +1,8 @@
-#include "ros/ros.h"
-#include "beginner_tutorials/AddTwoInts.h"
+#include <ros/ros.h>
+#include <maskor_ev3_services/AddTwoInts.h>
 
-bool add(beginner_tutorials::AddTwoInts::Request  &req,
-         beginner_tutorials::AddTwoInts::Response &res)
+bool add(maskor_ev3_services::AddTwoInts::Request  &req,
+         maskor_ev3_services::AddTwoInts::Response &res)
 {
   res.sum = req.a + req.b;
   ROS_INFO("request: x=%ld, y=%ld", (long int)req.a, (long int)req.b);

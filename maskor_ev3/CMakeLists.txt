@@ -74,10 +74,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
+# generate_messages(
+#   DEPENDENCIES
 #   std_msgs  # Or other packages containing msgs
- )
+# )
 
 # rosserial_generate_ros_lib(
 #   PACKAGE rosserial_client
