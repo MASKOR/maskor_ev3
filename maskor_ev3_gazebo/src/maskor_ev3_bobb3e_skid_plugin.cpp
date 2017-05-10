@@ -40,7 +40,7 @@
 #include <algorithm>
 #include <assert.h>
 
-#include <maskor_ev3_gazebo/maskor_ev3_bobb3e_skid_plugin.h>
+#include <gazebo_plugins/gazebo_ros_skid_steer_drive.h>
 
 #include <gazebo/math/gzmath.hh>
 #include <sdf/sdf.hh>
@@ -61,28 +61,25 @@ namespace gazebo {
     LEFT_FRONT=1,
     RIGHT_REAR=2,
     LEFT_REAR=3,
-    FORK_LEFT=4,
-    FORK_RIGHT=5,
-    FORK=6,
   };
 
-  MaskorEv3SkidSteerDrive::MaskorEv3SkidSteerDrive() {}
+  GazeboRosSkidSteerDrive::GazeboRosSkidSteerDrive() {}
 
   // Destructor
-  MaskorEv3SkidSteerDrive::~MaskorEv3SkidSteerDrive() {
+  GazeboRosSkidSteerDrive::~GazeboRosSkidSteerDrive() {
     delete rosnode_;
     delete transform_broadcaster_;
   }
 
   // Load the controller
-  void MaskorEv3SkidSteerDrive::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
+  void GazeboRosSkidSteerDrive::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
 
     this->parent = _parent;
     this->world = _parent->GetWorld();
 
     this->robot_namespace_ = "";
     if (!_sdf->HasElement("robotNamespace")) {
-      ROS_INFO_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin missing <robotNamespace>, defaults to \"%s\"",
+      ROS_INFO_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin missing <robotNamespace>, defaults to \"%s\"",
           this->robot_namespace_.c_str());
     } else {
       this->robot_namespace_ =
@@ -92,8 +89,8 @@ namespace gazebo {
     this->broadcast_tf_ = false;
     if (!_sdf->HasElement("broadcastTF")) {
       if (!this->broadcast_tf_)
-    	  ROS_INFO_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <broadcastTF>, defaults to false.",this->robot_namespace_.c_str());
-      else ROS_INFO_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <broadcastTF>, defaults to true.",this->robot_namespace_.c_str());
+    	  ROS_INFO_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <broadcastTF>, defaults to false.",this->robot_namespace_.c_str());
+      else ROS_INFO_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <broadcastTF>, defaults to true.",this->robot_namespace_.c_str());
 
     } else {
       this->broadcast_tf_ = _sdf->GetElement("broadcastTF")->Get<bool>();
@@ -102,7 +99,7 @@ namespace gazebo {
     // TODO write error if joint doesn't exist!
     this->left_front_joint_name_ = "left_front_joint";
     if (!_sdf->HasElement("leftFrontJoint")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <leftFrontJoint>, defaults to \"%s\"",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <leftFrontJoint>, defaults to \"%s\"",
           this->robot_namespace_.c_str(), this->left_front_joint_name_.c_str());
     } else {
       this->left_front_joint_name_ = _sdf->GetElement("leftFrontJoint")->Get<std::string>();
@@ -110,7 +107,7 @@ namespace gazebo {
 
     this->right_front_joint_name_ = "right_front_joint";
         if (!_sdf->HasElement("rightFrontJoint")) {
-          ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <rightFrontJoint>, defaults to \"%s\"",
+          ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <rightFrontJoint>, defaults to \"%s\"",
               this->robot_namespace_.c_str(), this->right_front_joint_name_.c_str());
         } else {
           this->right_front_joint_name_ = _sdf->GetElement("rightFrontJoint")->Get<std::string>();
@@ -118,7 +115,7 @@ namespace gazebo {
 
 	this->left_rear_joint_name_ = "left_rear_joint";
 	if (!_sdf->HasElement("leftRearJoint")) {
-	  ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <leftRearJoint>, defaults to \"%s\"",
+	  ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <leftRearJoint>, defaults to \"%s\"",
 		  this->robot_namespace_.c_str(), this->left_rear_joint_name_.c_str());
 	} else {
 	  this->left_rear_joint_name_ = _sdf->GetElement("leftRearJoint")->Get<std::string>();
@@ -126,35 +123,13 @@ namespace gazebo {
 
     this->right_rear_joint_name_ = "right_rear_joint";
     if (!_sdf->HasElement("rightRearJoint")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <rightRearJoint>, defaults to \"%s\"",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <rightRearJoint>, defaults to \"%s\"",
           this->robot_namespace_.c_str(), this->right_rear_joint_name_.c_str());
     } else {
       this->right_rear_joint_name_ = _sdf->GetElement("rightRearJoint")->Get<std::string>();
     }
 
-    this->left_fork_arm_name_= "left_fork_arm";
-    if (!_sdf->HasElement("leftForkArmJoint")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <leftForkArmJoint>, defaults to \"%s\"",
-          this->robot_namespace_.c_str(), this->left_fork_arm_name_.c_str());
-    } else {
-      this->left_fork_arm_name_ = _sdf->GetElement("leftForkArmJoint")->Get<std::string>();
-    }
 
-    this->right_fork_arm_name_= "right_fork_arm";
-    if (!_sdf->HasElement("rightForkArmJoint")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <rightForkArmJoint>, defaults to \"%s\"",
-          this->robot_namespace_.c_str(), this->right_fork_arm_name_.c_str());
-    } else {
-      this->right_fork_arm_name_ = _sdf->GetElement("rightForkArmJoint")->Get<std::string>();
-    }
-
-    this->fork_name_= "fork";
-    if (!_sdf->HasElement("forkJoint")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <forkJoint>, defaults to \"%s\"",
-          this->robot_namespace_.c_str(), this->fork_name_.c_str());
-    } else {
-      this->fork_name_ = _sdf->GetElement("forkJoint")->Get<std::string>();
-    }
     // This assumes that front and rear wheel spacing is identical
     /*this->wheel_separation_ = this->parent->GetJoint(left_front_joint_name_)->GetAnchor(0).Distance(
     		this->parent->GetJoint(right_front_joint_name_)->GetAnchor(0));*/
@@ -162,7 +137,7 @@ namespace gazebo {
     this->wheel_separation_ = 0.4;
 
     if (!_sdf->HasElement("wheelSeparation")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <wheelSeparation>, defaults to value from robot_description: %f",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <wheelSeparation>, defaults to value from robot_description: %f",
           this->robot_namespace_.c_str(), this->wheel_separation_);
     } else {
       this->wheel_separation_ =
@@ -172,7 +147,7 @@ namespace gazebo {
     // TODO get this from robot_description
     this->wheel_diameter_ = 0.15;
     if (!_sdf->HasElement("wheelDiameter")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <wheelDiameter>, defaults to %f",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <wheelDiameter>, defaults to %f",
           this->robot_namespace_.c_str(), this->wheel_diameter_);
     } else {
       this->wheel_diameter_ = _sdf->GetElement("wheelDiameter")->Get<double>();
@@ -180,23 +155,15 @@ namespace gazebo {
 
     this->torque = 5.0;
     if (!_sdf->HasElement("torque")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <torque>, defaults to %f",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <torque>, defaults to %f",
           this->robot_namespace_.c_str(), this->torque);
     } else {
       this->torque = _sdf->GetElement("torque")->Get<double>();
     }
 
-    this->fork_torque = 5.0;
-    if (!_sdf->HasElement("fork_torque")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <fork_torque>, defaults to %f",
-          this->robot_namespace_.c_str(), this->fork_torque);
-    } else {
-      this->fork_torque = _sdf->GetElement("fork_torque")->Get<double>();
-    }
-
     this->command_topic_ = "cmd_vel";
     if (!_sdf->HasElement("commandTopic")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <commandTopic>, defaults to \"%s\"",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <commandTopic>, defaults to \"%s\"",
           this->robot_namespace_.c_str(), this->command_topic_.c_str());
     } else {
       this->command_topic_ = _sdf->GetElement("commandTopic")->Get<std::string>();
@@ -204,7 +171,7 @@ namespace gazebo {
 
     this->odometry_topic_ = "odom";
     if (!_sdf->HasElement("odometryTopic")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <odometryTopic>, defaults to \"%s\"",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <odometryTopic>, defaults to \"%s\"",
           this->robot_namespace_.c_str(), this->odometry_topic_.c_str());
     } else {
       this->odometry_topic_ = _sdf->GetElement("odometryTopic")->Get<std::string>();
@@ -212,7 +179,7 @@ namespace gazebo {
 
     this->odometry_frame_ = "odom";
     if (!_sdf->HasElement("odometryFrame")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <odometryFrame>, defaults to \"%s\"",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <odometryFrame>, defaults to \"%s\"",
           this->robot_namespace_.c_str(), this->odometry_frame_.c_str());
     } else {
       this->odometry_frame_ = _sdf->GetElement("odometryFrame")->Get<std::string>();
@@ -220,7 +187,7 @@ namespace gazebo {
 
     this->robot_base_frame_ = "base_footprint";
     if (!_sdf->HasElement("robotBaseFrame")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <robotBaseFrame>, defaults to \"%s\"",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <robotBaseFrame>, defaults to \"%s\"",
           this->robot_namespace_.c_str(), this->robot_base_frame_.c_str());
     } else {
       this->robot_base_frame_ = _sdf->GetElement("robotBaseFrame")->Get<std::string>();
@@ -228,7 +195,7 @@ namespace gazebo {
 
     this->update_rate_ = 100.0;
     if (!_sdf->HasElement("updateRate")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <updateRate>, defaults to %f",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <updateRate>, defaults to %f",
           this->robot_namespace_.c_str(), this->update_rate_);
     } else {
       this->update_rate_ = _sdf->GetElement("updateRate")->Get<double>();
@@ -236,7 +203,7 @@ namespace gazebo {
 
     this->covariance_x_ = 0.0001;
     if (!_sdf->HasElement("covariance_x")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <covariance_x>, defaults to %f",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <covariance_x>, defaults to %f",
           this->robot_namespace_.c_str(), covariance_x_);
     } else {
       covariance_x_ = _sdf->GetElement("covariance_x")->Get<double>();
@@ -244,7 +211,7 @@ namespace gazebo {
 
     this->covariance_y_ = 0.0001;
     if (!_sdf->HasElement("covariance_y")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <covariance_y>, defaults to %f",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <covariance_y>, defaults to %f",
           this->robot_namespace_.c_str(), covariance_y_);
     } else {
       covariance_y_ = _sdf->GetElement("covariance_y")->Get<double>();
@@ -252,7 +219,7 @@ namespace gazebo {
 
     this->covariance_yaw_ = 0.01;
     if (!_sdf->HasElement("covariance_yaw")) {
-      ROS_WARN_NAMED("skid_steer_drive", "MaskorEv3SkidSteerDrive Plugin (ns = %s) missing <covariance_yaw>, defaults to %f",
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <covariance_yaw>, defaults to %f",
           this->robot_namespace_.c_str(), covariance_yaw_);
     } else {
       covariance_yaw_ = _sdf->GetElement("covariance_yaw")->Get<double>();
@@ -270,14 +237,9 @@ namespace gazebo {
     wheel_speed_[RIGHT_FRONT] = 0;
     wheel_speed_[LEFT_FRONT] = 0;
     wheel_speed_[RIGHT_REAR] = 0;
-	  wheel_speed_[LEFT_REAR] = 0;
-
-    fork_speed_[FORK_LEFT] = 0;
-    fork_speed_[FORK_RIGHT] = 0;
-    fork_speed_[FORK] = 0;
+	wheel_speed_[LEFT_REAR] = 0;
 
     x_ = 0;
-    z_ = 0;
     rot_ = 0;
     alive_ = true;
 
@@ -285,14 +247,11 @@ namespace gazebo {
     joints[RIGHT_FRONT] = this->parent->GetJoint(right_front_joint_name_);
     joints[LEFT_REAR] = this->parent->GetJoint(left_rear_joint_name_);
     joints[RIGHT_REAR] = this->parent->GetJoint(right_rear_joint_name_);
-    joints[FORK_RIGHT] = this->parent->GetJoint(right_fork_arm_name_);
-    joints[FORK_LEFT] = this->parent->GetJoint(left_fork_arm_name_);
-    joints[FORK] = this->parent->GetJoint(fork_name_);
 
     if (!joints[LEFT_FRONT]) {
       char error[200];
       snprintf(error, 200,
-          "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get left front hinge joint named \"%s\"",
+          "GazeboRosSkidSteerDrive Plugin (ns = %s) couldn't get left front hinge joint named \"%s\"",
           this->robot_namespace_.c_str(), this->left_front_joint_name_.c_str());
       gzthrow(error);
     }
@@ -300,7 +259,7 @@ namespace gazebo {
     if (!joints[RIGHT_FRONT]) {
       char error[200];
       snprintf(error, 200,
-          "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get right front hinge joint named \"%s\"",
+          "GazeboRosSkidSteerDrive Plugin (ns = %s) couldn't get right front hinge joint named \"%s\"",
           this->robot_namespace_.c_str(), this->right_front_joint_name_.c_str());
       gzthrow(error);
     }
@@ -308,7 +267,7 @@ namespace gazebo {
     if (!joints[LEFT_REAR]) {
 	 char error[200];
 	 snprintf(error, 200,
-		 "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get left rear hinge joint named \"%s\"",
+		 "GazeboRosSkidSteerDrive Plugin (ns = %s) couldn't get left rear hinge joint named \"%s\"",
 		 this->robot_namespace_.c_str(), this->left_rear_joint_name_.c_str());
 	 gzthrow(error);
    }
@@ -316,32 +275,8 @@ namespace gazebo {
    if (!joints[RIGHT_REAR]) {
 	 char error[200];
 	 snprintf(error, 200,
-		 "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get right rear hinge joint named \"%s\"",
+		 "GazeboRosSkidSteerDrive Plugin (ns = %s) couldn't get right rear hinge joint named \"%s\"",
 		 this->robot_namespace_.c_str(), this->right_rear_joint_name_.c_str());
-	 gzthrow(error);
-   }
-
-   if (!joints[FORK_RIGHT]) {
-	 char error[200];
-	 snprintf(error, 200,
-		 "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get right fork armhinge joint named \"%s\"",
-		 this->robot_namespace_.c_str(), this->right_fork_arm_name_.c_str());
-	 gzthrow(error);
-   }
-
-   if (!joints[FORK_LEFT]) {
-	 char error[200];
-	 snprintf(error, 200,
-		 "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get left fork arm hinge joint named \"%s\"",
-		 this->robot_namespace_.c_str(), this->left_fork_arm_name_.c_str());
-	 gzthrow(error);
-   }
-
-   if (!joints[FORK]) {
-	 char error[200];
-	 snprintf(error, 200,
-		 "MaskorEv3SkidSteerDrive Plugin (ns = %s) couldn't get fork hinge joint named \"%s\"",
-		 this->robot_namespace_.c_str(), this->fork_name_.c_str());
 	 gzthrow(error);
    }
 
@@ -350,18 +285,11 @@ namespace gazebo {
     joints[RIGHT_FRONT]->SetParam("fmax", 0, torque);
     joints[LEFT_REAR]->SetParam("fmax", 0, torque);
     joints[RIGHT_REAR]->SetParam("fmax", 0, torque);
-    joints[FORK_RIGHT]->SetParam("fmax", 0, fork_torque);
-    joints[FORK_LEFT]->SetParam("fmax", 0, fork_torque);
-    joints[FORK]->SetParam("fmax", 0, fork_torque);
 #else
     joints[LEFT_FRONT]->SetMaxForce(0, torque);
     joints[RIGHT_FRONT]->SetMaxForce(0, torque);
     joints[LEFT_REAR]->SetMaxForce(0, torque);
     joints[RIGHT_REAR]->SetMaxForce(0, torque);
-    joints[FORK_RIGHT]->SetMaxForce(0, fork_torque);
-    joints[FORK_LEFT]->SetMaxForce(0, fork_torque);
-    joints[FORK]->SetMaxForce(0, fork_torque);
-
 #endif
 
     // Make sure the ROS node for Gazebo has already been initialized
@@ -374,37 +302,34 @@ namespace gazebo {
 
     rosnode_ = new ros::NodeHandle(this->robot_namespace_);
 
-    ROS_INFO_NAMED("skid_steer_drive", "Starting MaskorEv3SkidSteerDrive Plugin (ns = %s)", this->robot_namespace_.c_str());
+    ROS_INFO_NAMED("skid_steer_drive", "Starting GazeboRosSkidSteerDrive Plugin (ns = %s)", this->robot_namespace_.c_str());
 
     tf_prefix_ = tf::getPrefixParam(*rosnode_);
     transform_broadcaster_ = new tf::TransformBroadcaster();
 
     // ROS: Subscribe to the velocity command topic (usually "cmd_vel")
-
-        ros::SubscribeOptions so =
-            ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 100,
-        							boost::bind(&MaskorEv3SkidSteerDrive::cmdVelCallback, this, _1),
-                      ros::VoidPtr(), &queue_);
+    ros::SubscribeOptions so =
+      ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 1,
+          boost::bind(&GazeboRosSkidSteerDrive::cmdVelCallback, this, _1),
+          ros::VoidPtr(), &queue_);
 
     cmd_vel_subscriber_ = rosnode_->subscribe(so);
-    //cmd_vel_subscriber_= rosnode_->subscribe(command_topic_,100,&MaskorEv3SkidSteerDrive::cmdVelCallback,this);
-
 
     odometry_publisher_ = rosnode_->advertise<nav_msgs::Odometry>(odometry_topic_, 1);
 
     // start custom queue for diff drive
     this->callback_queue_thread_ =
-      boost::thread(boost::bind(&MaskorEv3SkidSteerDrive::QueueThread, this));
+      boost::thread(boost::bind(&GazeboRosSkidSteerDrive::QueueThread, this));
 
     // listen to the update event (broadcast every simulation iteration)
     this->update_connection_ =
       event::Events::ConnectWorldUpdateBegin(
-          boost::bind(&MaskorEv3SkidSteerDrive::UpdateChild, this));
+          boost::bind(&GazeboRosSkidSteerDrive::UpdateChild, this));
 
   }
 
   // Update the controller
-  void MaskorEv3SkidSteerDrive::UpdateChild() {
+  void GazeboRosSkidSteerDrive::UpdateChild() {
     common::Time current_time = this->world->GetSimTime();
     double seconds_since_last_update =
       (current_time - last_update_time_).Double();
@@ -414,23 +339,16 @@ namespace gazebo {
 
       // Update robot in case new velocities have been requested
       getWheelVelocities();
-      //getForkVelocities();
 #if GAZEBO_MAJOR_VERSION > 2
       joints[LEFT_FRONT]->SetParam("vel", 0, wheel_speed_[LEFT_FRONT] / (wheel_diameter_ / 2.0));
       joints[RIGHT_FRONT]->SetParam("vel", 0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
       joints[LEFT_REAR]->SetParam("vel", 0, wheel_speed_[LEFT_REAR] / (wheel_diameter_ / 2.0));
       joints[RIGHT_REAR]->SetParam("vel", 0, wheel_speed_[RIGHT_REAR] / (wheel_diameter_ / 2.0));
-      joints[FORK_RIGHT]->SetParam("vel",0,fork_speed_[FORK_RIGHT]);
-      joints[FORK_LEFT]->SetParam("vel",0,fork_speed_[FORK_LEFT]);
-      joints[FORK]->SetParam("vel",0,fork_speed_[FORK]);
 #else
       joints[LEFT_FRONT]->SetVelocity(0, wheel_speed_[LEFT_FRONT] / (wheel_diameter_ / 2.0));
       joints[RIGHT_FRONT]->SetVelocity(0, wheel_speed_[RIGHT_FRONT] / (wheel_diameter_ / 2.0));
       joints[LEFT_REAR]->SetVelocity(0, wheel_speed_[LEFT_REAR] / (wheel_diameter_ / 2.0));
       joints[RIGHT_REAR]->SetVelocity(0, wheel_speed_[RIGHT_REAR] / (wheel_diameter_ / 2.0));
-      joints[FORK_RIGHT]->SetVelocity(0, fork_speed_[FORK_RIGHT]);
-      joints[FORK_LEFT]->SetVelocity(0, fork_speed_[FORK_RIGHT]);
-      joints[FORK]->SetVelocity(0, fork_speed_[FORK]);
 #endif
 
       last_update_time_+= common::Time(update_period_);
@@ -439,7 +357,7 @@ namespace gazebo {
   }
 
   // Finalize the controller
-  void MaskorEv3SkidSteerDrive::FiniChild() {
+  void GazeboRosSkidSteerDrive::FiniChild() {
     alive_ = false;
     queue_.clear();
     queue_.disable();
@@ -447,16 +365,11 @@ namespace gazebo {
     callback_queue_thread_.join();
   }
 
-  void MaskorEv3SkidSteerDrive::getWheelVelocities() {
+  void GazeboRosSkidSteerDrive::getWheelVelocities() {
     boost::mutex::scoped_lock scoped_lock(lock);
 
     double vr = x_;
     double va = rot_;
-    double vu = z_;
-
-    fork_speed_[FORK_RIGHT] = vu;
-    fork_speed_[FORK_LEFT] = vu;
-    fork_speed_[FORK] = vu;
 
     wheel_speed_[RIGHT_FRONT] = vr + va * wheel_separation_ / 2.0;
     wheel_speed_[RIGHT_REAR] = vr + va * wheel_separation_ / 2.0;
@@ -466,27 +379,15 @@ namespace gazebo {
 
   }
 
-  void MaskorEv3SkidSteerDrive::getForkVelocities() {
-    boost::mutex::scoped_lock scoped_lock(lock);
-
-    double vu = z_;
-
-    fork_speed_[FORK_RIGHT] = vu;
-    fork_speed_[FORK_LEFT] = vu;
-    fork_speed_[FORK] = vu;
-
-  }
-
-  void MaskorEv3SkidSteerDrive::cmdVelCallback(
+  void GazeboRosSkidSteerDrive::cmdVelCallback(
       const geometry_msgs::Twist::ConstPtr& cmd_msg) {
 
     boost::mutex::scoped_lock scoped_lock(lock);
     x_ = cmd_msg->linear.x;
-    z_ = cmd_msg->linear.z;
     rot_ = cmd_msg->angular.z;
   }
 
-  void MaskorEv3SkidSteerDrive::QueueThread() {
+  void GazeboRosSkidSteerDrive::QueueThread() {
     static const double timeout = 0.01;
 
     while (alive_ && rosnode_->ok()) {
@@ -494,7 +395,7 @@ namespace gazebo {
     }
   }
 
-  void MaskorEv3SkidSteerDrive::publishOdometry(double step_time) {
+  void GazeboRosSkidSteerDrive::publishOdometry(double step_time) {
     ros::Time current_time = ros::Time::now();
     std::string odom_frame =
       tf::resolve(tf_prefix_, odometry_frame_);
@@ -555,5 +456,5 @@ namespace gazebo {
     odometry_publisher_.publish(odom_);
   }
 
-  GZ_REGISTER_MODEL_PLUGIN(MaskorEv3SkidSteerDrive)
+  GZ_REGISTER_MODEL_PLUGIN(GazeboRosSkidSteerDrive)
 }

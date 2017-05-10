@@ -500,6 +500,21 @@
   <!-- ************** -->
 
   <gazebo>
+
+    <plugin name="maskor_ev3_bobb3e_arm_plugin" filename="libmaskor_ev3_bobb3e_arm_plugin.so">
+      <robotNamespace></robotNamespace>
+      <broadcastTF>1</broadcastTF>
+
+      <leftForkJoint>base_link_to_left_fork_arm</leftForkJoint>
+      <rightForkJoint>base_link_to_right_fork_arm</rightForkJoint>
+      <forkLiftJoint>base_link_to_fork_lift_link</forkLiftJoint>
+
+      <forkTorque>2.0</forkTorque>
+      <commandTopic>cmd_vel</commandTopic>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+      <updateRate>100.0</updateRate>
+    </plugin>
+    
     <plugin name="maskor_ev3_bobb3e_skid_plugin" filename="libmaskor_ev3_bobb3e_skid_plugin.so">
       <robotNamespace></robotNamespace>
       <broadcastTF>1</broadcastTF>
@@ -508,14 +523,11 @@
       <rightFrontJoint>base_link_to_right_front_wheel</rightFrontJoint>
       <leftRearJoint>base_link_to_left_rear_wheel</leftRearJoint>
       <rightRearJoint>base_link_to_right_rear_wheel</rightRearJoint>
-      <leftForkArmJoint>base_link_to_left_fork_arm</leftForkArmJoint>
-      <rightForkArmJoint>base_link_to_right_fork_arm</rightForkArmJoint>
-      <forkJoint>base_link_to_fork_lift_link</forkJoint>
 
       <wheelSeparation>0.13</wheelSeparation>
-      <wheelDiameter>0.02</wheelDiameter>
-      <torque>2.0</torque>
-      <fork_torque>2.0</fork_torque>
+      <wheelDiameter>0.04</wheelDiameter>
+      <torque>1.0</torque>
+
       <commandTopic>cmd_vel</commandTopic>
       <odometryTopic>odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
@@ -548,9 +560,15 @@
       <rosDebugLevel>false</rosDebugLevel>
       <odometrySource>encoder</odometrySource>
       <legacyMode>false</legacyMode>
-
 -->
+
     </plugin>
+
+
   </gazebo>
+
+
+
+
 
 </robot>

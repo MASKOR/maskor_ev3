@@ -167,6 +167,10 @@ link_directories(
   ${catkin_LIBRARY_DIRS}
 )
 ## Declare a C++ library
+add_library(maskor_ev3_bobb3e_arm_plugin
+ src/maskor_ev3_bobb3e_arm_plugin.cpp include/maskor_ev3_gazebo/maskor_ev3_bobb3e_arm_plugin.h
+ )
+
  add_library(maskor_ev3_bobb3e_skid_plugin
   src/maskor_ev3_bobb3e_skid_plugin.cpp include/maskor_ev3_gazebo/maskor_ev3_bobb3e_skid_plugin.h
   )
@@ -207,6 +211,12 @@ add_library(maskor_ev3_color_sensor_util
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
+target_link_libraries(maskor_ev3_bobb3e_arm_plugin
+  ${catkin_LIBRARIES}
+  ${GAZEBO_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
+
 target_link_libraries(maskor_ev3_bobb3e_skid_plugin
   ${catkin_LIBRARIES}
   ${GAZEBO_LIBRARIES}
