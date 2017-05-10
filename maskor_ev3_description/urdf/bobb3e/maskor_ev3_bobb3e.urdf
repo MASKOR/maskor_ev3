@@ -35,7 +35,7 @@
 
   <property name="wheel_radius" value="0.12" />
   <property name="wheel_thickness" value="0.05" />
-  <property name="wheel_mass" value="3" />
+  <property name="wheel_mass" value="0.2" />
   <property name="wheel_model_scale" value="1 1 1" />
 
 
@@ -144,7 +144,7 @@
     </collision>
 
     <inertial>
-      <mass value="${wheel_mass}"/>
+      <mass value="3.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -170,7 +170,7 @@
     </collision>
 
     <inertial>
-      <mass value="${wheel_mass}"/>
+      <mass value="3.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -196,7 +196,7 @@
     </collision>
 
     <inertial>
-      <mass value="${wheel_mass}"/>
+      <mass value="3.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -222,7 +222,7 @@
     </collision>
 
     <inertial>
-      <mass value="${wheel_mass}"/>
+      <mass value="3.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -514,8 +514,8 @@
 
       <wheelSeparation>0.13</wheelSeparation>
       <wheelDiameter>0.02</wheelDiameter>
-      <torque>2</torque>
-      <fork_torque>2</fork_torque>
+      <torque>2.0</torque>
+      <fork_torque>2.0</fork_torque>
       <commandTopic>cmd_vel</commandTopic>
       <odometryTopic>odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
@@ -549,7 +549,7 @@
       <odometrySource>encoder</odometrySource>
       <legacyMode>false</legacyMode>
 
-  -->
+-->
     </plugin>
   </gazebo>
 

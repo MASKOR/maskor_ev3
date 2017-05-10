@@ -381,13 +381,13 @@ namespace gazebo {
 
     // ROS: Subscribe to the velocity command topic (usually "cmd_vel")
 
-    /*    ros::SubscribeOptions so =
+        ros::SubscribeOptions so =
             ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 100,
         							boost::bind(&MaskorEv3SkidSteerDrive::cmdVelCallback, this, _1),
                       ros::VoidPtr(), &queue_);
-*/
-    //cmd_vel_subscriber_ = rosnode_->subscribe(so);
-    cmd_vel_subscriber_= rosnode_->subscribe(command_topic_,100,&MaskorEv3SkidSteerDrive::cmdVelCallback,this);
+
+    cmd_vel_subscriber_ = rosnode_->subscribe(so);
+    //cmd_vel_subscriber_= rosnode_->subscribe(command_topic_,100,&MaskorEv3SkidSteerDrive::cmdVelCallback,this);
 
 
     odometry_publisher_ = rosnode_->advertise<nav_msgs::Odometry>(odometry_topic_, 1);
@@ -466,8 +466,8 @@ namespace gazebo {
 
   }
 
-/*  void MaskorEv3SkidSteerDrive::getForkVelocities() {
-    //boost::mutex::scoped_lock scoped_lock(lock);
+  void MaskorEv3SkidSteerDrive::getForkVelocities() {
+    boost::mutex::scoped_lock scoped_lock(lock);
 
     double vu = z_;
 
@@ -476,7 +476,7 @@ namespace gazebo {
     fork_speed_[FORK] = vu;
 
   }
-*/
+
   void MaskorEv3SkidSteerDrive::cmdVelCallback(
       const geometry_msgs::Twist::ConstPtr& cmd_msg) {
 
