@@ -35,7 +35,7 @@
 
   <property name="wheel_radius" value="0.12" />
   <property name="wheel_thickness" value="0.05" />
-  <property name="wheel_mass" value="3" />
+  <property name="wheel_mass" value="0.2" />
   <property name="wheel_model_scale" value="1 1 1" />
 
 
@@ -144,7 +144,7 @@
     </collision>
 
     <inertial>
-      <mass value="${wheel_mass}"/>
+      <mass value="3.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -170,7 +170,7 @@
     </collision>
 
     <inertial>
-      <mass value="${wheel_mass}"/>
+      <mass value="3.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -196,7 +196,7 @@
     </collision>
 
     <inertial>
-      <mass value="${wheel_mass}"/>
+      <mass value="3.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -222,7 +222,7 @@
     </collision>
 
     <inertial>
-      <mass value="${wheel_mass}"/>
+      <mass value="3.0"/>
       <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
     </inertial>
 
@@ -500,7 +500,41 @@
   <!-- ************** -->
 
   <gazebo>
-    <plugin name="maskor_ev3_bobb3e_plugin" filename="libmaskor_ev3_bobb3e_plugin.so">
+
+    <plugin name="maskor_ev3_bobb3e_arm_plugin" filename="libmaskor_ev3_bobb3e_arm_plugin.so">
+      <robotNamespace></robotNamespace>
+      <broadcastTF>1</broadcastTF>
+
+      <leftForkJoint>base_link_to_left_fork_arm</leftForkJoint>
+      <rightForkJoint>base_link_to_right_fork_arm</rightForkJoint>
+      <forkLiftJoint>base_link_to_fork_lift_link</forkLiftJoint>
+
+      <forkTorque>2.0</forkTorque>
+      <commandTopic>cmd_vel</commandTopic>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+      <updateRate>100.0</updateRate>
+    </plugin>
+    
+    <plugin name="maskor_ev3_bobb3e_skid_plugin" filename="libmaskor_ev3_bobb3e_skid_plugin.so">
+      <robotNamespace></robotNamespace>
+      <broadcastTF>1</broadcastTF>
+
+      <leftFrontJoint>base_link_to_left_front_wheel</leftFrontJoint>
+      <rightFrontJoint>base_link_to_right_front_wheel</rightFrontJoint>
+      <leftRearJoint>base_link_to_left_rear_wheel</leftRearJoint>
+      <rightRearJoint>base_link_to_right_rear_wheel</rightRearJoint>
+
+      <wheelSeparation>0.13</wheelSeparation>
+      <wheelDiameter>0.04</wheelDiameter>
+      <torque>1.0</torque>
+
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+      <updateRate>100.0</updateRate>
+
+<!--
       <alwaysOn>true</alwaysOn>
       <updateRate>30</updateRate>
       <frontLeftWheelJoint>base_link_to_left_front_wheel</frontLeftWheelJoint>
@@ -526,7 +560,15 @@
       <rosDebugLevel>false</rosDebugLevel>
       <odometrySource>encoder</odometrySource>
       <legacyMode>false</legacyMode>
+-->
+
     </plugin>
+
+
   </gazebo>
+
+
+
+
 
 </robot>

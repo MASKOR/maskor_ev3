@@ -196,15 +196,15 @@ namespace gazebo
     // ROS: Subscribe to the velocity command topic (usually "cmd_vel")
     ROS_INFO_NAMED("MaskorEV3Bobb3ePlugin", "%s: Try to subscribe to %s!", gazebo_ros_->info(), command_topic_.c_str());
 
-  /*  ros::SubscribeOptions so =
+    ros::SubscribeOptions so =
       ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 100,
 							  boost::bind(&MaskorEV3Bobb3ePlugin::cmdVelCallback, this, _1),
                 ros::VoidPtr(), &queue_);
-                */
-    //cmd_vel_subscriber_ = gazebo_ros_->node()->subscribe(so);
+
+    cmd_vel_subscriber_ = gazebo_ros_->node()->subscribe(so);
 
     //publishers and subscribers
-    cmd_vel_subscriber_ = gazebo_ros_->node()->subscribe(command_topic_, 10, &MaskorEV3Bobb3ePlugin::cmdVelCallback, this );
+    //cmd_vel_subscriber_ = gazebo_ros_->node()->subscribe(command_topic_, 10, &MaskorEV3Bobb3ePlugin::cmdVelCallback, this );
     ROS_INFO_NAMED("MaskorEV3Bobb3ePlugin", "%s: Subscribe to %s!", gazebo_ros_->info(), command_topic_.c_str());
 
     if (this->publish_odom_tf_)
