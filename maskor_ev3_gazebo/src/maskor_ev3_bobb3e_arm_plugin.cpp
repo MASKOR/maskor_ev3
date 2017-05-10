@@ -207,7 +207,7 @@ namespace gazebo {
       (current_time - last_update_time_).Double();
     if (seconds_since_last_update > update_period_) {
 
-      publishOdometry(seconds_since_last_update);
+      //publishOdometry(seconds_since_last_update);
 
       // Update robot in case new velocities have been requested
       getForkVelocities();
