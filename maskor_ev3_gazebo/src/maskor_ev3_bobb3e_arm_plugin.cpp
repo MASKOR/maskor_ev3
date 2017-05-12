@@ -56,6 +56,14 @@ namespace gazebo {
       this->broadcast_tf_ = _sdf->GetElement("broadcastTF")->Get<bool>();
     }
 
+    this->odometry_frame_ = "odom";
+    if (!_sdf->HasElement("odometryFrame")) {
+      ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <odometryFrame>, defaults to \"%s\"",
+          this->robot_namespace_.c_str(), this->odometry_frame_.c_str());
+    } else {
+      this->odometry_frame_ = _sdf->GetElement("odometryFrame")->Get<std::string>();
+    }
+
     this->left_fork_joint_name_ = "left_fork_joint";
     if (!_sdf->HasElement("leftForkJoint")) {
       ROS_WARN_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin (ns = %s) missing <leftForkJoint>, defaults to \"%s\"",
@@ -207,7 +215,7 @@ namespace gazebo {
       (current_time - last_update_time_).Double();
     if (seconds_since_last_update > update_period_) {
 
-      //publishOdometry(seconds_since_last_update);
+      publishOdometry(seconds_since_last_update);
 
       // Update robot in case new velocities have been requested
       getForkVelocities();
@@ -261,6 +269,7 @@ namespace gazebo {
     }
 
     void MaskorEv3ArmPlugin::publishOdometry(double step_time) {
+
       ros::Time current_time = ros::Time::now();
       std::string odom_frame =
         tf::resolve(tf_prefix_, odometry_frame_);
@@ -283,7 +292,7 @@ namespace gazebo {
 
       }
 
-    /*  // publish odom topic
+/*      // publish odom topic
       odom_.pose.pose.position.x = pose.pos.x;
       odom_.pose.pose.position.y = pose.pos.y;
 
@@ -319,8 +328,8 @@ namespace gazebo {
       odom_.child_frame_id = base_footprint_frame;
 
 
-*/
-    odometry_publisher_.publish(odom_);
+
+    odometry_publisher_.publish(odom_);*/
     }
 
     GZ_REGISTER_MODEL_PLUGIN(MaskorEv3ArmPlugin)

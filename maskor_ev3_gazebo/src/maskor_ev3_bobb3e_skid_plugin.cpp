@@ -40,7 +40,7 @@
 #include <algorithm>
 #include <assert.h>
 
-#include <gazebo_plugins/gazebo_ros_skid_steer_drive.h>
+#include <maskor_ev3_gazebo/maskor_ev3_bobb3e_skid_plugin.h>
 
 #include <gazebo/math/gzmath.hh>
 #include <sdf/sdf.hh>
@@ -248,6 +248,7 @@ namespace gazebo {
     joints[LEFT_REAR] = this->parent->GetJoint(left_rear_joint_name_);
     joints[RIGHT_REAR] = this->parent->GetJoint(right_rear_joint_name_);
 
+
     if (!joints[LEFT_FRONT]) {
       char error[200];
       snprintf(error, 200,
@@ -315,7 +316,7 @@ namespace gazebo {
 
     cmd_vel_subscriber_ = rosnode_->subscribe(so);
 
-    odometry_publisher_ = rosnode_->advertise<nav_msgs::Odometry>(odometry_topic_, 1);
+    odometry_publisher_ = rosnode_->advertise<nav_msgs::Odometry>(odometry_topic_, 2);
 
     // start custom queue for diff drive
     this->callback_queue_thread_ =

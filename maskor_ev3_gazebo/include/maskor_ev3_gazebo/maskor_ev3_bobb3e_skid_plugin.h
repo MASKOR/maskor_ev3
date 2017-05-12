@@ -89,6 +89,7 @@ namespace gazebo {
       std::string left_rear_joint_name_;
       std::string right_rear_joint_name_;
 
+
       double wheel_separation_;
       double wheel_diameter_;
       double torque;

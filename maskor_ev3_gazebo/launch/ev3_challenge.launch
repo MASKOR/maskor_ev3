@@ -10,7 +10,7 @@
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <!--<arg name="world_name" value="$(find maskor_ev3_gazebo)/world/ev3_challenge.world"/>-->
+    <arg name="world_name" value="$(find maskor_ev3_gazebo)/world/ev3_challenge.world"/>
     <arg name="debug" value="$(arg debug)" />
     <arg name="gui" value="$(arg gui)" />
     <arg name="paused" value="$(arg paused)"/>
@@ -44,7 +44,7 @@
   <node pkg="rviz" type="rviz"  name="rviz" output="screen">
 
   </node>
-  
+
   <!-- Read joint positions from a GUI, then publish them to joint_states. -->
 
   <node name="joint_state_publisher" pkg="joint_state_publisher"
@@ -66,7 +66,7 @@
 
  <!-- Axes-->
   <param name="axis_linear" value="1" type="int"/>
-	<param name="axis_horizontal" value="3" type="int"/>
+	<param name="axis_horizontal" value="4" type="int"/>
   <param name="axis_angular" value="0" type="int"/>
   <param name="scale_linear" value="2" type="double"/>
   <param name="scale_angular" value="2" type="double"/>

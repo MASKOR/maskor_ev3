@@ -66,6 +66,7 @@ namespace gazebo {
 
     boost::mutex lock;
 
+    std::string turtle_name;
     std::string robot_namespace_;
     std::string command_topic_;
     std::string robot_base_frame_;

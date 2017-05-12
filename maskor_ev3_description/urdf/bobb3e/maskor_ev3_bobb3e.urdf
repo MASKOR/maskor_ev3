@@ -511,10 +511,12 @@
 
       <forkTorque>2.0</forkTorque>
       <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
       <robotBaseFrame>base_footprint</robotBaseFrame>
       <updateRate>100.0</updateRate>
     </plugin>
-    
+
     <plugin name="maskor_ev3_bobb3e_skid_plugin" filename="libmaskor_ev3_bobb3e_skid_plugin.so">
       <robotNamespace></robotNamespace>
       <broadcastTF>1</broadcastTF>
