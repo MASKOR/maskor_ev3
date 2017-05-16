@@ -13,6 +13,9 @@
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <sensor_msgs/JointState.h>
+#include <gazebo_plugins/gazebo_ros_utils.h>
+
 
 // Custom Callback Queue
 #include <ros/callback_queue.h>
@@ -37,10 +40,12 @@ namespace gazebo {
   protected:
     virtual void UpdateChild();
     virtual void FiniChild();
+    void publishJointStates();
 
   private:
     void publishOdometry(double step_time);
     void getForkVelocities();
+
 
     physics::WorldPtr world;
     physics::ModelPtr parent;
@@ -49,6 +54,8 @@ namespace gazebo {
     std::string right_fork_joint_name_;
     std::string left_fork_joint_name_;
     std::string fork_lift_joint_name_;
+
+    GazeboRosPtr gazebo_ros_;
 
     double fork_torque;
     double fork_speed_;
@@ -63,6 +70,8 @@ namespace gazebo {
     nav_msgs::Odometry odom_;
     std::string tf_prefix_;
     bool broadcast_tf_;
+    sensor_msgs::JointState joint_state_;
+    ros::Publisher joint_state_publisher_;
 
     boost::mutex lock;
 
@@ -92,6 +101,8 @@ namespace gazebo {
     double covariance_x_;
     double covariance_y_;
     double covariance_yaw_;
+
+    bool publishJointStates_;
 
   };
 }

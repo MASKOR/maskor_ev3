@@ -37,6 +37,15 @@ namespace gazebo {
     this->parent = _parent;
     this->world = _parent->GetWorld();
 
+    gazebo_ros_ = GazeboRosPtr ( new GazeboRos ( _parent, _sdf, "maskor_ev3_bobb3e_arm_plugin" ) );
+    gazebo_ros_->isInitialized();
+
+
+        joint_state_publisher_ = gazebo_ros_->node()->advertise<sensor_msgs::JointState>("joint_states", 1000);
+        //joint_state_publisher_ = NodeHandle->advertise<sensor_msgs::JointState>("joint_states",1000);
+        ROS_INFO_NAMED("MaskorEV3Bobb3eArmPlugin", "%s: Advertise joint_states!", gazebo_ros_->info());
+
+
     this->robot_namespace_ = "";
     if (!_sdf->HasElement("robotNamespace")) {
       ROS_INFO_NAMED("skid_steer_drive", "GazeboRosSkidSteerDrive Plugin missing <robotNamespace>, defaults to \"%s\"",
@@ -208,6 +217,23 @@ namespace gazebo {
           boost::bind(&MaskorEv3ArmPlugin::UpdateChild, this));
   }
 
+  void MaskorEv3ArmPlugin::publishJointStates()
+  {
+    ros::Time current_time = ros::Time::now();
+
+    joint_state_.header.stamp = current_time;
+    joint_state_.name.resize ( 3 );
+    joint_state_.position.resize ( 3 );
+
+    for ( int i = 0; i < 3; i++ ) {
+      physics::JointPtr joint = joints[i];
+      math::Angle angle = joint->GetAngle ( 0 );
+      joint_state_.name[i] = joint->GetName();
+      joint_state_.position[i] = angle.Radian () ;
+    }
+    joint_state_publisher_.publish ( joint_state_ );
+  }
+
   // Update the controller
   void MaskorEv3ArmPlugin::UpdateChild() {
     common::Time current_time = this->world->GetSimTime();
@@ -216,6 +242,7 @@ namespace gazebo {
     if (seconds_since_last_update > update_period_) {
 
       publishOdometry(seconds_since_last_update);
+      publishJointStates();
 
       // Update robot in case new velocities have been requested
       getForkVelocities();
