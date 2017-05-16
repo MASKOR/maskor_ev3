@@ -11,6 +11,10 @@
 //Include headers for OpenCV GUI handling
 #include <opencv2/highgui/highgui.hpp>
 
+#include <std_msgs/Int8.h>
+
+
+
 //Store all constants for image encodings in the enc namespace to be used later.
 namespace enc = sensor_msgs::image_encodings;
 
@@ -19,6 +23,7 @@ static const char WINDOW[] = "Image Processed";
 
 //Use method of ImageTransport to create image publisher
 image_transport::Publisher pub;
+ros::Publisher chatter_pub;
 
 int LowerH = 0;
 int LowerS = 0;
@@ -27,6 +32,8 @@ int UpperH = 180;
 int UpperS = 196;
 int UpperV = 170;
 int count = 0;
+
+
 
 
 void color_detection(int * rgb, cv::Mat H_histo,cv::Mat S_histo, cv::Mat V_histo, bool * color) {
@@ -98,6 +105,8 @@ void color_detection(int * rgb, cv::Mat H_histo,cv::Mat S_histo, cv::Mat V_histo
 
 void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image)
 {
+
+
     //Convert from the ROS image message to a CvImage suitable for working with OpenCV for processing
     cv_bridge::CvImagePtr cv_ptr;
     try
@@ -250,30 +259,45 @@ void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image)
         //Color Detection for black and white
       color_detection(rgb,H_hist, S_hist, V_hist, color);
 
+      std_msgs::Int8 msg;
+
      if(color[0] == true){
+        msg.data = 0;
         std::cout << "Color: black" << std::endl;
       }
       else if(color[1] == true){
+        msg.data = 1;
         std::cout << "Color: white" << std::endl;
       }
      else if(color[2] ==true){
+       msg.data = 2;
        std::cout << "Color: red" << std::endl;
      }
      else if(color[3] ==true){
+       msg.data = 3;
        std::cout << "Color: green" << std::endl;
      }
      else if(color[4] ==true){
+       msg.data = 4;
        std::cout << "Color: blue" << std::endl;
      }
      else if(color[5] ==true){
+       msg.data = 5;
        std::cout << "Color: yellow" << std::endl;
      }
      else if(color[6] ==true){
+       msg.data = 6;
        std::cout << "Color: brown" << std::endl;
      }
      else if(color[7] ==true){
+       msg.data = 7;
        std::cout << "Color: undifined" << std::endl;
      }
+
+
+
+     ROS_INFO("%d", msg.data);
+     chatter_pub.publish(msg);
 
 
 //      std::cout << "H_hist" << H_hist << std::endl;
@@ -364,6 +388,8 @@ int main(int argc, char **argv)
     * NodeHandle destructed will close down the node.
     */
     ros::NodeHandle nh;
+
+    chatter_pub = nh.advertise<std_msgs::Int8>("chatter", 1000);
     //Create an ImageTransport instance, initializing it with our NodeHandle.
     image_transport::ImageTransport it(nh);
 
