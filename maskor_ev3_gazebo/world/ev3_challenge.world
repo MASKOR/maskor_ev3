@@ -2920,7 +2920,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>white</name>
+              <name>green</name>
             </script>
           </material>
         </visual>
@@ -2944,7 +2944,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>green</name>
+              <name>brown</name>
             </script>
           </material>
         </visual>
@@ -4580,24 +4580,21 @@
       <elevation>0</elevation>
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
-    <light name='user_point_light_0' type='point'>
-      <pose frame=''>0.050869 0.503473 1 0 -0 0</pose>
-      <diffuse>0.5 0.5 0.5 1</diffuse>
-      <specular>0.1 0.1 0.1 1</specular>
-      <attenuation>
-        <range>20</range>
-        <constant>0.5</constant>
-        <linear>0.01</linear>
-        <quadratic>0.001</quadratic>
-      </attenuation>
-      <cast_shadows>0</cast_shadows>
-      <direction>0 0 -1</direction>
-    </light>
     <state world_name='maskor_ev3_challenge'>
-      <sim_time>614 803000000</sim_time>
-      <real_time>129 391393210</real_time>
-      <wall_time>1495030310 30804517</wall_time>
-      <iterations>123571</iterations>
+      <sim_time>797 795000000</sim_time>
+      <real_time>297 705782671</real_time>
+      <wall_time>1495030801 435975948</wall_time>
+      <iterations>182992</iterations>
+      <model name='ground_plane'>
+        <pose frame=''>0.114931 0.220781 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0.114931 0.220781 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
       <model name='tileAC10'>
         <pose frame=''>0 0.14 0.001 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -6498,16 +6495,76 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <light name='user_point_light_0'>
-        <pose frame=''>0.050869 0.503473 1 0 -0 0</pose>
+      <light name='user_point_light_1'>
+        <pose frame=''>0.207621 0.587377 2.85871 0 -0 0</pose>
       </light>
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>0.883039 0.615777 1.14945 0 1.03564 3.14019</pose>
+        <pose frame=''>0.720543 0.622871 1.10696 0 1.1418 3.13619</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Grey</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>0.114931 0.220781 0 0 -0 0</pose>
+    </model>
+    <light name='user_point_light_1' type='point'>
+      <pose frame=''>0.157514 0.481323 1 0 -0 0</pose>
+      <diffuse>0.5 0.5 0.5 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>20</range>
+        <constant>0.5</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <cast_shadows>0</cast_shadows>
+      <direction>0 0 -1</direction>
+    </light>
   </world>
 </sdf>
