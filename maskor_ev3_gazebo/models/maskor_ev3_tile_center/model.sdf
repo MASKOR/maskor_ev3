@@ -9,7 +9,7 @@
        <geometry>
          <mesh>
          <uri>model://maskor_ev3_tile_center/meshes/ev3_tile_center.dae</uri>
-           <scale>5 5 5</scale>
+           <scale>1 1 1</scale>
          </mesh>
        </geometry>
      <material>
