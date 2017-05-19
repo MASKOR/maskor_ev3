@@ -34,11 +34,30 @@ void LineFollower::lineFollowerCallback(const std_msgs::Int8::ConstPtr& msg)
 {
   //ROS_INFO("I heard: [%i]", msg->data);
   geometry_msgs::Twist twist;
+  bool find_whitel = false;
+  bool find_whiter = false;
  //finde linke Seite
  if(lastblackl == false && lastblackr == false){
    drive[3] = true;
    if(msg->data == 0){
      lastblackr = true;
+
+     find_whitel = true;
+   }
+ }
+ else if(find_whitel){
+   drive[0] =false;
+   drive[1] =false;
+   drive[2] =true;
+   drive[3] =false;
+
+   if(msg->data == 0){
+     drive[0] =false;
+     drive[1] =false;
+     drive[2] =false;
+     drive[3] =false;
+     drive[4] =true;
+     find_whitel = false;
    }
  }
  else{
@@ -62,8 +81,22 @@ void LineFollower::lineFollowerCallback(const std_msgs::Int8::ConstPtr& msg)
         drive[1] =false;
         drive[2] =false;
         drive[3] =false;
-        lastblackr = false;
-        lastblackl = true;
+
+        if(msg->data == 0){
+          drive[0] =false;
+          drive[1] =false;
+          drive[2] =false;
+          drive[3] =false;
+          drive[4] =true;
+          //find_whiter = false;
+
+          lastblackr = false;
+          lastblackl = true;
+
+        }
+
+
+
       }
      }
      else if(lastblackr){
@@ -77,8 +110,18 @@ void LineFollower::lineFollowerCallback(const std_msgs::Int8::ConstPtr& msg)
          drive[1] =false;
          drive[2] =false;
          drive[3] =false;
-         lastblackr = true;
-         lastblackl = false;
+
+         if(msg->data == 0){
+           drive[0] =false;
+           drive[1] =false;
+           drive[2] =false;
+           drive[3] =false;
+           drive[4] =true;
+
+           lastblackr = true;
+           lastblackl = false;
+         }
+
        }
      }
    }
@@ -94,7 +137,7 @@ void LineFollower::lineFollowerCallback(const std_msgs::Int8::ConstPtr& msg)
     std::cout << "vörwärts" << '\n';
     twist.linear.x = 2;
     twist.angular.z = 0;
-    //vel_pub_.publish(twist);
+    vel_pub_.publish(twist);
   }
   //RÜCKWÄRTS
   else if(drive[1]){
@@ -102,7 +145,7 @@ void LineFollower::lineFollowerCallback(const std_msgs::Int8::ConstPtr& msg)
     //lastblackr = false;
     twist.linear.x = -2;
     twist.angular.z = 0;
-    //vel_pub_.publish(twist);
+    vel_pub_.publish(twist);
   }
   //RECHTS
   else if(drive[2]){
@@ -110,21 +153,21 @@ void LineFollower::lineFollowerCallback(const std_msgs::Int8::ConstPtr& msg)
     //lastblackr = false;
     twist.linear.x = 0;
     twist.angular.z = -20;
-    //vel_pub_.publish(twist);
+    vel_pub_.publish(twist);
   }
   //LINKS
   else if(drive[3]){
     std::cout << "links" << '\n';
     twist.linear.x = 0;
     twist.angular.z = 20;
-    //vel_pub_.publish(twist);
+    vel_pub_.publish(twist);
   }
   //STOPP
   else if(drive[4]){
     std::cout << "stopp" << '\n';
     twist.linear.x = 0;
     twist.angular.z = 0;
-    //vel_pub_.publish(twist);
+    vel_pub_.publish(twist);
   }
 
 }
