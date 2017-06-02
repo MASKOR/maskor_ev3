@@ -2608,7 +2608,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>brown</name>
+              <name>blue</name>
             </script>
           </material>
         </visual>
@@ -2656,7 +2656,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>blue</name>
+              <name>yellow</name>
             </script>
           </material>
         </visual>
@@ -2752,7 +2752,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>blue</name>
+              <name>yellow</name>
             </script>
           </material>
         </visual>
@@ -2776,7 +2776,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>yellow</name>
+              <name>brown</name>
             </script>
           </material>
         </visual>
@@ -2824,7 +2824,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>brown</name>
+              <name>blue</name>
             </script>
           </material>
         </visual>
@@ -3520,7 +3520,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>brown</name>
+              <name>green</name>
             </script>
           </material>
         </visual>
@@ -3544,7 +3544,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>green</name>
+              <name>yellow</name>
             </script>
           </material>
         </visual>
@@ -3736,7 +3736,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>brown</name>
+              <name>yellow</name>
             </script>
           </material>
         </visual>
@@ -4192,7 +4192,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>yellow</name>
+              <name>blue</name>
             </script>
           </material>
         </visual>
@@ -4216,7 +4216,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>brown</name>
+              <name>yellow</name>
             </script>
           </material>
         </visual>
@@ -4240,7 +4240,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>blue</name>
+              <name>green</name>
             </script>
           </material>
         </visual>
@@ -4264,7 +4264,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>blue</name>
+              <name>green</name>
             </script>
           </material>
         </visual>
@@ -4288,7 +4288,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>yellow</name>
+              <name>blue</name>
             </script>
           </material>
         </visual>
@@ -4312,7 +4312,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>brown</name>
+              <name>yellow</name>
             </script>
           </material>
         </visual>
@@ -4456,7 +4456,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>yellow</name>
+              <name>brown</name>
             </script>
           </material>
         </visual>
@@ -4480,7 +4480,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>green</name>
+              <name>blue</name>
             </script>
           </material>
         </visual>
@@ -4504,7 +4504,7 @@
             <script>
               <uri>model://maskor_ev3_tile/materials/scripts</uri>
               <uri>model://maskor_ev3_tile/materials/textures</uri>
-              <name>brown</name>
+              <name>yellow</name>
             </script>
           </material>
         </visual>
@@ -4581,10 +4581,10 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <state world_name='maskor_ev3_challenge'>
-      <sim_time>797 795000000</sim_time>
-      <real_time>297 705782671</real_time>
-      <wall_time>1495030801 435975948</wall_time>
-      <iterations>182992</iterations>
+      <sim_time>1021 589000000</sim_time>
+      <real_time>194 419457713</real_time>
+      <wall_time>1495533148 133932113</wall_time>
+      <iterations>166996</iterations>
       <model name='ground_plane'>
         <pose frame=''>0.114931 0.220781 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -6501,7 +6501,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>0.720543 0.622871 1.10696 0 1.1418 3.13619</pose>
+        <pose frame=''>0.164491 0.613559 1.38393 0 1.5698 3.14018</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>

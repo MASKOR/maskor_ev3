@@ -1,0 +1,189 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%            $Id: figure-b-i.tex,v 1.1 2014/01/14 22:29:03 stf Exp $
+%         author: Stefan Schiffer
+%    description: standard LaTeX-paper Makefile
+%  last modified: $Date: 2014/01/14 22:29:03 $    
+%             by: $Author: stf $
+%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper]{article}
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  Packages
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \usepackage[utf8]{inputenc}
+
+\usepackage[top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
+
+\usepackage{graphicx,xcolor}               % enable graphics and xcoloring
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,shadows} 
+\usetikzlibrary{positioning,backgrounds} 
+
+% \usepackage{amssymb}
+% \usepackage{textcomp}
+% \usepackage{hyperref}
+
+% \usepackage[active,tightpage]{preview}
+% \PreviewEnvironment{tikzpicture}
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  Macros/Tools
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\input macros.tex
+
+\input legocolors.tex
+
+\pagestyle{empty}
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{center}
+  \begin{tikzpicture}%[scale=2.3]
+
+    \pgfdeclarelayer{base}
+    \pgfdeclarelayer{background}
+    \pgfdeclarelayer{foreground}
+    \pgfdeclarelayer{front}
+
+    \pgfsetlayers{base,background,main,foreground,front}
+
+    \tikzstyle{strasse}    = [draw=none,fill=lego-white]
+    \tikzstyle{randstn}    = [draw=none,fill=lego-black]
+
+    \tikzstyle{kreuz}   = [draw=none,fill=lego-red]
+    \tikzstyle{spot}    = [draw=none,fill=lego-red]
+
+    \tikzstyle{schwarz}    = [draw=none,fill=lego-black]
+    \tikzstyle{grau90}     = [draw=none,fill=lego-black!90!lego-white]
+    \tikzstyle{grau80}     = [draw=none,fill=lego-black!90!lego-white]
+    \tikzstyle{dunkelgrau} = [draw=none,fill=lego-black!75!lego-white]
+    \tikzstyle{grau70}     = [draw=none,fill=lego-black!70!lego-white]
+    \tikzstyle{grau60}     = [draw=none,fill=lego-black!60!lego-white]
+    \tikzstyle{grau}       = [draw=none,fill=lego-black!50!lego-white]
+    \tikzstyle{grau40}     = [draw=none,fill=lego-black!40!lego-white]
+    \tikzstyle{grau30}     = [draw=none,fill=lego-black!30!lego-white]
+    \tikzstyle{hellgrau}   = [draw=none,fill=lego-black!25!lego-white]
+    \tikzstyle{grau20}     = [draw=none,fill=lego-black!20!lego-white]
+    \tikzstyle{grau10}     = [draw=none,fill=lego-black!10!lego-white]
+    \tikzstyle{weiss}      = [draw=none,fill=lego-white]
+
+    \tikzstyle{rot}     = [draw=none,fill=lego-red]
+    \tikzstyle{blau}    = [draw=none,fill=lego-blue]
+    \tikzstyle{gelb}    = [draw=none,fill=lego-yellow]
+    \tikzstyle{gruen}   = [draw=none,fill=lego-green]
+    \tikzstyle{braun}   = [draw=none,fill=lego-brown]
+
+    \tikzstyle{spotlabel} = [draw=gray!78,fill=gray!23,text centered,rounded corners,drop shadow,scale=1.57]
+    \tikzstyle{xinglabel} = [draw=gray!78,fill=gray!23,text centered,circle,drop shadow,scale=1.57]
+
+    \newcommand{\calibspot}[4]{%
+      \draw[#4]  ({#1-1},{#2-1}) rectangle ({#1+0},{#2+0});
+    }
+    
+    %% INVISIBLE FRAME
+    \begin{pgfonlayer}{base}
+      \draw[white,fill=white!90!gray] (2.0,2.00) rectangle (19.00,27);
+    \end{pgfonlayer}{base}
+    %% GRID
+    \begin{pgfonlayer}{base}
+      \draw[gray] (2,2) grid (19,27);
+    \end{pgfonlayer}{base}
+
+    % %% Logos
+    % \begin{pgfonlayer}{base}
+    %   \draw (6.46,55) node[fill=white] {\includegraphics[width=10.5cm]{guter_studienstart_logo.png}};
+    %   \draw (44,55) node[fill=white,left] {\includegraphics[width=9.7cm]{logo_mascor_rechts.pdf}};
+    % \end{pgfonlayer}{base}
+
+    % %% LABELS
+    % \foreach \x in {1,...,45} {
+    % \draw[text centered] ({\x - 0.5},-.5) node {\LARGE$\mathsf{\x}$};
+    % %\pgfmathtruncatemacro{\label}{\x - 5 *  \y +21}
+    % %  \node [darkstyle]  (\x\y) at (1.5*\x,1.5*\y) {\label};
+    % } 
+    % \foreach \y in {1,...,60} {
+    %   \draw[text centered] (-.5,{\y - 0.5}) node {\LARGE$\mathsf{\y}$};
+    % } 
+
+    % \hstrasse{4}{20}{42}
+
+    % \hstrasse{4}{40}{42}
+
+    % \vstrasse{15}{4}{57}
+
+    % \vstrasse{30}{4}{57}
+
+
+    % % oben links
+    % \kreuzung{15}{40}{blau}{gruen}{braun}
+    % \kreuzlabel{18}{36}{I}
+    % % oben rechts
+    % \kreuzung{30}{40}{gruen}{blau}{gelb}
+    % \kreuzlabel{26}{36}{II}
+    % % unten links
+    % \kreuzung{15}{20}{blau}{braun}{gruen}
+    % \kreuzlabel{18}{23}{III}
+    % % unten rechts
+    % \kreuzung{30}{20}{blau}{gelb}{braun}
+    % \kreuzlabel{26}{23}{IV}
+
+    % % von-unten-nach-oben
+    % \spotnord{15}{57}{gelb}{gruen}{braun}{A}
+    % \spotnord{30}{57}{blau}{gruen}{gelb}{B}
+
+    % % von-oben-nach-unten
+    % \spotsued{15}{4}{gelb}{braun}{gruen}{C}
+    % \spotsued{30}{4}{gruen}{braun}{gelb}{D}
+
+    % % von-recht-nach-links
+    % \spotost{42}{20}{blau}{gelb}{gruen}{F}
+    % \spotost{42}{40}{gelb}{blau}{braun}{H}
+
+    % % von-links-nach-rechts
+    % \spotwest{4}{40}{gruen}{blau}{gelb}{G}
+    % \spotwest{4}{20}{gelb}{braun}{blau}{E}
+
+    % % \draw[thick,->] (1.75,0.5) -> (2.25,0.5 );
+    % % \draw[fill=yellow!42] (1.5,.5) circle (.42);
+    
+    %% CALIBRATION AREA
+
+    \draw (10.5,9) node[fill=white] {\Huge\bf CALIBRATION AREA};
+
+    \calibspot{ 8}{7}{1}{schwarz}
+    \calibspot{ 9}{7}{1}{rot}
+    \calibspot{10}{7}{1}{gruen}
+    \calibspot{11}{7}{1}{blau}
+    \calibspot{12}{7}{1}{gelb}
+    \calibspot{13}{7}{1}{braun}
+    \calibspot{14}{7}{1}{weiss}
+
+
+    \calibspot{ 5}{5}{1}{schwarz}
+    \calibspot{ 6}{5}{1}{grau90}
+    \calibspot{ 7}{5}{1}{grau80}
+    \calibspot{ 8}{5}{1}{dunkelgrau}
+    \calibspot{ 9}{5}{1}{grau70}
+    \calibspot{10}{5}{1}{grau60}
+    \calibspot{11}{5}{1}{grau}
+    \calibspot{12}{5}{1}{grau40}
+    \calibspot{13}{5}{1}{grau30}
+    \calibspot{14}{5}{1}{hellgrau}
+    \calibspot{15}{5}{1}{grau20}
+    \calibspot{16}{5}{1}{grau10}
+    \calibspot{17}{5}{1}{weiss}
+
+    \end{tikzpicture}
+%  \end{center}
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
