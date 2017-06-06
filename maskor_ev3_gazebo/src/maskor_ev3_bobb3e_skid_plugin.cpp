@@ -238,7 +238,7 @@ namespace gazebo {
     wheel_speed_[RIGHT_FRONT] = 0;
     wheel_speed_[LEFT_FRONT] = 0;
     wheel_speed_[RIGHT_REAR] = 0;
-	wheel_speed_[LEFT_REAR] = 0;
+    wheel_speed_[LEFT_REAR] = 0;
 
     x_ = 0;
     rot_ = 0;
@@ -318,7 +318,10 @@ namespace gazebo {
     cmd_vel_subscriber_ = rosnode_->subscribe(so);
 
     odometry_publisher_ = rosnode_->advertise<nav_msgs::Odometry>(odometry_topic_, 2);
+    joint_state_publisher_ = rosnode_->advertise<sensor_msgs::JointState>("joint_states", 1000);
 
+
+    
     // start custom queue for diff drive
     this->callback_queue_thread_ =
       boost::thread(boost::bind(&GazeboRosSkidSteerDrive::QueueThread, this));
@@ -338,7 +341,8 @@ namespace gazebo {
     if (seconds_since_last_update > update_period_) {
 
       publishOdometry(seconds_since_last_update);
-
+      publishJointStates();
+      
       // Update robot in case new velocities have been requested
       getWheelVelocities();
 #if GAZEBO_MAJOR_VERSION > 2
@@ -356,6 +360,8 @@ namespace gazebo {
       last_update_time_+= common::Time(update_period_);
 
     }
+
+    
   }
 
   // Finalize the controller

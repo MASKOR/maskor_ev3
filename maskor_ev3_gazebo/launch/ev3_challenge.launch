@@ -46,13 +46,13 @@
   </node>
 
   <!-- Read joint positions from a GUI, then publish them to joint_states. -->
-
+  <!--
   <node name="joint_state_publisher" pkg="joint_state_publisher"
          type="joint_state_publisher">
      <param name="rate" value="30"/>
      <param name="use_gui" value="false"/>
    </node>
-
+-->
 
 
 
