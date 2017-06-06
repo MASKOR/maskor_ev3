@@ -173,7 +173,7 @@ namespace gazebo {
 
   void MaskorEv3ArmPlugin::publishJointStates()
   {
-    ROS_INFO_NAMED("MaskorEV3Bobb3eArmPlugin", "MaskorEV3Bobb3eArmPlugin : publishJointStates()");
+    //ROS_INFO_NAMED("MaskorEV3Bobb3eArmPlugin", "MaskorEV3Bobb3eArmPlugin : publishJointStates()");
 
     ros::Time current_time = ros::Time::now();
 
