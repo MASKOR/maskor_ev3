@@ -111,6 +111,7 @@ namespace gazebo {
       nav_msgs::Odometry odom_;
       std::string tf_prefix_;
       bool broadcast_tf_;
+      bool publishJointStates_;
 
       boost::mutex lock;
 

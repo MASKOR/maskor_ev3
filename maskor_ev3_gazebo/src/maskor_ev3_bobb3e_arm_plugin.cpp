@@ -29,10 +29,14 @@ namespace gazebo {
     gazebo_ros_ = GazeboRosPtr ( new GazeboRos ( _parent, _sdf, "maskor_ev3_bobb3e_arm_plugin" ) );
     gazebo_ros_->isInitialized();
 
-    this->publishJointStates_=true;
-    if (publishJointStates_) {
-      joint_state_publisher_ = gazebo_ros_->node()->advertise<sensor_msgs::JointState>("joint_states", 1000);
-      ROS_INFO_NAMED("MaskorEV3Bobb3eArmPlugin", "%s: Advertise joint_states!", gazebo_ros_->info());
+    this->publishJointStates_ = false;
+    if (!_sdf->HasElement("publishArmJointStates")) {
+      if (!this->publishJointStates_)
+	ROS_INFO_NAMED("MaskorEv3ArmPlugin", "MaskorEv3ArmPlugin Plugin (ns = %s) missing <publishArmJointStates>, defaults to false.",this->robot_namespace_.c_str());
+      else ROS_INFO_NAMED("MaskorEv3ArmPlugin", "MaskorEv3ArmPlugin Plugin (ns = %s) missing <publishArmJointStates>, defaults to true.",this->robot_namespace_.c_str());
+
+    } else {
+      this->publishJointStates_ = _sdf->GetElement("publishArmJointStates")->Get<bool>();
     }
 
     this->robot_namespace_ = "";
@@ -44,7 +48,7 @@ namespace gazebo {
         _sdf->GetElement("robotNamespace")->Get<std::string>() + "/";
     }
 
-    this->left_fork_joint_name_ = "left_fork_joint";
+    this->left_fork_joint_name_ = "base_link_to_left_fork_arm";
     if (!_sdf->HasElement("leftForkJoint")) {
       ROS_WARN_NAMED("MaskorEV3Bobb3eArmPlugin", "MaskorEV3Bobb3eArmPlugin Plugin (ns = %s) missing <leftForkJoint>, defaults to \"%s\"",
 		     this->robot_namespace_.c_str(), this->left_fork_joint_name_.c_str());
@@ -52,7 +56,7 @@ namespace gazebo {
       this->left_fork_joint_name_ = _sdf->GetElement("leftForkJoint")->Get<std::string>();
     }
 
-    this->right_fork_joint_name_ = "right_fork_joint";
+    this->right_fork_joint_name_ = "base_link_to_right_fork_arm";
     if (!_sdf->HasElement("rightForkJoint")) {
       ROS_WARN_NAMED("MaskorEV3Bobb3eArmPlugin", "MaskorEV3Bobb3eArmPlugin Plugin (ns = %s) missing <rightForkJoint>, defaults to \"%s\"",
 		     this->robot_namespace_.c_str(), this->right_fork_joint_name_.c_str());
@@ -60,7 +64,7 @@ namespace gazebo {
       this->right_fork_joint_name_ = _sdf->GetElement("rightForkJoint")->Get<std::string>();
     }
 
-    this->fork_lift_joint_name_ = "fork_lift_joint";
+    this->fork_lift_joint_name_ = "base_link_to_fork_lift_link";
     if (!_sdf->HasElement("forkLiftJoint")) {
       ROS_WARN_NAMED("MaskorEV3Bobb3eArmPlugin", "MaskorEV3Bobb3eArmPlugin Plugin (ns = %s) missing <forkLiftJoint>, defaults to \"%s\"",
 		     this->robot_namespace_.c_str(), this->fork_lift_joint_name_.c_str());
@@ -124,14 +128,14 @@ namespace gazebo {
     // Make sure the ROS node for Gazebo has already been initialized
     if (!ros::isInitialized())
       {
-	ROS_FATAL_STREAM_NAMED("skid_steer_drive", "A ROS node for Gazebo has not been initialized, unable to load plugin. "
+	ROS_FATAL_STREAM_NAMED("MaskorEV3Bobb3eArmPlugin", "A ROS node for Gazebo has not been initialized, unable to load plugin. "
 			       << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
 	return;
       }
 
     rosnode_ = new ros::NodeHandle(this->robot_namespace_);
 
-    ROS_INFO_NAMED("", "Starting MaskorEV3Bobb3eArmPlugin Plugin (ns = %s)", this->robot_namespace_.c_str());
+    ROS_INFO_NAMED("MaskorEV3Bobb3eArmPlugin", "Starting MaskorEV3Bobb3eArmPlugin Plugin (ns = %s)", this->robot_namespace_.c_str());
 
     tf_prefix_ = tf::getPrefixParam(*rosnode_);
 
@@ -143,7 +147,19 @@ namespace gazebo {
 
     cmd_vel_subscriber_ = rosnode_->subscribe(so);
 
+    /*
+    if(publishJointStates_) {
+      joint_state_publisher_ = rosnode_->advertise<sensor_msgs::JointState>("joint_states", 1000);
+    }
+    */
 
+    if (publishJointStates_) {
+      joint_state_publisher_ = rosnode_->advertise<sensor_msgs::JointState>("joint_states", 1000);
+      ROS_INFO_NAMED("MaskorEV3Bobb3eArmPlugin", "%s: Advertise joint_states!", gazebo_ros_->info());
+    }
+
+
+    
 
     // start custom queue for diff drive
     this->callback_queue_thread_ =
@@ -157,6 +173,8 @@ namespace gazebo {
 
   void MaskorEv3ArmPlugin::publishJointStates()
   {
+    ROS_INFO_NAMED("MaskorEV3Bobb3eArmPlugin", "MaskorEV3Bobb3eArmPlugin : publishJointStates()");
+
     ros::Time current_time = ros::Time::now();
 
     joint_state_.header.stamp = current_time;
@@ -165,9 +183,9 @@ namespace gazebo {
 
     for ( int i = 0; i < NUM_JOINTS; i++ ) {
       physics::JointPtr joint = joints[i];
-      math::Angle angle = joint->GetAngle ( 0 );
+      math::Angle angle = joint->GetAngle( 0 );
       joint_state_.name[i] = joint->GetName();
-      joint_state_.position[i] = angle.Radian () ;
+      joint_state_.position[i] = angle.Radian() ;
     }
     joint_state_publisher_.publish ( joint_state_ );
   }
@@ -192,8 +210,10 @@ namespace gazebo {
       joints[FORK_LIFT]->SetVelocity(0, fork_speed_);
 #endif
 
-      publishJointStates();
-	    
+      if(publishJointStates_) {
+	publishJointStates();
+      }
+      
       last_update_time_+= common::Time(update_period_);
     }
   }
@@ -232,7 +252,5 @@ namespace gazebo {
     }
   }
 
-}
-
-GZ_REGISTER_MODEL_PLUGIN(MaskorEv3ArmPlugin)
+  GZ_REGISTER_MODEL_PLUGIN(MaskorEv3ArmPlugin)
 }

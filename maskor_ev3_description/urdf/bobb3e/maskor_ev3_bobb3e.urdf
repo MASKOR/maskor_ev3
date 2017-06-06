@@ -505,7 +505,7 @@
 
     <plugin name="maskor_ev3_bobb3e_arm_plugin" filename="libmaskor_ev3_bobb3e_arm_plugin.so">
       <robotNamespace></robotNamespace>
-      <broadcastTF>1</broadcastTF>
+      <publishArmJointStates>1</publishArmJointStates>
 
       <leftForkJoint>base_link_to_left_fork_arm</leftForkJoint>
       <rightForkJoint>base_link_to_right_fork_arm</rightForkJoint>
@@ -513,16 +513,14 @@
 
       <forkTorque>2.0</forkTorque>
       <commandTopic>cmd_vel</commandTopic>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
-      <robotBaseFrame>base_footprint</robotBaseFrame>
       <updateRate>100.0</updateRate>
     </plugin>
 
     <plugin name="maskor_ev3_bobb3e_skid_plugin" filename="libmaskor_ev3_bobb3e_skid_plugin.so">
       <robotNamespace></robotNamespace>
       <broadcastTF>1</broadcastTF>
-
+      <publishWheelJointStates>1</publishWheelJointStates>
+      
       <leftFrontJoint>base_link_to_left_front_wheel</leftFrontJoint>
       <rightFrontJoint>base_link_to_right_front_wheel</rightFrontJoint>
       <leftRearJoint>base_link_to_left_rear_wheel</leftRearJoint>
