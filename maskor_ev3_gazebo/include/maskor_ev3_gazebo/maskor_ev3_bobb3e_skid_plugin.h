@@ -51,6 +51,8 @@
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <sensor_msgs/JointState.h>
+
 
 // Custom Callback Queue
 #include <ros/callback_queue.h>
@@ -68,7 +70,7 @@ namespace gazebo {
   class GazeboRosSkidSteerDrive : public ModelPlugin {
 
     public:
-	  GazeboRosSkidSteerDrive();
+      GazeboRosSkidSteerDrive();
       ~GazeboRosSkidSteerDrive();
       void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf);
 
@@ -79,7 +81,9 @@ namespace gazebo {
     private:
       void publishOdometry(double step_time);
       void getWheelVelocities();
-
+      void publishJointStates();
+    
+      
       physics::WorldPtr world;
       physics::ModelPtr parent;
       event::ConnectionPtr update_connection_;
@@ -89,21 +93,25 @@ namespace gazebo {
       std::string left_rear_joint_name_;
       std::string right_rear_joint_name_;
 
+
       double wheel_separation_;
       double wheel_diameter_;
       double torque;
       double wheel_speed_[4];
 
-      physics::JointPtr joints[4];
+      physics::JointPtr joints_[4];
 
       // ROS STUFF
       ros::NodeHandle* rosnode_;
       ros::Publisher odometry_publisher_;
       ros::Subscriber cmd_vel_subscriber_;
+      ros::Publisher joint_state_publisher_;
+      sensor_msgs::JointState joint_state_;
       tf::TransformBroadcaster *transform_broadcaster_;
       nav_msgs::Odometry odom_;
       std::string tf_prefix_;
       bool broadcast_tf_;
+      bool publishJointStates_;
 
       boost::mutex lock;
 
