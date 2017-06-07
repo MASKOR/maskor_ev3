@@ -26,15 +26,13 @@
   <arg name="z" default="1"/>
   <arg name="roll" default="0.0"/>
   <arg name="pitch" default="0.0"/>
-  <arg name="yaw" default="0"/>
+  <arg name="yaw" default="1.5708"/>
 
 
   <!-- push robot_description to factory and spawn robot in gazebo-->
   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
         args=" -urdf -model ev3_bobb3e -param robot_description -z 1.0 -unpause -x $(arg x) -y $(arg y) -z $(arg z)
         -R $(arg roll) -P $(arg pitch) -Y $(arg yaw)" respawn="false" output="screen" />
-
-
 
 
   <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">

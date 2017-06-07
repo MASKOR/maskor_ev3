@@ -64,6 +64,15 @@
 
 namespace gazebo {
 
+  enum {
+    RIGHT_FRONT=0,
+    LEFT_FRONT=1,
+    RIGHT_REAR=2,
+    LEFT_REAR=3,
+    NUM_JOINTS=4
+  };
+
+  
   class Joint;
   class Entity;
 
@@ -97,9 +106,9 @@ namespace gazebo {
       double wheel_separation_;
       double wheel_diameter_;
       double torque;
-      double wheel_speed_[4];
+      double wheel_speed_[NUM_JOINTS];
 
-      physics::JointPtr joints_[4];
+      physics::JointPtr joints_[NUM_JOINTS];
 
       // ROS STUFF
       ros::NodeHandle* rosnode_;

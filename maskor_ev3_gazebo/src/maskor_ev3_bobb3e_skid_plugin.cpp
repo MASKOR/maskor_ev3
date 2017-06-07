@@ -56,14 +56,6 @@
 
 namespace gazebo {
 
-  enum {
-    RIGHT_FRONT=0,
-    LEFT_FRONT=1,
-    RIGHT_REAR=2,
-    LEFT_REAR=3,
-    NUM_JOINTS=4
-  };
-
   GazeboRosSkidSteerDrive::GazeboRosSkidSteerDrive() {}
 
   // Destructor
@@ -91,7 +83,7 @@ namespace gazebo {
     if (!_sdf->HasElement("broadcastTF")) {
       if (!this->broadcast_tf_)
     	  ROS_INFO_NAMED("MaskorEV3Bobb3ePlugin", "MaskorEV3Bobb3ePlugin Plugin (ns = %s) missing <broadcastTF>, defaults to false.",this->robot_namespace_.c_str());
-      else ROS_INFO_NAMED("skid_steer_drive", "MaskorEV3Bobb3ePlugin Plugin (ns = %s) missing <broadcastTF>, defaults to true.",this->robot_namespace_.c_str());
+      else ROS_INFO_NAMED("MaskorEV3Bobb3ePlugin", "MaskorEV3Bobb3ePlugin Plugin (ns = %s) missing <broadcastTF>, defaults to true.",this->robot_namespace_.c_str());
 
     } else {
       this->broadcast_tf_ = _sdf->GetElement("broadcastTF")->Get<bool>();
@@ -224,7 +216,7 @@ namespace gazebo {
     }
 
     this->covariance_y_ = 0.0001;
-    if (!_sdf->HasElement("MaskorEV3Bobb3ePlugin")) {
+    if (!_sdf->HasElement("covariance_y")) {
       ROS_WARN_NAMED("MaskorEV3Bobb3ePlugin", "MaskorEV3Bobb3ePlugin Plugin (ns = %s) missing <covariance_y>, defaults to %f",
           this->robot_namespace_.c_str(), covariance_y_);
     } else {
@@ -320,8 +312,11 @@ namespace gazebo {
     ROS_INFO_NAMED("MaskorEV3Bobb3ePlugin", "Starting MaskorEV3Bobb3ePlugin Plugin (ns = %s)", this->robot_namespace_.c_str());
 
     tf_prefix_ = tf::getPrefixParam(*rosnode_);
-    transform_broadcaster_ = new tf::TransformBroadcaster();
 
+    if(this->broadcast_tf_) {
+      transform_broadcaster_ = new tf::TransformBroadcaster();
+    }
+    
     // ROS: Subscribe to the velocity command topic (usually "cmd_vel")
     ros::SubscribeOptions so =
       ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 1,
@@ -334,7 +329,7 @@ namespace gazebo {
 
     if(publishJointStates_) {
       joint_state_publisher_ = rosnode_->advertise<sensor_msgs::JointState>("joint_states", 1000);
-      ROS_INFO_NAMED("MaskorEV3Bobb3eArmPlugin", "MaskorEV3Bobb3eArmPlugin: Advertising joint_states!");
+      ROS_INFO_NAMED("MaskorEV3Bobb3ePlugin", "MaskorEV3Bobb3ePlugin: Advertising joint_states!");
     }
 
     
@@ -442,7 +437,6 @@ namespace gazebo {
     	transform_broadcaster_->sendTransform(
         tf::StampedTransform(base_footprint_to_odom, current_time,
             odom_frame, base_footprint_frame));
-
     }
 
     // publish odom topic
