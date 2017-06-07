@@ -18,6 +18,7 @@
 
 #include <gazebo/common/common.hh>
 #include <gazebo/physics/physics.hh>
+#include <gazebo_plugins/gazebo_ros_utils.h>
 #include <sdf/sdf.hh>
 
 #include <ros/advertise_options.h>
@@ -42,6 +43,7 @@ namespace gazebo {
     private:
       void publishGyroSensorMessage();
 
+      GazeboRosPtr gazebo_ros_;
       physics::ModelPtr parent_;
       event::ConnectionPtr update_connection_;
       boost::shared_ptr<ros::NodeHandle> rosnode_;

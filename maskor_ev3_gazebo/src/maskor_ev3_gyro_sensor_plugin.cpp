@@ -22,6 +22,9 @@ namespace gazebo
       sdf::ElementPtr sdf) 
   {
 
+    gazebo_ros_ = GazeboRosPtr ( new GazeboRos ( parent, sdf, "maskor_ev3_gyro_sensor_plugin" ) );
+    gazebo_ros_->isInitialized();
+  
     parent_ = parent;
 
     /* Parse parameters */
@@ -98,7 +101,7 @@ namespace gazebo
  
     gyro_sensor_pub_ = rosnode_->advertise<maskor_ev3_msgs::GyroSensor>(gyro_sensor_topic_, 1);
 
-    // start custom queue for diff drive
+    // start custom queue 
     callback_queue_thread_ = 
       boost::thread(boost::bind(&MaskorEV3GyroSensorPlugin::QueueThread, this));
 
@@ -162,65 +165,8 @@ namespace gazebo
     
     gyro_sensor_pub_.publish(gyro_sensor_msg_);
 
-
-    /*
-
-    tf::Quaternion qt(pose.rot.x, pose.rot.y, pose.rot.z, pose.rot.w);
-    tf::Vector3 vt(pose.pos.x, pose.pos.y, pose.pos.z);
-
-    tf::Transform base_footprint_to_odom(qt, vt);
-    transform_broadcaster_->sendTransform(
-        tf::StampedTransform(base_footprint_to_odom, current_time, odom_frame,
-            base_footprint_frame));
-
-    // publish odom topic
-    odom_.pose.pose.position.x = pose.pos.x;
-    odom_.pose.pose.position.y = pose.pos.y;
-
-    odom_.pose.pose.orientation.x = pose.rot.x;
-    odom_.pose.pose.orientation.y = pose.rot.y;
-    odom_.pose.pose.orientation.z = pose.rot.z;
-    odom_.pose.pose.orientation.w = pose.rot.w;
-    odom_.pose.covariance[0] = 0.00001;
-    odom_.pose.covariance[7] = 0.00001;
-    odom_.pose.covariance[14] = 1000000000000.0;
-    odom_.pose.covariance[21] = 1000000000000.0;
-    odom_.pose.covariance[28] = 1000000000000.0;
-    odom_.pose.covariance[35] = 0.001;
-
-    // get velocity in /odom frame
-    math::Vector3 linear;
-    linear.x = (pose.pos.x - last_odom_pose_.pos.x) / step_time;
-    linear.y = (pose.pos.y - last_odom_pose_.pos.y) / step_time;
-    if (rot_ > M_PI / step_time) 
-    { 
-      // we cannot calculate the angular velocity correctly
-      odom_.twist.twist.angular.z = rot_;
-    } 
-    else 
-    {
-      float last_yaw = last_odom_pose_.rot.GetYaw();
-      float current_yaw = pose.rot.GetYaw();
-      while (current_yaw < last_yaw - M_PI) current_yaw += 2 * M_PI;
-      while (current_yaw > last_yaw + M_PI) current_yaw -= 2 * M_PI;
-      float angular_diff = current_yaw - last_yaw;
-      odom_.twist.twist.angular.z = angular_diff / step_time;
-    }
-    last_odom_pose_ = pose;
-
-    // convert velocity to child_frame_id (aka base_footprint)
-    float yaw = pose.rot.GetYaw();
-    odom_.twist.twist.linear.x = cosf(yaw) * linear.x + sinf(yaw) * linear.y;
-    odom_.twist.twist.linear.y = cosf(yaw) * linear.y - sinf(yaw) * linear.x;
-
-    odom_.header.stamp = current_time;
-    odom_.header.frame_id = odom_frame;
-    odom_.child_frame_id = base_footprint_frame;
-
-    odometry_pub_.publish(odom_);
-
-    */
+    last_pose_ = parent_->GetWorldPose();
   }
-
+  
   GZ_REGISTER_MODEL_PLUGIN(MaskorEV3GyroSensorPlugin)
 }

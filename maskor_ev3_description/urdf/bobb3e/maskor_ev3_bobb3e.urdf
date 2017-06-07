@@ -259,7 +259,7 @@
   <link name="gyro_sensor_link">
     <visual>
       <geometry>
-	<box size="0.01 0.01 0.01"/>
+	<box size="0.002 0.002 0.004"/>
       </geometry>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <material name="black"/>
@@ -498,11 +498,11 @@
 
 
   <!-- ************** -->
-  <!-- Plugins        -->
+  <!-- EV3 Plugins    -->
   <!-- ************** -->
 
   <gazebo>
-
+    
     <plugin name="maskor_ev3_bobb3e_arm_plugin" filename="libmaskor_ev3_bobb3e_arm_plugin.so">
       <robotNamespace></robotNamespace>
       <publishArmJointStates>true</publishArmJointStates>
@@ -515,6 +515,8 @@
       <commandTopic>cmd_vel</commandTopic>
       <updateRate>100.0</updateRate>
     </plugin>
+
+    
 
     <plugin name="maskor_ev3_bobb3e_skid_plugin" filename="libmaskor_ev3_bobb3e_skid_plugin.so">
       <robotNamespace></robotNamespace>
@@ -538,9 +540,17 @@
       <covariance_x>0.0001</covariance_x>      
       <covariance_y>0.0001</covariance_y>      
       <covariance_yaw>0.01</covariance_yaw>      
+    </plugin>  
 
 
-    </plugin>
+    
+    <plugin name="maskor_ev3_gyro_sensor_plugin" filename="libmaskor_ev3_gyro_sensor_plugin.so">
+      <robotNamespace></robotNamespace>
+      <gyroSensorTopic>gyro_sensor</gyroSensorTopic>
+      <gyroSensorFrame>gyro_sensor_link</gyroSensorFrame>
+      <rate>20.0</rate>
+    </plugin>    
+
   </gazebo>
 
   <!-- ************** -->
@@ -620,11 +630,10 @@
        </noise>
      </ray>
      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
-       <topicName>/rrbot/laser/scan</topicName>
+       <topicName>scan</topicName>
        <frameName>infrared_sensor_link</frameName>
      </plugin>
    </sensor>
  </gazebo>
-
 
 </robot>
