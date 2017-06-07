@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(maskor_ev3_gazebo)
 
+set(DCMAKE_BUILD_TYPE=Debug)
+
+
 ## Add support for C++11, supported in ROS Kinetic and newer
 # add_definitions(-std=c++11)
 
@@ -10,7 +13,7 @@ project(maskor_ev3_gazebo)
 find_package(GAZEBO REQUIRED)
 find_package(SDFormat REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
-find_package( OpenCV REQUIRED )
+find_package(OpenCV REQUIRED )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
 
 
@@ -39,12 +42,13 @@ find_package(catkin REQUIRED COMPONENTS
   diagnostic_updater
   camera_info_manager
   std_msgs
-	polled_camera
-
+  polled_camera
+  maskor_ev3_msgs
 )
 
 
-include_directories(include
+include_directories(
+  include
   ${Boost_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
@@ -141,7 +145,7 @@ include_directories(include
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES maskor_ev3_gazebo maskor_ev3_color_sensor_plugin maskor_ev3_color_sensor_util
+  LIBRARIES maskor_ev3_gazebo maskor_ev3_color_sensor_plugin maskor_ev3_color_sensor_util maskor_ev3_gyro_sensor_plugin
   CATKIN_DEPENDS roscpp
   DEPENDS GAZEBO SDFormat
 	#gazebo_ros_camera_utils
@@ -153,14 +157,14 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${GAZEBO_INCLUDE_DIRS}
-  include
-
 )
 message(STATUS,${catkin_INCLUDE_DIRS})
+
+message("CATKIN_INCLUDE_DIRS: ${catkin_INCLUDE_DIRS}")
 
 link_directories(
   ${GAZEBO_LIBRARY_DIRS}
@@ -187,6 +191,11 @@ add_library(maskor_ev3_color_sensor_plugin
 add_library(maskor_ev3_color_sensor_util
 	src/maskor_ev3_color_sensor_util.cpp include/maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h
 )
+
+add_library(maskor_ev3_gyro_sensor_plugin
+	src/maskor_ev3_gyro_sensor_plugin.cpp include/maskor_ev3_gazebo/maskor_ev3_gyro_sensor_plugin.h
+)
+
 
 
 ## Add cmake target dependencies of the library
@@ -215,6 +224,12 @@ add_executable(maskor_ev3_line_follower_node
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+add_dependencies(maskor_ev3_gyro_sensor_plugin maskor_ev3_msgs_generate_messages_cpp)
+add_dependencies(maskor_ev3_gyro_sensor_plugin ${catkin_EXPORTED_TARGETS})
+ 
+
+
+
 ## Specify libraries to link a library or executable target against
 target_link_libraries(maskor_ev3_bobb3e_arm_plugin
   ${catkin_LIBRARIES}
@@ -233,6 +248,12 @@ target_link_libraries(maskor_ev3_bobb3e_plugin
    ${GAZEBO_LIBRARIES}
    ${Boost_LIBRARIES}
  )
+
+target_link_libraries(maskor_ev3_gyro_sensor_plugin
+  ${catkin_LIBRARIES}
+  ${GAZEBO_LIBRARIES}
+  ${Boost_LIBRARIES}
+)
 
 target_link_libraries(maskor_ev3_color_sensor_plugin
 	  gazebo_ros_camera_utils
@@ -305,4 +326,3 @@ target_link_libraries(maskor_ev3_line_follower_node
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-set(DCMAKE_BUILD_TYPE=Debug)
