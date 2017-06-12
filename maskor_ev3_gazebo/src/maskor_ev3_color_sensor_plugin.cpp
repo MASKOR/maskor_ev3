@@ -1,122 +1,176 @@
 /*
- * Copyright 2013 Open Source Robotics Foundation
+ * MASKOR EV3 GYRO SENSOR PLUGIN
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) 2017 
+ * Marcel Stüttgen 
+ * stuettgen@fh-aachen.de
+ * https://www.maskor.fh-aachen.de
  *
 */
-
-/*
- @mainpage
-   Desc: GazeboRosCamera plugin for simulating cameras in Gazebo
-   Author: John Hsu
-   Date: 24 Sept 2008
-*/
-
-#include <string>
-#include <iostream>
-
-#include <gazebo/sensors/Sensor.hh>
-#include <gazebo/sensors/CameraSensor.hh>
-#include <gazebo/sensors/SensorTypes.hh>
 
 #include <maskor_ev3_gazebo/maskor_ev3_color_sensor_plugin.h>
 
-
-namespace gazebo
+namespace gazebo 
 {
-// Register this plugin with the simulator
-GZ_REGISTER_SENSOR_PLUGIN(GazeboRosCamera)
 
-////////////////////////////////////////////////////////////////////////////////
-// Constructor
-GazeboRosCamera::GazeboRosCamera()
-{
-}
+  MaskorEV3ColorSensorPlugin::MaskorEV3ColorSensorPlugin() {}
 
-////////////////////////////////////////////////////////////////////////////////
-// Destructor
-GazeboRosCamera::~GazeboRosCamera()
-{
-  ROS_DEBUG_STREAM_NAMED("camera","Unloaded");
-}
+  MaskorEV3ColorSensorPlugin::~MaskorEV3ColorSensorPlugin() {}
 
-void GazeboRosCamera::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf)
-{
-  //std::cout << "HEY" << std::endl;
-  // Make sure the ROS node for Gazebo has already been initialized
-  if (!ros::isInitialized())
+  // Load the controller
+  void MaskorEV3ColorSensorPlugin::Load(physics::ModelPtr parent, 
+      sdf::ElementPtr sdf) 
   {
-    ROS_FATAL_STREAM("A ROS node for Gazebo has not been initialized, unable to load plugin. "
-      << "Load the Gazebo system plugin 'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
-    return;
-  }
 
-  CameraPlugin::Load(_parent, _sdf);
-  // copying from CameraPlugin into GazeboRosCameraUtils
-  this->parentSensor_ = this->parentSensor;
-  this->width_ = this->width;
-  this->height_ = this->height;
-  this->depth_ = this->depth;
-  this->format_ = this->format;
-  this->camera_ = this->camera;
+    gazebo_ros_ = GazeboRosPtr ( new GazeboRos ( parent, sdf, "maskor_ev3_gyro_sensor_plugin" ) );
+    gazebo_ros_->isInitialized();
+  
+    parent_ = parent;
 
-  GazeboRosCameraUtils::Load(_parent, _sdf);
-}
+    /* Parse parameters */
 
-////////////////////////////////////////////////////////////////////////////////
-// Update the controller
-void GazeboRosCamera::OnNewFrame(const unsigned char *_image,
-    unsigned int _width, unsigned int _height, unsigned int _depth,
-    const std::string &_format)
-{
-  GazeboRosCameraUtils * test = new GazeboRosCameraUtils();
-
-# if GAZEBO_MAJOR_VERSION >= 7
-  common::Time sensor_update_time = this->parentSensor_->LastMeasurementTime();
-# else
-  common::Time sensor_update_time = this->parentSensor_->GetLastMeasurementTime();
-# endif
-
-  if (!this->parentSensor->IsActive())
-  {
-    if ((*this->image_connect_count_) > 0)
-      // do this first so there's chance for sensor to run once after activated
-      this->parentSensor->SetActive(true);
-  }
-  else
-  {
-    if ((*this->image_connect_count_) > 0)
+    robot_namespace_ = "";
+    if (!sdf->HasElement("robotNamespace")) 
     {
-      // OnNewFrame is triggered at the gazebo sensor <update_rate>
-      // while there is also a plugin <updateRate> that can throttle the
-      // rate down further (but then why not reduce the sensor rate?
-      // what is the use case?).
-      // Setting the <updateRate> to zero will make this plugin
-      // update at the gazebo sensor <update_rate>, update_period_ will be
-      // zero and the conditional always will be true.
-      //std::cout << "" << std::endl;
-      if (sensor_update_time - this->last_update_time_ >= this->update_period_)
-      {
-        this->PutCameraData(_image, sensor_update_time);
-        //Test();
-        //this->PutCameraData(_image,1);
-        //test->Test();
-        this->PublishCameraInfo(sensor_update_time);
-        this->last_update_time_ = sensor_update_time;
+      ROS_INFO("MaskorEV3ColorSensorPlugin missing <robotNamespace>, "
+          "defaults to \"%s\"", robot_namespace_.c_str());
+    }
+    else 
+    {
+      robot_namespace_ = 
+        sdf->GetElement("robotNamespace")->Get<std::string>();
+    }
 
-        
+    color_sensor_topic_ = "bobb3e/color_sensor";
+    if (!sdf->HasElement("colorSensorTopic")) 
+    {
+      ROS_WARN("MaskorEV3ColorSensorPlugin (ns = %s) missing <colorSensorTopic>, "
+          "defaults to \"%s\"", 
+          robot_namespace_.c_str(), color_sensor_topic_.c_str());
+    } 
+    else 
+    {
+      color_sensor_topic_ = sdf->GetElement("colorSensorTopic")->Get<std::string>();
+    }
+
+    color_sensor_frame_ = "color_sensor_link";
+    if (!sdf->HasElement("colorSensorFrame")) 
+    {
+      ROS_WARN("MaskorEV3ColorSensorPlugin (ns = %s) missing <colorSensorFrame>, "
+          "defaults to \"%s\"", 
+          robot_namespace_.c_str(), color_sensor_frame_.c_str());
+    } 
+    else 
+    {
+      color_sensor_frame_ = sdf->GetElement("colorSensorFrame")->Get<std::string>();
+    }
+ 
+    rate_ = 20.0;
+    if (!sdf->HasElement("rate")) 
+    {
+      ROS_WARN("MaskorEV3ColorSensorPlugin (ns = %s) missing <odometryRate>, "
+          "defaults to %f",
+          robot_namespace_.c_str(), rate_);
+    } 
+    else 
+    {
+      rate_ = sdf->GetElement("rate")->Get<double>();
+    } 
+ 
+    last_publish_time_ = parent_->GetWorld()->GetSimTime();
+    last_pose_ = parent_->GetWorldPose();
+
+
+    color_ = 0;
+    alive_ = true;
+
+    // Ensure that ROS has been initialized and subscribe to cmd_vel
+    if (!ros::isInitialized()) 
+    {
+      ROS_FATAL_STREAM("MaskorEV3ColorSensorPlugin (ns = " << robot_namespace_
+        << "). A ROS node for Gazebo has not been initialized, "
+        << "unable to load plugin. Load the Gazebo system plugin "
+        << "'libgazebo_ros_api_plugin.so' in the gazebo_ros package)");
+      return;
+    }
+    rosnode_.reset(new ros::NodeHandle(robot_namespace_));
+
+    ROS_DEBUG("MaskorEV3ColorSensorPlugin (%s) has started!", 
+        robot_namespace_.c_str());
+
+    //tf_prefix_ = tf::getPrefixParam(*rosnode_);
+ 
+    color_sensor_pub_ = rosnode_->advertise<maskor_ev3_msgs::ColorSensor>(color_sensor_topic_, 1);
+
+    // start custom queue 
+    callback_queue_thread_ = 
+      boost::thread(boost::bind(&MaskorEV3ColorSensorPlugin::QueueThread, this));
+
+    // listen to the update event (broadcast every simulation iteration)
+    update_connection_ = 
+      event::Events::ConnectWorldUpdateBegin(
+          boost::bind(&MaskorEV3ColorSensorPlugin::UpdateChild, this));
+
+  }
+
+  // Update the controller
+  void MaskorEV3ColorSensorPlugin::UpdateChild() 
+  {
+    boost::mutex::scoped_lock scoped_lock(lock);
+
+    common::Time current_time = parent_->GetWorld()->GetSimTime();
+    double seconds_since_last_update = (current_time - last_publish_time_).Double();
+    
+    //TODO : Update internal variables
+    
+
+    if (rate_ > 0.0) {
+      if (seconds_since_last_update > (1.0 / rate_)) {
+        publishColorSensorMessage();
+        last_publish_time_ = current_time;
       }
     }
   }
-}
+
+  // Finalize the controller
+  void MaskorEV3ColorSensorPlugin::FiniChild() {
+    alive_ = false;
+    queue_.clear();
+    queue_.disable();
+    rosnode_->shutdown();
+    callback_queue_thread_.join();
+  }
+
+ 
+  void MaskorEV3ColorSensorPlugin::QueueThread() 
+  {
+    static const double timeout = 0.01;
+    while (alive_ && rosnode_->ok()) 
+    {
+      queue_.callAvailable(ros::WallDuration(timeout));
+    }
+  }
+
+  void MaskorEV3ColorSensorPlugin::publishColorSensorMessage()
+  {
+    /*
+      # Value Color
+      # 0 	none
+      # 1 	black
+      # 2 	blue
+      # 3 	green
+      # 4 	yellow
+      # 5 	red
+      # 6 	white
+      # 7 	brown
+    */
+
+    color_sensor_msg_.header.stamp = ros::Time::now();
+    color_sensor_msg_.header.frame_id = color_sensor_frame_;
+    color_sensor_msg_.color = color_;
+    
+    color_sensor_pub_.publish(color_sensor_msg_);
+  }
+  
+  GZ_REGISTER_MODEL_PLUGIN(MaskorEV3ColorSensorPlugin)
 }

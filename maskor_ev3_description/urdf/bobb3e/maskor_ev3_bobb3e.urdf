@@ -550,6 +550,13 @@
       <rate>20.0</rate>
     </plugin>    
 
+    <plugin name="maskor_ev3_color_sensor_plugin" filename="libmaskor_ev3_color_sensor_plugin.so">
+      <robotNamespace></robotNamespace>
+      <colorSensorTopic>bobb3e/color_sensor</colorSensorTopic>
+      <colorSensorFrame>color_sensor_link</colorSensorFrame>
+      <rate>20.0</rate>
+    </plugin>    
+
   </gazebo>
 
   <!-- ************** -->

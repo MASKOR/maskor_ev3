@@ -1,54 +1,88 @@
 /*
- * Copyright 2012 Open Source Robotics Foundation
+ * MASKOR EV3 GYRO SENSOR PLUGIN
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) 2017 
+ * Marcel Stüttgen 
+ * stuettgen@fh-aachen.de
+ * https://www.maskor.fh-aachen.de
  *
 */
-/*
- * Desc: A dynamic controller plugin that publishes ROS image_raw
- *    camera_info topic for generic camera sensor.
-*/
 
-#ifndef GAZEBO_ROS_CAMERA_HH
-#define GAZEBO_ROS_CAMERA_HH
 
-#include <string>
+#ifndef MASKOR_EV3_COLOR_SENSOR_PLUGIN_HH
+#define MASKOR_EV3_COLOR_SENSOR_PLUGIN_HH
 
-// library for processing camera data for gazebo / ros conversions
-#include <gazebo/plugins/CameraPlugin.hh>
-#include <maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h>
+#include <boost/bind.hpp>
+#include <boost/thread.hpp>
+#include <map>
 
-namespace gazebo
-{
-  class GazeboRosCamera : public CameraPlugin, GazeboRosCameraUtils
-  {
-    //public: void Test(){std::cout << "Test" << std::endl;}
-    //public: void ColorSensor(){}
-    /// \brief Constructor
-    /// \param parent The parent entity, must be a Model or a Sensor
-    public: GazeboRosCamera();
+#include <gazebo/common/common.hh>
+#include <gazebo/physics/physics.hh>
+#include <gazebo_plugins/gazebo_ros_utils.h>
+#include <sdf/sdf.hh>
 
-    /// \brief Destructor
-    public: ~GazeboRosCamera();
+#include <ros/advertise_options.h>
+#include <ros/callback_queue.h>
+#include <ros/ros.h>
 
-    /// \brief Load the plugin
-    /// \param take in SDF root element
-    public: void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+#include <opencv2/imgproc/imgproc.hpp>
 
-    /// \brief Update the controller
-    protected: virtual void OnNewFrame(const unsigned char *_image,
-                   unsigned int _width, unsigned int _height,
-                   unsigned int _depth, const std::string &_format);
+#include <maskor_ev3_msgs/ColorSensor.h>
+
+namespace gazebo {
+
+  class MaskorEV3ColorSensorPlugin : public ModelPlugin {
+
+    public: 
+      MaskorEV3ColorSensorPlugin();
+      ~MaskorEV3ColorSensorPlugin();
+      void Load(physics::ModelPtr parent, sdf::ElementPtr sdf);
+
+    protected: 
+      virtual void UpdateChild();
+      virtual void FiniChild();
+
+    private:
+      void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image);
+      void publishColorSensorMessage();
+
+      GazeboRosPtr gazebo_ros_;
+      physics::ModelPtr parent_;
+      event::ConnectionPtr update_connection_;
+      boost::shared_ptr<ros::NodeHandle> rosnode_;
+      ros::Publisher color_sensor_pub_;
+      maskor_ev3_msgs::ColorSensor color_sensor_msg_;
+      std::string tf_prefix_;
+
+      boost::mutex lock;
+
+      std::string robot_namespace_;
+      std::string color_sensor_topic_;
+      std::string color_sensor_frame_;
+
+      // Custom Callback Queue
+      ros::CallbackQueue queue_;
+      boost::thread callback_queue_thread_;
+      void QueueThread();
+
+      bool alive_;
+      double rate_;
+      int color_;
+      
+      int LowerH_ = 0;
+      int LowerS_ = 0;
+      int LowerV_ = 0;
+      int UpperH_ = 180;
+      int UpperS_ = 196;
+      int UpperV_ = 170;
+      
+      common::Time last_publish_time_;
+      math::Pose last_pose_;
   };
+
 }
-#endif
+
+#endif /* end of include guard: MASKOR_EV3_GYRO_SENSOR_PLUGIN_HH */
