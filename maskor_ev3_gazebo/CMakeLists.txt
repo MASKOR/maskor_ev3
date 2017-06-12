@@ -227,7 +227,8 @@ add_executable(maskor_ev3_line_follower_node
 add_dependencies(maskor_ev3_gyro_sensor_plugin maskor_ev3_msgs_generate_messages_cpp)
 add_dependencies(maskor_ev3_gyro_sensor_plugin ${catkin_EXPORTED_TARGETS})
  
-
+add_dependencies(maskor_ev3_color_sensor_plugin maskor_ev3_msgs_generate_messages_cpp)
+add_dependencies(maskor_ev3_color_sensor_plugin ${catkin_EXPORTED_TARGETS})
 
 
 ## Specify libraries to link a library or executable target against
