@@ -533,7 +533,7 @@
       <torque>1.0</torque>
 
       <commandTopic>cmd_vel</commandTopic>
-      <odometryTopic>odom</odometryTopic>
+      <odometryTopic>bobb3e/odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
       <robotBaseFrame>base_footprint</robotBaseFrame>
       <updateRate>100.0</updateRate>
@@ -542,11 +542,10 @@
       <covariance_yaw>0.01</covariance_yaw>      
     </plugin>  
 
-
     
     <plugin name="maskor_ev3_gyro_sensor_plugin" filename="libmaskor_ev3_gyro_sensor_plugin.so">
       <robotNamespace></robotNamespace>
-      <gyroSensorTopic>gyro_sensor</gyroSensorTopic>
+      <gyroSensorTopic>bobb3e/gyro_sensor</gyroSensorTopic>
       <gyroSensorFrame>gyro_sensor_link</gyroSensorFrame>
       <rate>20.0</rate>
     </plugin>    
@@ -582,7 +581,7 @@
    <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
      <alwaysOn>true</alwaysOn>
      <updateRate>0.0</updateRate>
-     <cameraName>rrbot/camera1</cameraName>
+     <cameraName>bobb3e/camera1</cameraName>
      <imageTopicName>image_raw</imageTopicName>
      <cameraInfoTopicName>camera_info</cameraInfoTopicName>
      <frameName>color_sensor_link</frameName>
@@ -630,7 +629,7 @@
        </noise>
      </ray>
      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
-       <topicName>scan</topicName>
+       <topicName>bobb3e/scan</topicName>
        <frameName>infrared_sensor_link</frameName>
      </plugin>
    </sensor>
