@@ -1,9 +1,11 @@
 /*
- * MASKOR EV3 GYRO SENSOR PLUGIN
+ * MASKOR EV3 COLOR SENSOR PLUGIN
  *
  * Copyright (c) 2017 
  * Marcel Stüttgen 
  * stuettgen@fh-aachen.de
+ * Dennis Miltz 
+ * dennis.miltz@alumni.fh-aachen.de
  * https://www.maskor.fh-aachen.de
  *
 */
@@ -22,7 +24,7 @@ namespace gazebo
       sdf::ElementPtr sdf) 
   {
 
-    gazebo_ros_ = GazeboRosPtr ( new GazeboRos ( parent, sdf, "maskor_ev3_gyro_sensor_plugin" ) );
+    gazebo_ros_ = GazeboRosPtr ( new GazeboRos ( parent, sdf, "maskor_ev3_color_sensor_plugin" ) );
     gazebo_ros_->isInitialized();
   
     parent_ = parent;
@@ -98,10 +100,15 @@ namespace gazebo
     ROS_DEBUG("MaskorEV3ColorSensorPlugin (%s) has started!", 
         robot_namespace_.c_str());
 
-    //tf_prefix_ = tf::getPrefixParam(*rosnode_);
- 
-    color_sensor_pub_ = rosnode_->advertise<maskor_ev3_msgs::ColorSensor>(color_sensor_topic_, 1);
+  //tf_prefix_ = tf::getPrefixParam(*rosnode_);
 
+ color_sensor_pub_ = rosnode_->advertise<maskor_ev3_msgs::ColorSensor>(color_sensor_topic_, 1);
+
+    it = new image_transport::ImageTransport(*rosnode_);
+        
+    //image_sub = it->subscribe("/bobb3e/camera1/image_raw", 1, boost::bind(&MaskorEV3ColorSensorPlugin::colorDetectionCallback, this, _1));
+    
+      
     // start custom queue 
     callback_queue_thread_ = 
       boost::thread(boost::bind(&MaskorEV3ColorSensorPlugin::QueueThread, this));
@@ -171,6 +178,15 @@ namespace gazebo
     
     color_sensor_pub_.publish(color_sensor_msg_);
   }
+
+
+  
+  void colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image) {
+    ROS_INFO("colorDetectionCallback(const sensor_msgs::ImageConstPtr& original_image");
+
+  }
+    
+
   
   GZ_REGISTER_MODEL_PLUGIN(MaskorEV3ColorSensorPlugin)
 }

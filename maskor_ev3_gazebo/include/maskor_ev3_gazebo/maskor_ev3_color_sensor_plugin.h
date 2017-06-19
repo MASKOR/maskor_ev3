@@ -1,9 +1,13 @@
 /*
- * MASKOR EV3 GYRO SENSOR PLUGIN
+ * MASKOR EV3 COLOR SENSOR PLUGIN
  *
  * Copyright (c) 2017 
  * Marcel Stüttgen 
  * stuettgen@fh-aachen.de
+ *
+ * Dennis Miltz 
+ * dennis.miltz@alumni.fh-aachen.de
+ *
  * https://www.maskor.fh-aachen.de
  *
 */
@@ -54,6 +58,9 @@ namespace gazebo {
       event::ConnectionPtr update_connection_;
       boost::shared_ptr<ros::NodeHandle> rosnode_;
       ros::Publisher color_sensor_pub_;
+      image_transport::ImageTransport* it;
+      image_transport::Subscriber image_sub;
+      
       maskor_ev3_msgs::ColorSensor color_sensor_msg_;
       std::string tf_prefix_;
 
@@ -85,4 +92,4 @@ namespace gazebo {
 
 }
 
-#endif /* end of include guard: MASKOR_EV3_GYRO_SENSOR_PLUGIN_HH */
+#endif /* end of include guard: MASKOR_EV3_COLOR_SENSOR_PLUGIN_HH */
