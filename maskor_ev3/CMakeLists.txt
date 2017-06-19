@@ -169,6 +169,7 @@ add_library(maskor_ev3
 ## Declare a C++ executable
 add_executable(maskor_ev3_bobb3e_node src/maskor_ev3_bobb3e_node.cpp)
 
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(maskor_ev3_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -184,7 +185,6 @@ target_link_libraries(maskor_ev3_bobb3e_node
   #${catkin_LIBRARIES}
   maskor_ev3
 )
-
 
 #############
 ## Install ##
