@@ -1,5 +1,8 @@
 #include <gazebo/common/Plugin.hh>
 #include <ros/ros.h>
+
+#include <std_msgs/Int8.h>
+
 #include "maskor_ev3_gazebo/maskor_ev3_color_sensor_plugin.h"
 
 #include "gazebo_plugins/gazebo_ros_camera.h"
@@ -16,6 +19,8 @@
 //Include headers for OpenCV GUI handling
 #include <opencv2/highgui/highgui.hpp>
 
+
+
 namespace gazebo
 {
   // Register this plugin with the simulator
@@ -24,11 +29,9 @@ namespace gazebo
   ////////////////////////////////////////////////////////////////////////////////
   // Constructor
   MaskorEV3ColorSensor::MaskorEV3ColorSensor():
-  _nh("MaskorEV3ColorSensor"),
-  _fov(6),
-  _range(10)
+  _nh("MaskorEV3ColorSensor")
   {
-    _sensorPublisher = _nh.advertise<sensor_msgs::Illuminance>("MaskorEV3ColorSensor", 1);
+    _sensorPublisher = _nh.advertise<std_msgs::Int8>("/maskor_ev3_color_sensor", 1);
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -61,13 +64,11 @@ namespace gazebo
   }
 
   ////////////////////////////////////////////////////////////////////////////////
-  // Update the controller
+  // Callback for each Camera Image
   void MaskorEV3ColorSensor::OnNewFrame(const unsigned char *_image,
     unsigned int _width, unsigned int _height, unsigned int _depth,
     const std::string &_format)
   {
-    static int seq=0;
-
     this->sensor_update_time_ = this->parentSensor_->LastUpdateTime();
 
     if (!this->parentSensor->IsActive())
@@ -88,39 +89,36 @@ namespace gazebo
           this->last_update_time_ = cur_time;
 
 
-          //unsigned char* b = _image;
+          // storeage for image data
+          unsigned char *data;
+          data = new unsigned char[_width * _height * 3];
 
-          cv::Mat TempMat = cv::Mat(_width, _height, CV_8UC1,*_image);
+          // copy const _image to  data
+          memcpy(data, _image, _width * _height * 3);
+
+          //converting gazebo camera image to CV Mat
+          cv::Mat cv_img = cv::Mat(_height, _width,  CV_8UC3, data);
+          //converting from gazebo RGB to openCV BGR format
+          cv::cvtColor(cv_img, cv_img, cv::COLOR_RGB2BGR);
+
+          //show Image just for debug
+          imshow("OPENCV DEBUG OUTPUT",cv_img);
+          cv::waitKey(1);
 
 
-          imshow("this is a test",TempMat);
-
-          // Publish your own data here
+          /// CALCULATE COLOR HERE
 
 
+          //create ROS message 
+          std_msgs::Int8 msg;
+          msg.data = 1;
 
-
-          sensor_msgs::Illuminance msg;
-          msg.header.stamp = ros::Time::now();
-          msg.header.frame_id = "";
-          msg.header.seq = seq;
-
-          int startingPix = _width * ( (int)(_height/2) - (int)( _fov/2)) - (int)(_fov/2);
-
-          double illum = 0;
-          for (int i=0; i<_fov ; ++i)
-          {
-            int index = startingPix + i*_width;
-            for (int j=0; j<_fov ; ++j)
-              illum += _image[index+j];
-          }
-
-          msg.illuminance = illum/(_fov*_fov);
-          msg.variance = 0.0;
-
+          //publish ROS message
           _sensorPublisher.publish(msg);
 
-          seq++;
+          //free reserved space!
+          delete data;
+
         }
       }
     }

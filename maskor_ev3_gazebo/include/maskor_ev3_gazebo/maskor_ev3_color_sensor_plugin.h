@@ -29,8 +29,6 @@ namespace gazebo
       ros::NodeHandle _nh;
       ros::Publisher _sensorPublisher;
 
-      double _fov;
-      double _range;
   };
 }
 #endif
