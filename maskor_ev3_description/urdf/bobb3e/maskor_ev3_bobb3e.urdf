@@ -593,7 +593,8 @@
  <sensor type="camera" name="camera1">
    <update_rate>30.0</update_rate>
    <camera name="head">
-     <horizontal_fov>1.3962634</horizontal_fov>
+     <!--<horizontal_fov>1.3962634</horizontal_fov>-->
+     <horizontal_fov>0.8</horizontal_fov>
      <image>
        <width>40</width>
        <height>40</height>
