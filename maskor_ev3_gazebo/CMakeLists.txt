@@ -14,7 +14,7 @@ find_package(GAZEBO REQUIRED)
 find_package(SDFormat REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread)
 find_package(OpenCV REQUIRED )
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+add_definitions(-std=c++11)
 
 
 find_package(catkin REQUIRED COMPONENTS
@@ -170,6 +170,13 @@ link_directories(
   ${GAZEBO_LIBRARY_DIRS}
   ${catkin_LIBRARY_DIRS}
 )
+
+add_library(maskor_ev3_color_sensor_plugin src/maskor_ev3_color_sensor_plugin.cpp)
+target_link_libraries(maskor_ev3_color_sensor_plugin ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES} CameraPlugin )
+
+
+
+
 ## Declare a C++ library
 add_library(maskor_ev3_bobb3e_arm_plugin
  src/maskor_ev3_bobb3e_arm_plugin.cpp include/maskor_ev3_gazebo/maskor_ev3_bobb3e_arm_plugin.h
@@ -184,13 +191,13 @@ add_library(maskor_ev3_bobb3e_arm_plugin
 
  )
 
-add_library(maskor_ev3_color_sensor_plugin
-	src/maskor_ev3_color_sensor_plugin.cpp include/maskor_ev3_gazebo/maskor_ev3_color_sensor_plugin.h
-)
+#add_library(maskor_ev3_color_sensor_plugin
+#	src/maskor_ev3_color_sensor_plugin.cpp include/maskor_ev3_gazebo/maskor_ev3_color_sensor_plugin.h
+#)
 
-add_library(maskor_ev3_color_sensor_util
-	src/maskor_ev3_color_sensor_util.cpp include/maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h
-)
+#add_library(maskor_ev3_color_sensor_util
+#	src/maskor_ev3_color_sensor_util.cpp include/maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h
+#)
 
 add_library(maskor_ev3_gyro_sensor_plugin
 	src/maskor_ev3_gyro_sensor_plugin.cpp include/maskor_ev3_gazebo/maskor_ev3_gyro_sensor_plugin.h
@@ -226,9 +233,9 @@ add_executable(maskor_ev3_line_follower_node
 
 add_dependencies(maskor_ev3_gyro_sensor_plugin maskor_ev3_msgs_generate_messages_cpp)
 add_dependencies(maskor_ev3_gyro_sensor_plugin ${catkin_EXPORTED_TARGETS})
- 
-add_dependencies(maskor_ev3_color_sensor_plugin maskor_ev3_msgs_generate_messages_cpp)
-add_dependencies(maskor_ev3_color_sensor_plugin ${catkin_EXPORTED_TARGETS})
+
+#add_dependencies(maskor_ev3_color_sensor_plugin maskor_ev3_msgs_generate_messages_cpp)
+#add_dependencies(maskor_ev3_color_sensor_plugin ${catkin_EXPORTED_TARGETS})
 
 
 ## Specify libraries to link a library or executable target against
@@ -256,20 +263,20 @@ target_link_libraries(maskor_ev3_gyro_sensor_plugin
   ${Boost_LIBRARIES}
 )
 
-target_link_libraries(maskor_ev3_color_sensor_plugin
-	  gazebo_ros_camera_utils
-		${GAZEBO_LIBRARIES}
-		CameraPlugin
-		${catkin_LIBRARIES}
+#target_link_libraries(maskor_ev3_color_sensor_plugin
+#	  gazebo_ros_camera_utils
+#		${GAZEBO_LIBRARIES}
+#		CameraPlugin
+#		${catkin_LIBRARIES}
+#
+#)
 
-)
-
-target_link_libraries(maskor_ev3_color_sensor_util
- gazebo_ros_camera_utils
-	${GAZEBO_LIBRARIES}
-	CameraPlugin
-	${catkin_LIBRARIES}
-)
+#target_link_libraries(maskor_ev3_color_sensor_util
+# gazebo_ros_camera_utils
+#	${GAZEBO_LIBRARIES}
+#	CameraPlugin
+#	${catkin_LIBRARIES}
+#)
 
 target_link_libraries(color_sensor_node
 	${catkin_LIBRARIES}

@@ -502,7 +502,7 @@
   <!-- ************** -->
 
   <gazebo>
-    
+
     <plugin name="maskor_ev3_bobb3e_arm_plugin" filename="libmaskor_ev3_bobb3e_arm_plugin.so">
       <robotNamespace></robotNamespace>
       <publishArmJointStates>true</publishArmJointStates>
@@ -516,13 +516,13 @@
       <updateRate>100.0</updateRate>
     </plugin>
 
-    
+
 
     <plugin name="maskor_ev3_bobb3e_skid_plugin" filename="libmaskor_ev3_bobb3e_skid_plugin.so">
       <robotNamespace></robotNamespace>
       <broadcastTF>true</broadcastTF>
       <publishWheelJointStates>true</publishWheelJointStates>
-      
+
       <leftFrontJoint>base_link_to_left_front_wheel</leftFrontJoint>
       <rightFrontJoint>base_link_to_right_front_wheel</rightFrontJoint>
       <leftRearJoint>base_link_to_left_rear_wheel</leftRearJoint>
@@ -537,25 +537,18 @@
       <odometryFrame>odom</odometryFrame>
       <robotBaseFrame>base_footprint</robotBaseFrame>
       <updateRate>100.0</updateRate>
-      <covariance_x>0.0001</covariance_x>      
-      <covariance_y>0.0001</covariance_y>      
-      <covariance_yaw>0.01</covariance_yaw>      
-    </plugin>  
+      <covariance_x>0.0001</covariance_x>
+      <covariance_y>0.0001</covariance_y>
+      <covariance_yaw>0.01</covariance_yaw>
+    </plugin>
 
-    
+
     <plugin name="maskor_ev3_gyro_sensor_plugin" filename="libmaskor_ev3_gyro_sensor_plugin.so">
       <robotNamespace></robotNamespace>
       <gyroSensorTopic>bobb3e/gyro_sensor</gyroSensorTopic>
       <gyroSensorFrame>gyro_sensor_link</gyroSensorFrame>
       <rate>20.0</rate>
-    </plugin>    
-
-    <plugin name="maskor_ev3_color_sensor_plugin" filename="libmaskor_ev3_color_sensor_plugin.so">
-      <robotNamespace></robotNamespace>
-      <colorSensorTopic>bobb3e/color_sensor</colorSensorTopic>
-      <colorSensorFrame>color_sensor_link</colorSensorFrame>
-      <rate>20.0</rate>
-    </plugin>    
+    </plugin>
 
   </gazebo>
 
@@ -563,6 +556,40 @@
   <!-- CameraPlugin   -->
   <!-- ************** -->
 <gazebo reference="color_sensor_link">
+<!--  <sensor name='camera' type='camera'>
+    <camera name='__default__'>
+      <horizontal_fov>1.047</horizontal_fov>
+      <image>
+        <width>320</width>
+        <height>240</height>
+      </image>
+      <clip>
+        <near>0.1</near>
+        <far>100</far>
+      </clip>
+    </camera>
+    <plugin name="color_sensor" filename="libmaskor_ev3_color_sensor_plugin.so">
+      <cameraName>camera</cameraName>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>10</updateRate>
+      <imageTopicName>rgb/image_raw</imageTopicName>
+      <depthImageTopicName>depth/image_raw</depthImageTopicName>
+      <pointCloudTopicName>depth/points</pointCloudTopicName>
+      <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+      <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+      <frameName>camera_depth_optical_frame</frameName>
+      <baseline>0.1</baseline>
+      <distortion_k1>0.0</distortion_k1>
+      <distortion_k2>0.0</distortion_k2>
+      <distortion_k3>0.0</distortion_k3>
+      <distortion_t1>0.0</distortion_t1>
+      <distortion_t2>0.0</distortion_t2>
+      <pointCloudCutoff>0.4</pointCloudCutoff>
+      <robotNamespace>/</robotNamespace>
+    </plugin>
+  </sensor>
+-->
+
  <sensor type="camera" name="camera1">
    <update_rate>30.0</update_rate>
    <camera name="head">
@@ -578,14 +605,11 @@
      </clip>
      <noise>
        <type>gaussian</type>
-       <!-- Noise is sampled independently per pixel on each frame.
-            That pixel's noise value is added to each of its color
-            channels, which at that point lie in the range [0,1]. -->
        <mean>0.0</mean>
        <stddev>0.007</stddev>
      </noise>
    </camera>
-   <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+   <plugin name="camera_controller" filename="libmaskor_ev3_color_sensor_plugin.so">
      <alwaysOn>true</alwaysOn>
      <updateRate>0.0</updateRate>
      <cameraName>bobb3e/camera1</cameraName>
