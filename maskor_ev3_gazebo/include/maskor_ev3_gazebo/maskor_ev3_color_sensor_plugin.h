@@ -40,6 +40,7 @@ namespace gazebo
       int UpperV = 170;
       int count = 0;
 
+      bool _showDebugWindows = false;
 
   };
 }
