@@ -1,23 +1,18 @@
-#include <gazebo/common/Plugin.hh>
 #include <ros/ros.h>
-
-#include <std_msgs/Int8.h>
-
-#include "maskor_ev3_gazebo/maskor_ev3_color_sensor_plugin.h"
-
 #include "gazebo_plugins/gazebo_ros_camera.h"
-
-#include <string>
 
 #include <gazebo/sensors/Sensor.hh>
 #include <gazebo/sensors/CameraSensor.hh>
 #include <gazebo/sensors/SensorTypes.hh>
+#include <gazebo/common/Plugin.hh>
 
 #include <opencv2/imgproc/imgproc.hpp>
-//Include headers for OpenCV GUI handling
 #include <opencv2/highgui/highgui.hpp>
 
+#include <maskor_ev3_gazebo/maskor_ev3_color_sensor_plugin.h>
 #include <maskor_ev3_msgs/ColorSensor.h>
+
+#include <string>
 
 
 namespace gazebo
@@ -121,13 +116,6 @@ namespace gazebo
 		  cv::imshow("Image Processed", img_mask);
 		  //Add some delay in miliseconds. The function only works if there is at least one HighGUI window created and the window is active. If there are several HighGUI windows, any of them can be active.
 		  cv::waitKey(3);
-		  /**
-		   * The publish() function is how you send messages. The parameter
-		   * is the message object. The type of this object must agree with the type
-		   * given as a template parameter to the advertise<>() call, as was done
-		   * in the constructor in main().
-		   */
-		  //Convert the CvImage to a ROS image message and publish it on the "camera/image_processed" topic.
 		}
 
 		
@@ -147,37 +135,7 @@ namespace gazebo
 		  rgb[i] = rgb[i] / 1600;
 		}
 
-		/*    if(rgb[0] >=0 && rgb[0] <= 10 && rgb[1] >=0 && rgb[1] <= 10 && rgb[2] >=0 && rgb[2] <= 20){
-		      ROS_INFO("Schwarz");
-		      }
-		      else if(rgb[0] >=0 && rgb[0] <= 10 && rgb[1] >=0 && rgb[1] <= 10 && rgb[2] >=250 && rgb[2] <= 255){
-		      ROS_INFO("Blau");
-		      }
-		      else if(rgb[0] >= 0 && rgb[0] <= 10 && rgb[1] >= 250 && rgb[1] <= 255 && rgb[2] >=55 && rgb[2] <= 62){
-		      ROS_INFO("Grün");
-		      }
-		      else if(rgb[0] >= 240 && rgb[0] <= 250 && rgb[1] >= 250 && rgb[1] <= 255 && rgb[2] >= 53 && rgb[2] <= 63){
-		      ROS_INFO("Gelb");
-		      }
-		      else if(rgb[0] >= 250 && rgb[0] <= 255 && rgb[1] >= 0 && rgb[1] <= 10 && rgb[2] >= 0 && rgb[2] <= 10){
-		      ROS_INFO("Rot");
-		      }
-		      else if(rgb[0] >= 245 && rgb[0] <= 255 && rgb[1] >= 245 && rgb[1] <= 255 && rgb[2] >= 245 && rgb[2] <= 255){
-		      ROS_INFO("Weiß");
-		      }
-		      else if(rgb[0] >= 98 && rgb[0] <= 107 && rgb[1] >= 46 && rgb[1] <= 55 && rgb[2] >= 49 && rgb[2] <= 59){
-		      ROS_INFO("Braun");
-		      }
-		      else{
-		      ROS_INFO("Unbekannte Farbe oder Farblos");
-		      }
-
-		      //    ROS_INFO("rgb[0] %d",rgb[0]);
-		      //    ROS_INFO("rgb[1] %d",rgb[1]);
-		      //    ROS_INFO("rgb[2] %d",rgb[2]); */
-
 		//Farberkennung HSV
-
 		//color[0] = black
 		//color[1] = white
 		//color[2] = red

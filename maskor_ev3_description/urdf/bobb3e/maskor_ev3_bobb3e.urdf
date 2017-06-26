@@ -23,7 +23,6 @@
     <color rgba="0 0 0 1"/>
   </material>
 
-
   <property name="M_PI" value="3.14159" />
 
   <property name="dummy_mass" value="0.1" />
@@ -37,8 +36,6 @@
   <property name="wheel_thickness" value="0.05" />
   <property name="wheel_mass" value="0.2" />
   <property name="wheel_model_scale" value="1 1 1" />
-
-
 
   <!-- Null inertial element. This is needed to make the model work with
        Gazebo. -->
@@ -594,7 +591,7 @@
    <update_rate>30.0</update_rate>
    <camera name="head">
      <!--<horizontal_fov>1.3962634</horizontal_fov>-->
-     <horizontal_fov>0.8</horizontal_fov>
+     <horizontal_fov>0.5</horizontal_fov>
      <image>
        <width>40</width>
        <height>40</height>
