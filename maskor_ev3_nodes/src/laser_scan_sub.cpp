@@ -12,7 +12,16 @@ void laserCallback(const sensor_msgs::LaserScan::ConstPtr& msg)
   ROS_INFO("I received a laser scan message");
   double minimum = 1000;
   
-  
+  for(int i=0; i<10; i++){
+
+    if(msg->ranges[i] < minimum) {
+      minimum = msg->ranges[i];
+
+    }
+
+
+
+  }
 }
 
 
