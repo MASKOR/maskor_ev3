@@ -14,7 +14,7 @@
             <iyz>0</iyz>
             <izz>1</izz>
           </inertia>
-          <mass>0.1</mass>
+          <mass>0.02</mass>
         </inertial>
        <visual name="visual">
        <geometry>
