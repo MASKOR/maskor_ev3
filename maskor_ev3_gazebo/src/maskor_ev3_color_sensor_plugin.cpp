@@ -118,7 +118,7 @@ namespace gazebo
 		  cv::waitKey(3);
 		}
 
-		
+
 		// Farberkennung RGB
 		int rgb[3] = {0,0,0};
 
@@ -212,7 +212,7 @@ namespace gazebo
 		color_detection(rgb,H_hist, S_hist, V_hist, color);
 
 		maskor_ev3_msgs::ColorSensor color_sensor_msg;
-    
+
 		if(color[0] == true){
 		  color_sensor_msg.color = 0;
 		  //std::cout << "Color: black" << std::endl;
@@ -250,7 +250,7 @@ namespace gazebo
 		color_sensor_msg.header.frame_id = "color_sensor_link";
 
 		_sensorPublisher.publish(color_sensor_msg);
-		
+
 		//free reserved space!
 		delete data;
 
@@ -311,13 +311,13 @@ namespace gazebo
       else if(rgb[0] >= 0 && rgb[0] <= 10 && rgb[1] >= 250 && rgb[1] <= 255 && rgb[2] >=0 && rgb[2] <= 10){
         color[3] = true; // green = true
       }
-      else if(rgb[0] >= 240 && rgb[0] <= 250 && rgb[1] >= 250 && rgb[1] <= 255 && rgb[2] >= 53 && rgb[2] <= 63){
+      else if(rgb[0] >= 240 && rgb[0] <= 255 && rgb[1] >= 250 && rgb[1] <= 255 && rgb[2] >= 0 && rgb[2] <= 10){
         color[5] = true; // yellow = true
       }
       else if(rgb[0] >= 250 && rgb[0] <= 255 && rgb[1] >= 0 && rgb[1] <= 10 && rgb[2] >= 0 && rgb[2] <= 10){
         color[2] = true; // red = true
       }
-      else if(rgb[0] >= 98 && rgb[0] <= 107 && rgb[1] >= 46 && rgb[1] <= 55 && rgb[2] >= 49 && rgb[2] <= 59){
+      else if(rgb[0] >= 110 && rgb[0] <= 150 && rgb[1] >= 46 && rgb[1] <= 80 && rgb[2] >= 0 && rgb[2] <= 40){
         color[6] = true; // brown = true
       }
       else{
