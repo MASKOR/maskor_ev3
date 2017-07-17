@@ -31,7 +31,7 @@
 // FUNCTION DECLARATIONS
 void cmd_velCb(const geometry_msgs::Twist& cmd);
 void calc_odometry();
-void publish_test_messages();
+void publish_sensor_messages();
 void publish_joint_states();
 double calc_fork_lift_link_position(double arm_position);
 
@@ -88,7 +88,7 @@ char odom[] = "/odom";
 
 
 #ifndef _OFFLINETEST
-char rosSrvrIp[] = "10.42.0.1";
+char rosSrvrIp[] = "149.201.37.134";
 #else
 //char rosSrvrIp[] = "149.201.178.169";
 char rosSrvrIp[] = "127.0.0.1";
@@ -481,18 +481,18 @@ void calc_odometry() {
 
 void publish_sensor_messages() {
 
-  printf("publish_test_messages()\n");
+  printf("publish_sensor_messages()\n");
 
   color_sensor_msg.header.stamp = nh.now();
   color_sensor_msg.header.frame_id = "color_sensor_link";
   color_sensor_msg.color = color_sensor.value();
   color_sensor_pub.publish(&color_sensor_msg);
 
-  gyro_sensor_msg.header.stamp = nh.now();
-  gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
+  //gyro_sensor_msg.header.stamp = nh.now();
+  //gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
   //gyro_sensor_msg.angle = gyro_sensor.value(0);
   //gyro_sensor_msg.rotational_speed = gyro_sensor.value(1);
-  gyro_sensor_pub.publish(&gyro_sensor_msg);
+  //gyro_sensor_pub.publish(&gyro_sensor_msg);
 
   infrared_sensor_msg.header.stamp = nh.now();
   infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
