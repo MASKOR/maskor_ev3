@@ -24,7 +24,7 @@
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
 #include <maskor_ev3_msgs/ColorSensor.h>
-//#include <maskor_ev3_msgs/GyroSensor.h>
+#include <maskor_ev3_msgs/GyroSensor.h>
 #include <maskor_ev3_msgs/InfraredSensor.h>
 
 
@@ -47,7 +47,7 @@ tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
 sensor_msgs::JointState joint_state_msg;
 maskor_ev3_msgs::ColorSensor color_sensor_msg;
-//maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
+maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
 maskor_ev3_msgs::InfraredSensor infrared_sensor_msg;
 
 
@@ -56,7 +56,7 @@ ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
 ros::Publisher odom_pub("/odom", &odom_msg);
 ros::Publisher joint_state_pub("/joint_states", &joint_state_msg);
 ros::Publisher color_sensor_pub("/bobb3e/color_sensor", &color_sensor_msg);
-//ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
+ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
 ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
 
 
@@ -488,11 +488,11 @@ void publish_sensor_messages() {
   color_sensor_msg.color = color_sensor.value();
   color_sensor_pub.publish(&color_sensor_msg);
 
-  //gyro_sensor_msg.header.stamp = nh.now();
-  //gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
+  gyro_sensor_msg.header.stamp = nh.now();
+  gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
   //gyro_sensor_msg.angle = gyro_sensor.value(0);
   //gyro_sensor_msg.rotational_speed = gyro_sensor.value(1);
-  //gyro_sensor_pub.publish(&gyro_sensor_msg);
+  gyro_sensor_pub.publish(&gyro_sensor_msg);
 
   infrared_sensor_msg.header.stamp = nh.now();
   infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
