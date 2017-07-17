@@ -634,10 +634,10 @@ void init_sensors() {
 }
 #endif
 
-void init_node() {
+void init_node(char ip[]) {
   printf("Init Node...\n");
 
-  nh.initNode(rosSrvrIp);
+  nh.initNode(ip);
   nh.subscribe(cmd_vel_sub);
   nh.advertise(odom_pub);
   nh.advertise(joint_state_pub);
@@ -650,7 +650,13 @@ void init_node() {
 
 int main(int argc, char* argv[])
 {
-  init_node();
+  if (argc == 2) {
+    init_node(argv[1]);
+  }
+  else {
+    init_node("10.42.0.1");
+  }
+    
 #ifndef _OFFLINETEST
   init_motors();
   init_sensors();
