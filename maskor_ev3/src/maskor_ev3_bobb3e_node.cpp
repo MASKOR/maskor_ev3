@@ -1,11 +1,11 @@
 /*
  * MASKOR EV3 BOBB3E NODE
  *
- * Copyright (c) 2017 
- * Marcel Stüttgen 
+ * Copyright (c) 2017
+ * Marcel Stüttgen
  * stuettgen@fh-aachen.de
  *
- * Patrick Hannak 
+ * Patrick Hannak
  * patrick.hannak@alumni.fh-aachen.de
  */
 
@@ -24,7 +24,7 @@
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
 #include <maskor_ev3_msgs/ColorSensor.h>
-#include <maskor_ev3_msgs/GyroSensor.h>
+//#include <maskor_ev3_msgs/GyroSensor.h>
 #include <maskor_ev3_msgs/InfraredSensor.h>
 
 
@@ -47,7 +47,7 @@ tf::TransformBroadcaster broadcaster;
 nav_msgs::Odometry odom_msg;
 sensor_msgs::JointState joint_state_msg;
 maskor_ev3_msgs::ColorSensor color_sensor_msg;
-maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
+//maskor_ev3_msgs::GyroSensor gyro_sensor_msg;
 maskor_ev3_msgs::InfraredSensor infrared_sensor_msg;
 
 
@@ -56,7 +56,7 @@ ros::Subscriber<geometry_msgs::Twist> cmd_vel_sub("cmd_vel", cmd_velCb );
 ros::Publisher odom_pub("/odom", &odom_msg);
 ros::Publisher joint_state_pub("/joint_states", &joint_state_msg);
 ros::Publisher color_sensor_pub("/bobb3e/color_sensor", &color_sensor_msg);
-ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
+//ros::Publisher gyro_sensor_pub("/bobb3e/gyro_sensor", &gyro_sensor_msg);
 ros::Publisher infrared_sensor_pub("/bobb3e/infrared_sensor", &infrared_sensor_msg);
 
 
@@ -68,7 +68,7 @@ maskor_ev3::motor right_motor(maskor_ev3::OUTPUT_C);
 //sensors
 maskor_ev3::color_sensor color_sensor(maskor_ev3::INPUT_1);
 maskor_ev3::infrared_sensor ir_sensor(maskor_ev3::INPUT_3);
-maskor_ev3::gyro_sensor gyro_sensor(maskor_ev3::INPUT_4);
+//maskor_ev3::gyro_sensor gyro_sensor(maskor_ev3::INPUT_4);
 #endif
 
 
@@ -115,14 +115,14 @@ float t_offset = 0.0;
 float vx = 0.0;
 float wt = 0.0;
 float vl = 0.0;
-float vr = 0.0; 
+float vr = 0.0;
 float wheelbase = 0.95;
 float wheelradius = 0.015;
 
 enum {
    LEFT_FRONT_WHEEL,
    LEFT_REAR_WHEEL,
-   RIGHT_FRONT_WHEEL, 
+   RIGHT_FRONT_WHEEL,
    RIGHT_REAR_WHEEL,
    FORK_LIFT,
    RIGHT_ARM_LINK,
@@ -130,10 +130,10 @@ enum {
    NUM_JOINTS
 };
 
-char *joint_names[] = {"base_link_to_left_front_wheel", 
+char *joint_names[] = {"base_link_to_left_front_wheel",
 		       "base_link_to_left_rear_wheel",
-		       "base_link_to_right_front_wheel",       
-		       "base_link_to_right_rear_wheel",       
+		       "base_link_to_right_front_wheel",
+		       "base_link_to_right_rear_wheel",
 		       "base_link_to_fork_lift_link",
 		       "base_link_to_right_fork_arm",
 		       "base_link_to_left_fork_arm"};
@@ -177,12 +177,12 @@ void set_motor_speed()
 void turn_left_abs() {
   left_motor.set_position_sp(-540);
   right_motor.set_position_sp(-540);
- 
+
   left_motor.set_command("run-to-rel-pos");
   right_motor.set_command("run-to-rel-pos");
 
   usleep(5000000);
-  
+
   left_motor.set_position_sp(720);
   right_motor.set_position_sp(-720);
 
@@ -192,15 +192,15 @@ void turn_left_abs() {
   usleep(6000000);
 }
 
-void turn_right_abs() { 
+void turn_right_abs() {
   left_motor.set_position_sp(-540);
   right_motor.set_position_sp(-540);
- 
+
   left_motor.set_command("run-to-rel-pos");
   right_motor.set_command("run-to-rel-pos");
 
   usleep(5000000);
-  
+
   left_motor.set_position_sp(-720);
   right_motor.set_position_sp(720);
 
@@ -212,20 +212,20 @@ void turn_right_abs() {
 */
 
 //Turning functions with gyro
-void turn_left() {
+/*void turn_left() {
 #ifndef _OFFLINETEST
   int cur_deg = gyro_sensor.value();
-  
+
   left_motor.set_position_sp(-540);
   right_motor.set_position_sp(-540);
 
   left_motor.set_speed_sp(100);
   right_motor.set_speed_sp(-100);
-  
+
   left_motor.set_command("run-to-rel-pos");
   right_motor.set_command("run-to-rel-pos");
 
-  usleep(5000000);  
+  usleep(5000000);
 
   while (gyro_sensor.value() > cur_deg-90)
     {
@@ -235,14 +235,15 @@ void turn_left() {
       calc_odometry();
       publish_joint_states();
     }
-  
+
   left_motor.set_command("stop");
   right_motor.set_command("stop");
 #endif
 }
+*/
 
-void turn_right() { 
-#ifndef _OFFLINETEST  
+/*void turn_right() {
+#ifndef _OFFLINETEST
 int cur_deg = gyro_sensor.value();
 
   left_motor.set_position_sp(-540);
@@ -250,12 +251,12 @@ int cur_deg = gyro_sensor.value();
 
   left_motor.set_speed_sp(-100);
   right_motor.set_speed_sp(100);
-    
+
   left_motor.set_command("run-to-rel-pos");
   right_motor.set_command("run-to-rel-pos");
 
   usleep(5000000);
-  
+
   while (gyro_sensor.value() < cur_deg+90)
     {
       printf("gyro value: %d \n", gyro_sensor.value());
@@ -264,12 +265,12 @@ int cur_deg = gyro_sensor.value();
       calc_odometry();
       publish_joint_states();
     }
-  
+
   left_motor.set_command("stop");
   right_motor.set_command("stop");
 #endif
 }
-
+*/
 //-------------------------------------------------------------lift-functions---------------------------------------------------
 
 //Lift moves upwards until the IR "sees" the fork, it then will move approx. to the ground
@@ -280,12 +281,12 @@ void reset_lift(){
   printf("Resetting lift....\n");
 
   lift_motor.set_speed_sp(100);
-  
+
   while(ir_sensor.value() > 30)
     {
       lift_motor.set_command("run-forever");
     }
-  
+
   lift_motor.set_command("stop");
   lift_motor.set_time_sp(1500);
   lift_motor.set_speed_sp(-100);
@@ -369,16 +370,16 @@ double calc_fork_lift_link_position(double arm_position) {
 
 //----------------------------------------------------------------------calculating odometry-------------------------------------------------------------------------
 
-//function to calculate the odometry 
+//function to calculate the odometry
 void calc_odometry() {
 
 #ifdef _DEBUG
   printf("calc_odometry()\n");
 #endif
- 
+
 #ifndef _OFFLINETEST
   //calculating gyro
-  theta = -gyro_sensor.value()*deg2rad - t_offset;
+  //theta = -gyro_sensor.value()*deg2rad - t_offset;
 
   //making sure the angle lies in [-π,π]
   theta = theta/deg2rad;
@@ -387,7 +388,7 @@ void calc_odometry() {
       k = theta/360;
       theta = theta - k*360;
       if(theta>0&&theta<90)
-	q =1; 
+	q =1;
       if(theta>90&&theta<180)
 	q = 2;
       if(theta>180&&theta<270)
@@ -405,7 +406,7 @@ void calc_odometry() {
       k = -theta/360;
       theta = theta + k*360;
       if(theta<0 && theta>-90)
-	q =4; 
+	q =4;
       if(theta<-90&&theta>-180)
 	q = 3;
       if(theta<-180&&theta>-270)
@@ -419,9 +420,9 @@ void calc_odometry() {
     }
 
   theta*=deg2rad;
-  
-  //get current wheel positions  
-  wheel_encoder_current_pos[0] = left_motor.position(); 
+
+  //get current wheel positions
+  wheel_encoder_current_pos[0] = left_motor.position();
   wheel_encoder_current_pos[1] = right_motor.position();
 #endif
 
@@ -443,7 +444,7 @@ void calc_odometry() {
   vr = right_motor.speed();
 #endif
 
-  /*vx=velocity of centroid, wt=angular velocity of cenintroid, 
+  /*vx=velocity of centroid, wt=angular velocity of cenintroid,
     vr,vl= velocity of wheels,L=distance between wheels R = radius of wheel*/
   //remmapping linear and angular velocity of centroid from vl, vr
   vx = (vl+vr) / 2*(wheelradius * deg2rad);
@@ -466,7 +467,7 @@ void calc_odometry() {
   odom_msg.header.stamp = nh.now();
   odom_msg.header.frame_id = odom;
   odom_msg.child_frame_id = base_link;
-  odom_msg.pose.pose.position.x = trans_x; 
+  odom_msg.pose.pose.position.x = trans_x;
   odom_msg.pose.pose.position.y = trans_y;
   odom_msg.pose.pose.position.z = 0.0;
   odom_msg.pose.pose.orientation = odom_quat;
@@ -474,56 +475,56 @@ void calc_odometry() {
   odom_msg.twist.twist.linear.y = 0;
   odom_msg.twist.twist.angular.z = wt;
   odom_pub.publish(&odom_msg);
-} 
+}
 
 //------------------------------------------------------------------------------publishing sensor messages for offline debug----------------------------------------------------
 
 void publish_sensor_messages() {
-  
+
   printf("publish_test_messages()\n");
 
   color_sensor_msg.header.stamp = nh.now();
   color_sensor_msg.header.frame_id = "color_sensor_link";
   color_sensor_msg.color = color_sensor.value();
   color_sensor_pub.publish(&color_sensor_msg);
-  
-  gyro_sensor_msg.header.stamp = nh.now();
-  gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
-  gyro_sensor_msg.angle = gyro_sensor.value(0);
-  gyro_sensor_msg.rotational_speed = gyro_sensor.value(1);
-  gyro_sensor_pub.publish(&gyro_sensor_msg);
+
+  //gyro_sensor_msg.header.stamp = nh.now();
+  //gyro_sensor_msg.header.frame_id = "gyro_sensor_link";
+  //gyro_sensor_msg.angle = gyro_sensor.value(0);
+  //gyro_sensor_msg.rotational_speed = gyro_sensor.value(1);
+  //gyro_sensor_pub.publish(&gyro_sensor_msg);
 
   infrared_sensor_msg.header.stamp = nh.now();
   infrared_sensor_msg.header.frame_id = "infrared_sensor_link";
   infrared_sensor_msg.proximity = ir_sensor.value();
-  infrared_sensor_pub.publish(&infrared_sensor_msg);  
+  infrared_sensor_pub.publish(&infrared_sensor_msg);
 }
 
 //------------------------------------------------------------------------------publishing joint states----------------------------------------------------
 
 void publish_joint_states() {
   // printf("publish_joint_states()\n");
- 
+
   //TODO: read joint states from motors
 // # The state of each joint (revolute or prismatic) is defined by:
 // #  * the position of the joint (rad or m),
-// #  * the velocity of the joint (rad/s or m/s) and 
-// #  * the effort that is applied in the joint (Nm or N).  
+// #  * the velocity of the joint (rad/s or m/s) and
+// #  * the effort that is applied in the joint (Nm or N).
 #ifndef _OFFLINETEST
   /*
   joint_positions[RIGHT_FRONT_WHEEL] = right_motor.position()*deg2rad; //deg or rad??
-  joint_positions[RIGHT_REAR_WHEEL] = right_motor.position()*deg2rad; 
+  joint_positions[RIGHT_REAR_WHEEL] = right_motor.position()*deg2rad;
   joint_positions[LEFT_FRONT_WHEEL] = left_motor.position()*deg2rad; //deg or rad??
-  joint_positions[LEFT_REAR_WHEEL] = left_motor.position()*deg2rad; 
+  joint_positions[LEFT_REAR_WHEEL] = left_motor.position()*deg2rad;
   joint_positions[LEFT_ARM_LINK] = lift_motor.position()*deg2rad;
   joint_positions[RIGHT_ARM_LINK] = lift_motor.position()*deg2rad;
   joint_positions[FORK_LIFT] = calc_fork_lift_link_position(joint_positions[LEFT_ARM_LINK])*deg2rad;;
 */
-  
+
   joint_positions[RIGHT_FRONT_WHEEL] = right_motor.position(); //deg or rad??
-  joint_positions[RIGHT_REAR_WHEEL] = right_motor.position(); 
+  joint_positions[RIGHT_REAR_WHEEL] = right_motor.position();
   joint_positions[LEFT_FRONT_WHEEL] = left_motor.position(); //deg or rad??
-  joint_positions[LEFT_REAR_WHEEL] = left_motor.position(); 
+  joint_positions[LEFT_REAR_WHEEL] = left_motor.position();
   joint_positions[LEFT_ARM_LINK] = lift_motor.position()*deg2rad;
   joint_positions[RIGHT_ARM_LINK] = lift_motor.position()*deg2rad;
   joint_positions[FORK_LIFT] = calc_fork_lift_link_position(joint_positions[LEFT_ARM_LINK])*deg2rad;;
@@ -532,27 +533,27 @@ void publish_joint_states() {
   printf("pos Lift: %f\n", lift_motor.position()*deg2rad);
   printf("vel Lift: %f\n", lift_motor.speed()*deg2rad);
   */
-  
+
   joint_velocities[RIGHT_FRONT_WHEEL] = right_motor.speed();
-  joint_velocities[RIGHT_REAR_WHEEL] = right_motor.speed(); 
+  joint_velocities[RIGHT_REAR_WHEEL] = right_motor.speed();
   joint_velocities[LEFT_FRONT_WHEEL] = left_motor.speed();
-  joint_velocities[LEFT_REAR_WHEEL] = left_motor.speed(); 
+  joint_velocities[LEFT_REAR_WHEEL] = left_motor.speed();
   joint_velocities[FORK_LIFT] = 0;
   joint_velocities[LEFT_ARM_LINK] = lift_motor.speed();
   joint_velocities[RIGHT_ARM_LINK] = lift_motor.speed();
 
   joint_efforts[RIGHT_FRONT_WHEEL] = 0;
-  joint_efforts[RIGHT_REAR_WHEEL] = 0; 
+  joint_efforts[RIGHT_REAR_WHEEL] = 0;
   joint_efforts[LEFT_FRONT_WHEEL] = 0;
   joint_efforts[LEFT_REAR_WHEEL] = 0;
   joint_efforts[FORK_LIFT] = 0;
   joint_efforts[LEFT_ARM_LINK] = 0;
   joint_efforts[RIGHT_ARM_LINK] = 0;
 #else
-  joint_positions[RIGHT_FRONT_WHEEL] = 0; 
-  joint_positions[RIGHT_REAR_WHEEL] = 0; 
+  joint_positions[RIGHT_FRONT_WHEEL] = 0;
+  joint_positions[RIGHT_REAR_WHEEL] = 0;
   joint_positions[LEFT_FRONT_WHEEL] = 0;
-  joint_positions[LEFT_REAR_WHEEL] = 0; 
+  joint_positions[LEFT_REAR_WHEEL] = 0;
   joint_positions[LEFT_ARM_LINK] = (sin(t) * 1.1) - (3.14159/5);
   joint_positions[RIGHT_ARM_LINK] = joint_positions[LEFT_ARM_LINK];
   joint_positions[FORK_LIFT] = calc_fork_lift_link_position(joint_positions[LEFT_ARM_LINK]);
@@ -573,15 +574,15 @@ void publish_joint_states() {
 
 
   joint_velocities[RIGHT_FRONT_WHEEL] = 0;
-  joint_velocities[RIGHT_REAR_WHEEL] = 0; 
+  joint_velocities[RIGHT_REAR_WHEEL] = 0;
   joint_velocities[LEFT_FRONT_WHEEL] = 0;
-  joint_velocities[LEFT_REAR_WHEEL] = 0; 
+  joint_velocities[LEFT_REAR_WHEEL] = 0;
   joint_velocities[FORK_LIFT] = 0;
   joint_velocities[LEFT_ARM_LINK] = 1;
   joint_velocities[RIGHT_ARM_LINK] = 1;
 
   joint_efforts[RIGHT_FRONT_WHEEL] = 0;
-  joint_efforts[RIGHT_REAR_WHEEL] = 0; 
+  joint_efforts[RIGHT_REAR_WHEEL] = 0;
   joint_efforts[LEFT_FRONT_WHEEL] = 0;
   joint_efforts[LEFT_REAR_WHEEL] = 0;
   joint_efforts[FORK_LIFT] = 0;
@@ -593,7 +594,7 @@ void publish_joint_states() {
   joint_state_msg.header.frame_id = "/bobb3e";
   joint_state_msg.name_length = NUM_JOINTS;
   joint_state_msg.velocity_length = NUM_JOINTS;
-  joint_state_msg.position_length = NUM_JOINTS; 
+  joint_state_msg.position_length = NUM_JOINTS;
   joint_state_msg.effort_length = NUM_JOINTS;
 
   joint_state_msg.name = joint_names;
@@ -626,8 +627,8 @@ void init_motors() {
 
 void init_sensors() {
   printf("Init Sensors...\n");
-  gyro_sensor.rate();
-  gyro_sensor.g_a();
+  //gyro_sensor.rate();
+  //gyro_sensor.g_a();
   ir_sensor.proximity();
   color_sensor.color();
 }
@@ -639,11 +640,11 @@ void init_node() {
   nh.initNode(rosSrvrIp);
   nh.subscribe(cmd_vel_sub);
   nh.advertise(odom_pub);
-  nh.advertise(joint_state_pub); 
-  nh.advertise(color_sensor_pub); 
-  nh.advertise(gyro_sensor_pub); 
+  nh.advertise(joint_state_pub);
+  nh.advertise(color_sensor_pub);
+  //nh.advertise(gyro_sensor_pub);
   nh.advertise(infrared_sensor_pub);
- 
+
   broadcaster.init(nh);
 }
 
@@ -653,12 +654,12 @@ int main(int argc, char* argv[])
 #ifndef _OFFLINETEST
   init_motors();
   init_sensors();
-#endif   
+#endif
 
   usleep(1000000);
 
   printf("Entering loop....\n");
-  
+
   while(1)
     {
       //ros stuff
@@ -669,7 +670,6 @@ int main(int argc, char* argv[])
       usleep(100000); //microseconds
       nh.spinOnce(); // check for incoming messages
     }
- 
+
   return 0;
 }
-
