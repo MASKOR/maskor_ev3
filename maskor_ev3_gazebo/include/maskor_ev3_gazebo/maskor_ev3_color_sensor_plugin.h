@@ -1,54 +1,47 @@
-/*
- * Copyright 2012 Open Source Robotics Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
-*/
-/*
- * Desc: A dynamic controller plugin that publishes ROS image_raw
- *    camera_info topic for generic camera sensor.
-*/
-
-#ifndef GAZEBO_ROS_CAMERA_HH
-#define GAZEBO_ROS_CAMERA_HH
+#ifndef MASKOR_EV3_COLOR_SENSOR_HH
+#define MASKOR_EV3_COLOR_SENSOR_HH
 
 #include <string>
 
 // library for processing camera data for gazebo / ros conversions
 #include <gazebo/plugins/CameraPlugin.hh>
-#include <maskor_ev3_gazebo/maskor_ev3_color_sensor_util.h>
+#include <gazebo_plugins/gazebo_ros_camera_utils.h>
+//OPENCV stuff
+#include <opencv2/imgproc/imgproc.hpp>
 
 namespace gazebo
 {
-  class GazeboRosCamera : public CameraPlugin, GazeboRosCameraUtils
+  class MaskorEV3ColorSensor : public CameraPlugin, GazeboRosCameraUtils
   {
-    //public: void Test(){std::cout << "Test" << std::endl;}
-    //public: void ColorSensor(){}
-    /// \brief Constructor
-    /// \param parent The parent entity, must be a Model or a Sensor
-    public: GazeboRosCamera();
 
-    /// \brief Destructor
-    public: ~GazeboRosCamera();
+    public:
+      MaskorEV3ColorSensor();
+      ~MaskorEV3ColorSensor();
 
-    /// \brief Load the plugin
-    /// \param take in SDF root element
-    public: void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
+      void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
 
-    /// \brief Update the controller
-    protected: virtual void OnNewFrame(const unsigned char *_image,
-                   unsigned int _width, unsigned int _height,
-                   unsigned int _depth, const std::string &_format);
+      void color_detection(int * rgb, cv::Mat H_histo,cv::Mat S_histo, cv::Mat V_histo, bool * color);
+
+    /// Callback for Camera Sensor
+    protected:
+      virtual void OnNewFrame(const unsigned char *_image,
+      unsigned int _width, unsigned int _height,
+      unsigned int _depth, const std::string &_format);
+
+    private:
+      ros::NodeHandle _nh;
+      ros::Publisher _sensorPublisher;
+
+      int LowerH = 0;
+      int LowerS = 0;
+      int LowerV = 0;
+      int UpperH = 180;
+      int UpperS = 196;
+      int UpperV = 170;
+      int count = 0;
+
+      bool _showDebugWindows = false;
+
   };
 }
 #endif

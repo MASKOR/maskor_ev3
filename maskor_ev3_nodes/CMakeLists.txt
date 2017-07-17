@@ -1,24 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(maskor_ev3)
+project(maskor_ev3_nodes)
 
-#comment this in to cross compile for ARM
-set(CMAKE_CXX_COMPILER /usr/bin/arm-linux-gnueabi-g++)
-set(CMAKE_C_COMPILER /usr/bin/arm-linux-gnueabi-gcc)
-
-add_definitions(-D_GLIBCXX_USE_NANOSLEEP)
-add_compile_options(-std=c++11)
-
-#comment this in if using raspberry pi
-#add_definitions(-DEV3DEV_PLATFORM_BRICKPI)
+## Compile as C++11, supported in ROS Kinetic and newer
+# add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rosserial_client
-#  std_msgs
-#  message_generation
+  sensor_msgs
+  std_msgs
+  maskor_ev3_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -57,14 +50,16 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 # add_message_files(
 #   FILES
-#   ColorSensorMsg.msg
-#)
+#   Message1.msg
+#   Message2.msg
+# )
 
 ## Generate services in the 'srv' folder
 # add_service_files(
 #   FILES
-#   lift_up.srv
-#   )
+#   Service1.srv
+#   Service2.srv
+# )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -76,12 +71,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
-
-# rosserial_generate_ros_lib(
-#   PACKAGE rosserial_client
-#   SCRIPT make_libraries.py
+#   sensor_msgs#   std_msgs
 # )
 
 ################################################
@@ -114,11 +104,11 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES maskor_ev3
-  CATKIN_DEPENDS roscpp
-  #  DEPENDS system_lib
-  )
+#  INCLUDE_DIRS include
+#  LIBRARIES maskor_ev3_nodes
+#  CATKIN_DEPENDS roscpp sensor_msgs std_msgs
+#  DEPENDS system_lib
+)
 
 ###########
 ## Build ##
@@ -127,64 +117,48 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
-  include/ros_lib/ #rosserial
+# include
   ${catkin_INCLUDE_DIRS}
-  )
+)
 
 ## Declare a C++ library
-add_library(maskor_ev3
-  include/maskor_ev3/maskor_ev3.h
-  include/maskor_ev3/common.h
-  include/maskor_ev3/lru_cache.h
-  include/maskor_ev3/port.h src/port.cpp
-  include/maskor_ev3/device.h src/device.cpp
-  include/maskor_ev3/sensor.h src/sensor.cpp
-  include/maskor_ev3/i2c_sensor.h src/i2c_sensor.cpp
-  include/maskor_ev3/touch_sensor.h src/touch_sensor.cpp
-  include/maskor_ev3/color_sensor.h src/color_sensor.cpp
-  include/maskor_ev3/infrared_sensor.h src/infrared_sensor.cpp
-  include/maskor_ev3/gyro_sensor.h src/gyro_sensor.cpp
-  include/maskor_ev3/ultrasonic_sensor.h src/ultrasonic_sensor.cpp
-  include/maskor_ev3/sound_sensor.h src/sound_sensor.cpp
-  include/maskor_ev3/light_sensor.h src/light_sensor.cpp 
-  include/maskor_ev3/motor.h src/motor.cpp
-  include/maskor_ev3/medium_motor.h src/medium_motor.cpp
-  include/maskor_ev3/large_motor.h src/large_motor.cpp
-  include/maskor_ev3/dc_motor.h src/dc_motor.cpp
-  include/maskor_ev3/servo_motor.h src/servo_motor.cpp
-  include/maskor_ev3/led.h src/led.cpp
-  include/maskor_ev3/power_supply.h src/power_supply.cpp
-  include/maskor_ev3/button.h src/button.cpp
-  include/maskor_ev3/sound.h src/sound.cpp
-  include/maskor_ev3/lcd.h src/lcd.cpp
-  include/maskor_ev3/remote_control.h src/remote_control.cpp
-  )
+# add_library(${PROJECT_NAME}
+#   src/${PROJECT_NAME}/maskor_ev3_nodes.cpp
+# )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(maskor_ev3 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(maskor_ev3_bobb3e_node src/maskor_ev3_bobb3e_node.cpp)
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+add_executable(laser_scan_sub src/laser_scan_sub.cpp)
+add_executable(colour_scan_sub src/colour_scan_sub.cpp)
 
+
+## Rename C++ executable without prefix
+## The above recommended prefix causes long target names, the following renames the
+## target back to the shorter version for ease of user use
+## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
+# set_target_properties(${PROJECT_NAME}_node PROPERTIES OUTPUT_NAME node PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(maskor_ev3_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(maskor_ev3_bobb3e_node maskor_ev3_msgs_generate_messages_cpp)
-#add_dependencies(turn_left_for_x_secs maskor_ev3_msgs_generate_messages_cpp)
+# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(maskor_ev3
-  #${catkin_LIBRARIES}
+target_link_libraries(laser_scan_sub
+  ${catkin_LIBRARIES}
 )
+## Specify libraries to link a library or executable target against
+target_link_libraries(colour_scan_sub
+  ${catkin_LIBRARIES}
+  )
 
-target_link_libraries(maskor_ev3_bobb3e_node
-  #${catkin_LIBRARIES}
-  maskor_ev3
-)
+#add_dependencies(colour_scan_sub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(colour_scan_sub maskor_ev3_msgs_gencpp)
+
 
 #############
 ## Install ##
@@ -200,17 +174,12 @@ target_link_libraries(maskor_ev3_bobb3e_node
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-## automatic deployment of the nodes and libs to the EV3
-set(NFS_MOUNT /home/flokaefer/nfs/ev3dev)
-set(CATKIN_PACKAGE_BIN_DESTINATION ${NFS_MOUNT})
-set(CATKIN_PACKAGE_LIB_DESTINATION ${NFS_MOUNT})
-
 ## Mark executables and/or libraries for installation
-install(TARGETS maskor_ev3 maskor_ev3_bobb3e_node
+# install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
@@ -231,7 +200,7 @@ install(TARGETS maskor_ev3 maskor_ev3_bobb3e_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_maskor_ev3.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_maskor_ev3_nodes.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

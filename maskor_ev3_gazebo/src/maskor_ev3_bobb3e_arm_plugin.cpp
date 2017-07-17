@@ -107,10 +107,10 @@ namespace gazebo {
     // Initialize velocity stuff
     fork_speed_ = 0;
 
-    z_ = 0;
+    z_ = -1;
     rot_ = 0;
     alive_ = true;
-
+   
     joints[LEFT_FORK_ARM] = this->parent->GetJoint(left_fork_joint_name_);
     joints[RIGHT_FORK_ARM] = this->parent->GetJoint(right_fork_joint_name_);
     joints[FORK_LIFT] = this->parent->GetJoint(fork_lift_joint_name_);
@@ -144,14 +144,8 @@ namespace gazebo {
       ros::SubscribeOptions::create<geometry_msgs::Twist>(command_topic_, 1,
 							  boost::bind(&MaskorEv3ArmPlugin::cmdVelCallback, this, _1),
 							  ros::VoidPtr(), &queue_);
-
+    
     cmd_vel_subscriber_ = rosnode_->subscribe(so);
-
-    /*
-    if(publishJointStates_) {
-      joint_state_publisher_ = rosnode_->advertise<sensor_msgs::JointState>("joint_states", 1000);
-    }
-    */
 
     if (publishJointStates_) {
       joint_state_publisher_ = rosnode_->advertise<sensor_msgs::JointState>("joint_states", 1000);
