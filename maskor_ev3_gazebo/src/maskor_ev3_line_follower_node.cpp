@@ -32,105 +32,11 @@ LineFollower::LineFollower(){
 
 void LineFollower::lineFollowerCallback(const std_msgs::Int8::ConstPtr& msg)
 {
+
+//TODO
+
   //ROS_INFO("I heard: [%i]", msg->data);
   geometry_msgs::Twist twist;
-  bool find_whitel = false;
-  bool find_whiter = false;
- //finde linke Seite
- if(lastblackl == false && lastblackr == false){
-   drive[3] = true;
-   if(msg->data == 0){
-     lastblackr = true;
-
-     find_whitel = true;
-   }
- }
- else if(find_whitel){
-   drive[0] =false;
-   drive[1] =false;
-   drive[2] =true;
-   drive[3] =false;
-
-   if(msg->data == 0){
-     drive[0] =false;
-     drive[1] =false;
-     drive[2] =false;
-     drive[3] =false;
-     drive[4] =true;
-     find_whitel = false;
-   }
- }
- else{
-   if(msg->data == 1){
-     drive[0] =true;
-     drive[1] =false;
-     drive[2] =false;
-     drive[3] =false;
-     count = 0;
-   }
-   else{
-     if(lastblackl){
-      drive[0] = false;
-      drive[1] = false;
-      drive[2] = false;
-      drive[3] = true;
-
-
-      if(msg->data == 1){
-        drive[0] =true;
-        drive[1] =false;
-        drive[2] =false;
-        drive[3] =false;
-
-        if(msg->data == 0){
-          drive[0] =false;
-          drive[1] =false;
-          drive[2] =false;
-          drive[3] =false;
-          drive[4] =true;
-          //find_whiter = false;
-
-          lastblackr = false;
-          lastblackl = true;
-
-        }
-
-
-
-      }
-     }
-     else if(lastblackr){
-       drive[0] = false;
-       drive[1] = false;
-       drive[2] = true;
-       drive[3] = false;
-
-       if(msg->data == 1){
-         drive[0] =true;
-         drive[1] =false;
-         drive[2] =false;
-         drive[3] =false;
-
-         if(msg->data == 0){
-           drive[0] =false;
-           drive[1] =false;
-           drive[2] =false;
-           drive[3] =false;
-           drive[4] =true;
-
-           lastblackr = true;
-           lastblackl = false;
-         }
-
-       }
-     }
-   }
- }
-
-
-
-
-
 
   //VORWÄRTS
   if(drive[0]){
