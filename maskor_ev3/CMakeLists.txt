@@ -201,7 +201,7 @@ target_link_libraries(maskor_ev3_bobb3e_node
 # )
 
 ## automatic deployment of the nodes and libs to the EV3
-set(NFS_MOUNT /home/flokaefer/nfs/ev3dev)
+set(NFS_MOUNT /home/mstuettgen/ev3)
 set(CATKIN_PACKAGE_BIN_DESTINATION ${NFS_MOUNT})
 set(CATKIN_PACKAGE_LIB_DESTINATION ${NFS_MOUNT})
 
