@@ -80,6 +80,7 @@ double lift_motor_speed=0.0;
 
 int wheel_encoder_current_pos[2] = {0,0};
 int wheel_encoder_prev_pos[2] = {0,0};
+ros::Time time_curr, time_prev;
 int dl = 0;
 int dr = 0;
 
@@ -93,7 +94,7 @@ float theta_curr, theta_prev= 0.0;
 float x_prev, x_curr= 0.0;
 float y_prev, y_curr=0.0;
 float gearRatio = (12.0f/20.0f) * -1;
-float axisDistance = 0.125;
+float axisDistance = 0.145;
 
 
 enum {
@@ -175,6 +176,8 @@ void calc_odometry() {
 
   double delta_theta, delta_theta_grad = 0.0;
 
+  time_curr = nh.now();
+
   //get current wheel positions
   wheel_encoder_current_pos[0] = (float)left_motor.position();
   wheel_encoder_current_pos[1] = (float)right_motor.position();
@@ -192,7 +195,9 @@ void calc_odometry() {
 
   x_curr = x_prev + (((dr*(2*M_PI*wheelradius/ticks_per_rotation)) + (dl*(2*M_PI*wheelradius/ticks_per_rotation)))/2)*cos(theta_curr);
   y_curr = y_prev + (((dr*(2*M_PI*wheelradius/ticks_per_rotation)) + (dl*(2*M_PI*wheelradius/ticks_per_rotation)))/2)*sin(theta_curr);
- 
+
+
+  double dt = time_curr.toSec() - time_prev.toSec();
 
   //since all odometry is 6DOF we'll need a quaternion created from yaw
   geometry_msgs::Quaternion odom_quat = tf::createQuaternionFromYaw(theta_curr);
@@ -203,11 +208,11 @@ void calc_odometry() {
   odom_msg.child_frame_id = base_link;
   odom_msg.pose.pose.position.x = x_curr;
   odom_msg.pose.pose.position.y = y_curr;
-  odom_msg.pose.pose.position.z = theta_curr;
+  odom_msg.pose.pose.position.z = 0.0;
   odom_msg.pose.pose.orientation = odom_quat;
-  odom_msg.twist.twist.linear.x = x_curr - x_prev;
-  odom_msg.twist.twist.linear.y = y_curr - y_prev;
-  odom_msg.twist.twist.angular.z = theta_curr - theta_prev;
+  odom_msg.twist.twist.linear.x = (x_curr - x_prev) / dt;
+  odom_msg.twist.twist.linear.y = (y_curr - y_prev) / dt;
+  odom_msg.twist.twist.angular.z = (theta_curr - theta_prev) / dt;
   odom_pub.publish(&odom_msg);
 
  //publish odom TF
@@ -216,7 +221,7 @@ void calc_odometry() {
   odom_tf.child_frame_id = base_link;
   odom_tf.transform.translation.x = x_curr;
   odom_tf.transform.translation.y = y_curr;
-  odom_tf.transform.translation.z = theta_curr;
+  odom_tf.transform.translation.z = 0.0;
   odom_tf.transform.rotation = odom_quat;
   broadcaster.sendTransform(odom_tf);
 
@@ -226,6 +231,7 @@ void calc_odometry() {
   y_prev = y_curr;
   wheel_encoder_prev_pos[0] = wheel_encoder_current_pos[0];
   wheel_encoder_prev_pos[1] = wheel_encoder_current_pos[1];
+  time_prev = time_curr;
 }
 
 //------------------------------------------------------------------------------publishing sensor messages for offline debug----------------------------------------------------
@@ -255,10 +261,10 @@ void publish_sensor_messages() {
 
 void publish_joint_states() {
 
-  joint_positions[RIGHT_FRONT_WHEEL] = right_motor.position(); //wheel encoder position
-  joint_positions[RIGHT_REAR_WHEEL] = right_motor.position();
-  joint_positions[LEFT_FRONT_WHEEL] = left_motor.position(); 
-  joint_positions[LEFT_REAR_WHEEL] = left_motor.position();
+  joint_positions[RIGHT_FRONT_WHEEL] = (right_motor.position() % 360) * (2*M_PI/360.0) *-1; //wheel encoder position
+  joint_positions[RIGHT_REAR_WHEEL] = (right_motor.position() % 360) * (2*M_PI/360.0)*-1;
+  joint_positions[LEFT_FRONT_WHEEL] = (left_motor.position() % 360) * (2*M_PI/360.0)*-1;
+  joint_positions[LEFT_REAR_WHEEL] = (left_motor.position() % 360) * (2*M_PI/360.0)*-1;
   joint_positions[LEFT_ARM_LINK] = 0;
   joint_positions[RIGHT_ARM_LINK] = 0;
   joint_positions[FORK_LIFT] = 0;
