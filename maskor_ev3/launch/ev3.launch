@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+  <include file="$(find maskor_ev3_description)/launch/robot_description.launch"/>
+
+  <node pkg="rosserial_python" type="serial_node.py" name="rosserial_node" args="tcp" output="screen"/>
+
+  
+</launch>

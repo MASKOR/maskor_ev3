@@ -84,11 +84,6 @@ ros::Time time_curr, time_prev;
 int dl = 0;
 int dr = 0;
 
-// float vx = 0.0;
-// float wt = 0.0;
-// float vl = 0.0;
-// float vr = 0.0;
-
 float wheelradius = 0.016f; //without chain 0.015
 float theta_curr, theta_prev= 0.0;
 float x_prev, x_curr= 0.0;
@@ -351,6 +346,10 @@ int main(int argc, char* argv[])
 
   while(1)
     {
+
+      printf("Lift motor position: %d" , lift_motor.position());
+      printf("Lift motor speed: %d" , lift_motor.speed());
+      
       //ros stuff
       set_motor_speed();
       calc_odometry();
