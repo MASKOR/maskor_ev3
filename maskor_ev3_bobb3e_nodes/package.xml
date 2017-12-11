@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>bobb3e_nodes</name>
+  <name>maskor_ev3_bobb3e_nodes</name>
   <version>0.0.0</version>
   <description>The bobb3e_nodes package</description>
 
@@ -55,7 +55,6 @@
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>maskor_ev3_msgs</exec_depend>
   <exec_depend>roscpp</exec_depend>
-
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
