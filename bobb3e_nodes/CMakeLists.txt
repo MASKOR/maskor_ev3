@@ -134,11 +134,8 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/bobb3e_nodes_node.cpp)
 
-add_executable(maskor_ev3_line_follower_node
- src/maskor_ev3_line_follower_node.cpp)
-
-add_executable(maskor_ev3_line_follower_node_
- src/maskor_ev3_linefollower_node_.cpp)
+add_executable(maskor_ev3_linefollower_node
+ src/maskor_ev3_linefollower_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -157,11 +154,7 @@ add_executable(maskor_ev3_line_follower_node_
 #   ${catkin_LIBRARIES}
 # )
 
-target_link_libraries(maskor_ev3_line_follower_node
- ${catkin_LIBRARIES}
- )
-
-target_link_libraries(maskor_ev3_line_follower_node_
+target_link_libraries(maskor_ev3_linefollower_node
  ${catkin_LIBRARIES}
  )
 #############
