@@ -160,6 +160,15 @@ void cmd_velCb(const geometry_msgs::Twist& cmd) {
   right_motor_speed = vr + va;
   left_motor_speed  = vr - va;
 
+  //speed limit of lego motor is +-1000 (estimated)
+  if(right_motor_speed < -1000) { right_motor_speed = -1000; }
+  if(right_motor_speed >  1000) { right_motor_speed =  1000; }
+  if(left_motor_speed < -1000) { left_motor_speed = -1000; }
+  if(left_motor_speed >  1000) { left_motor_speed =  1000;}
+  
+
+  printf("right_motor_speed: %f \n", right_motor_speed);
+  printf("left_motor_speed: %f \n", left_motor_speed);  
   lift_motor_speed = z_;
 
 }
@@ -347,8 +356,8 @@ int main(int argc, char* argv[])
   while(1)
     {
 
-      printf("Lift motor position: %d" , lift_motor.position());
-      printf("Lift motor speed: %d" , lift_motor.speed());
+      printf("Lift motor position: %d \n" , lift_motor.position());
+      printf("Lift motor speed: %d \n" , lift_motor.speed());
       
       //ros stuff
       set_motor_speed();
