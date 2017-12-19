@@ -4,87 +4,106 @@
 #include <geometry_msgs/Twist.h>
 #include <sstream>
 
+enum direction {
+  FORWARD = 0,
+  BACKWARD,
+  LEFT,
+  RIGHT,
+  STOP
+};
+
+
 ros::Publisher vel_pub_;
 ros::Subscriber color_sensor;
 
 int turn_counter;
 bool turn_flag;
 
-
 void drive(int input){
   geometry_msgs::Twist twist;
 
   //VORWÄRTS
-  if(input == 0){
-    std::cout << "vörwärts" << '\n';
+  if(input == FORWARD){
+
+    ROS_INFO("FORWARD");
+
     twist.linear.x = 0.15;
     twist.angular.z = 0;
     vel_pub_.publish(twist);
   }
   //RÜCKWÄRTS
-  else if(input ==1){
-    std::cout << "rückwärts" << '\n';
-    //lastblackr = false;
+  else if(input == BACKWARD){
+
+    ROS_INFO("BACKWARD");
+
     twist.linear.x = -0.15;
     twist.angular.z = 0;
     vel_pub_.publish(twist);
   }
   //RECHTS
-  else if(input ==2){
-    std::cout << "rechts" << '\n';
-    //lastblackr = false;
+  else if(input == RIGHT){
+
+    ROS_INFO("RIGHT");
+
     twist.linear.x = 0;
     twist.angular.z = -0.08;
     vel_pub_.publish(twist);
   }
   //LINKS
-  else if(input ==3){
-    std::cout << "links" << '\n';
+  else if(input == LEFT){
+
+    ROS_INFO("LEFT");
+
     twist.linear.x = 0;
     twist.angular.z = 0.08;
     vel_pub_.publish(twist);
   }
   //STOPP
-  else if(input == 4){
-    std::cout << "stopp" << '\n';
+  else if(input == STOP){
+
+    ROS_INFO("STOP");
+
     twist.linear.x = 0;
     twist.angular.z = 0;
     vel_pub_.publish(twist);
   }
 }
 
+
+
 void lineFollowerCallback(const maskor_ev3_msgs::ColorSensor::ConstPtr& msg)
 {
-  ROS_INFO("Color: [%i]", msg->color);
+  int detected_color = msg->color;
+  ROS_INFO("detected color: [%i]", detected_color);
 
-  if(msg->color == 1){
-    drive(0);
-    turn_counter = 0;
-  }
-  else{
-    if(turn_flag == true)
-    {
-      turn_counter++;
-      drive(2);
 
-      if(turn_counter == 20)
-        turn_flag = false;
+  if(detected_color == 1 || detected_color == 5 || detected_color == 2){
+      drive(FORWARD);
+      turn_counter = 0;
     }
-    else
-    {
-      turn_counter--;
-      drive(3);
-      if(turn_counter == -20)
-        turn_flag = true;
+    else{
+      if(turn_flag == true)
+      {
+        turn_counter++;
+        drive(RIGHT);
+
+        if(turn_counter == 20)
+          turn_flag = false;
+      }
+      else
+      {
+        turn_counter--;
+        drive(LEFT);
+        if(turn_counter == -20)
+          turn_flag = true;
+      }
     }
-  }
 
 
 }
 
 int main(int argc, char **argv)
 {
-
   ros::init(argc, argv, "line_follower");
 
   ros::NodeHandle n;
@@ -94,18 +113,11 @@ int main(int argc, char **argv)
 
   ros::Rate loop_rate(10);
 
-  int count = 0;
   while (ros::ok())
   {
-
-
-
     ros::spinOnce();
-
     loop_rate.sleep();
-
   }
-
 
   return 0;
 }
